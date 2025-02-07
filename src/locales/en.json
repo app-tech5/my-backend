@@ -1,0 +1,13 @@
+{
+  "email_and_password_required": "Email and password are required",
+  "email_already_in_use": "Email already in use",
+  "passwords_do_not_match": "Passwords do not match",
+  "user_registered_successfully": "User registered successfully",
+  "server_error": "Server error",
+  "user_not_found": "User not found",
+  "incorrect_password": "Incorrect password",
+  "login_successful": "Login successful",
+  "unauthenticated": "Unauthenticated",
+  "invalid_or_expired_token": "Invalid or expired token",
+  "logout_successful": "Logout successful"
+}
