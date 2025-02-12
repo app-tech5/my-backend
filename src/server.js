@@ -8,6 +8,7 @@ const userRoutes = require('./routes/userRoutes');
 const languageRoutes = require('./routes/languageRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 const currencyRoutes = require('./routes/currencyRoutes');
+const uploadRoutes = require("./routes/uploadRoutes");
 const http = require('http');
 
 const { Server } = require('socket.io');
@@ -45,10 +46,14 @@ app.use("/api/auth", authRoutes);
 app.use("/api", authMiddleware);
 
 app.use('/api/users', userRoutes);
-app.use('/api/languages', languageRoutes);
-app.use('/api/settings', settingsRoutes);
+// app.use('/api/languages', languageRoutes);
+// app.use('/api/settings', settingsRoutes);
 // app.use('/api/currencies', currencyRoutes);
-app.use("/api", genericRoutes);
+app.use("/api/resource", genericRoutes);
+app.use("/api/upload", uploadRoutes);
+
+// 📌 Servir les images stockées
+app.use("/api/uploads", express.static("uploads"));
 
 
 const PORT = process.env.PORT || 5000;

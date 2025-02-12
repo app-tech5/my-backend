@@ -84,11 +84,11 @@ router.post('/login', async (req, res) => {
 
 router.get('/me', async (req, res) => {
     try {
-        const token = req.cookies.token; // Récupère le token JWT dans les cookies
-        if (!token) return res.status(401).json({ message: res.__("unauthenticated") });
+        // const token = req.cookies.token; // Récupère le token JWT dans les cookies
+        // if (!token) return res.status(401).json({ message: res.__("unauthenticated") });
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(decoded.id).select('-password'); // Exclut le mot de passe
+        // const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(req.user.id).select('-password'); // Exclut le mot de passe
         if (!user) return res.status(401).json({ message: res.__("user_not_found") });
 
         res.json(user);

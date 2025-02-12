@@ -13,7 +13,8 @@ const SettingSchema = new mongoose.Schema({
         isDefault: { type: Boolean, required: true, default: false },
         name: { type: String, required: true },
     },
-    createdAt: { type: Date, default: Date.now },
-  });
+    image_url: { type: String },
+    // createdAt: { type: Date, default: Date.now },
+  }, { timestamps: true } );
 
 module.exports = mongoose.model('Setting', SettingSchema);

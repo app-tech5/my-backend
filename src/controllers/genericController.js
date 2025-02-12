@@ -1,3 +1,5 @@
+const getDefaultValue = require("../utils/getDefaultValue");
+
 const genericController = (Model) => {
     return {
         getAll: async (req, res) => {
@@ -12,7 +14,7 @@ const genericController = (Model) => {
         getById: async (req, res) => {
             try {
                 const item = await Model.findById(req.params.id);
-                if (!item) return res.status(404).json({ message: "Not Found" });
+                // if (!item) return res.status(404).json({ message: "Not Found" });
                 res.json(item);
             } catch (error) {
                 res.status(500).json({ error: error.message });
@@ -21,6 +23,9 @@ const genericController = (Model) => {
 
         create: async (req, res) => {
             try {
+                if (req.body.isDefault) {
+                    await Model.updateMany({}, { isDefault: false });
+                }
                 const newItem = new Model(req.body);
                 await newItem.save();
                 res.status(201).json(newItem);
@@ -28,17 +33,21 @@ const genericController = (Model) => {
                 res.status(400).json({ error: error.message });
             }
         },
-
+        
         update: async (req, res) => {
             try {
+                if (req.body.isDefault) {
+                    await Model.updateMany({ _id: { $ne: req.params.id } }, { isDefault: false });
+                }
                 const updatedItem = await Model.findByIdAndUpdate(req.params.id, req.body, { new: true });
                 if (!updatedItem) return res.status(404).json({ message: "Not Found" });
+                console.log(updatedItem, req.params.id)
                 res.json(updatedItem);
             } catch (error) {
                 res.status(500).json({ error: error.message });
             }
         },
-
+        
         delete: async (req, res) => {
             try {
                 const deletedItem = await Model.findByIdAndDelete(req.params.id);
@@ -48,6 +57,26 @@ const genericController = (Model) => {
                 res.status(500).json({ error: error.message });
             }
         },
+
+        getDefaultFields: async (req, res) => {
+            try {
+                const doc = await Model.findOne({}, { _id: 0, createdAt: 0, updatedAt: 0, __v: 0 });
+
+                console.log(doc);
+
+                if (!doc) return res.json({});
+
+                const defaultFields = Object.fromEntries(
+                    Object.entries(doc.toObject()).map(([key, value]) => [key, getDefaultValue(value)])
+                );
+
+                res.json(defaultFields);
+            } catch (error) {
+                console.error("Error fetching default fields:", error);
+                res.status(500).json({ error: "Internal server error" });
+            }
+        }
+
     };
 };
 
