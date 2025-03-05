@@ -10,6 +10,7 @@ const settingsRoutes = require('./routes/settingsRoutes');
 const currencyRoutes = require('./routes/currencyRoutes');
 const uploadRoutes = require("./routes/uploadRoutes");
 const http = require('http');
+const cleanupRouter = require('./routes/cleanup');
 
 const { Server } = require('socket.io');
 
@@ -54,6 +55,8 @@ app.use("/api/upload", uploadRoutes);
 
 // 📌 Servir les images stockées
 app.use("/api/uploads", express.static("uploads"));
+
+app.use('/api', cleanupRouter);
 
 
 const PORT = process.env.PORT || 5000;

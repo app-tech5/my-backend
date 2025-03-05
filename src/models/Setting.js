@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const SettingSchema = new mongoose.Schema({
     _id: { type: String, required: true }, // 👈 ID fixe "app_settings"
     appName: { type: String, required: true },
-    defaultCurrency: {
+    currency: {
       value: { type: String, required: true },
       label: { type: String, required: true },
       symbol: { type: String, required: true },
