@@ -1,5 +1,7 @@
-function getDefaultValue(value) {
-//   console.log("getDefaultValue", value);
+const mongoose = require('mongoose');
+
+function getDefaultValue(value, key) {
+  // console.log("getDefaultValue", value, key, mongoose.Types.ObjectId.isValid(value));
 
   if(/^([01]\d|2[0-3]):([0-5]\d)$/.test(value))
     return `${new Date().getHours()}:${new Date().getMinutes()}`
@@ -17,6 +19,8 @@ function getDefaultValue(value) {
     )
       return [{ value: "", label: "" }];
   }
+  // if(key === "userId")
+  //   return new mongoose.Types.ObjectId();
   if (value.hasOwnProperty("value") && value.hasOwnProperty("label")) {
     return { value: "", label: "" };
   }

@@ -31,4 +31,31 @@ function getModelsWithImageField() {
   return modelsWithImage;
 }
 
-module.exports = getModelsWithImageField;
+function getModelsWithImageOrDocumentsField() {
+  const modelsWithFields = [];
+
+  console.log('Début de la détection des modèles avec un champ `image` ou `documents`...');
+
+  // Parcourir tous les modèles enregistrés dans Mongoose
+  for (const modelName of Object.keys(mongoose.models)) {
+    const model = mongoose.models[modelName];
+    const schema = model.schema;
+
+    console.log(`Vérification du modèle : ${modelName}`);
+    console.log('Chemins du schéma :', Object.keys(schema.paths));
+
+    // Vérifier si le schéma contient un champ `image` ou `documents`
+    if (schema.paths.image || schema.paths.documents) {
+      console.log(`Champ \`image\` ou \`documents\` trouvé dans le modèle ${modelName}.`);
+      modelsWithFields.push(model);
+    } else {
+      console.log(`Aucun champ \`image\` ou \`documents\` trouvé dans le modèle ${modelName}.`);
+    }
+  }
+
+  console.log('Modèles détectés :', modelsWithFields.map(m => m.modelName));
+  return modelsWithFields;
+}
+
+
+module.exports = getModelsWithImageOrDocumentsField;

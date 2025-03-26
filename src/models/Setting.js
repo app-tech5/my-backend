@@ -7,6 +7,7 @@ const SettingSchema = new mongoose.Schema({
       value: { type: String, required: true },
       label: { type: String, required: true },
       symbol: { type: String, required: true },
+      code: { type: String, required: true },
     },
     language: { // Ajout du champ langue
         code: { type: String, required: true },

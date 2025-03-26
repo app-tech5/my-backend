@@ -12,6 +12,9 @@ router.use("/:model", async (req, res, next) => {
   const modelName = convertToModelName(req.params.model); // Conversion dynamique
   console.log("Requested model:", modelName);
 
+  // if(modelName === "Driver")
+  //   req.body.userId = new mongoose.Types.ObjectId(req.body.users.value);
+
   try {
     req.Model = require(`../models/${modelName}`); // Importation dynamique du modèle
 
@@ -36,6 +39,10 @@ router.use("/:model", async (req, res, next) => {
 
 router.get("/:model/defaultFields", (req, res) =>
   genericController(req.Model).getDefaultFields(req, res)
+);
+
+router.get("/:model/schema", (req, res) => 
+  genericController(req.Model).getSchema(req, res)
 );
 
 router.get("/:model", (req, res) =>
