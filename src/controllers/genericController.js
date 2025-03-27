@@ -100,28 +100,31 @@ const genericController = (Model) => {
     },
 
     getSchema: async (req, res) => {
-      try {
-        const schema = Model.schema;
-        const simplifiedSchema = {};
-
-        Object.entries(schema.paths).forEach(([path, schemaType]) => {
-          if (["_id", "__v", "createdAt", "updatedAt"].includes(path)) return;
-
-        //   simplifiedSchema[path] = {
-        //     type: schemaType.instance,
-        //     required: schemaType.isRequired,
-        //     default: schemaType.defaultValue,
-        //     enum: schemaType.options.enum,
-        //   };
-
-          simplifiedSchema[path] = schemaType.defaultValue
-        });
-
-        res.json(simplifiedSchema);
-      } catch (error) {
-        res.status(500).json({ error: error.message });
+        try {
+          const schema = Model.schema;
+          const simplifiedSchema = {};
+      
+          Object.entries(schema.paths).forEach(([path, schemaType]) => {
+            if (["_id", "__v", "createdAt", "updatedAt"].includes(path)) return;
+      
+            // Vérifier si c'est un tableau d'objets
+            if (schemaType.schema) {
+              const subSchema = {};
+              Object.entries(schemaType.schema.paths).forEach(([subPath, subType]) => {
+                subSchema[subPath] = subType.defaultValue;
+              });
+              simplifiedSchema[path] = [subSchema];
+            } else {
+              simplifiedSchema[path] = schemaType.defaultValue;
+            }
+          });
+      
+          res.json(simplifiedSchema);
+        } catch (error) {
+          res.status(500).json({ error: error.message });
+        }
       }
-    },
+      ,
   };
 };
 
