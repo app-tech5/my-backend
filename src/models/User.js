@@ -5,12 +5,12 @@ const UserSchema = new mongoose.Schema(
     {
       email: { type: String, required: true, unique: true, default: "" },
       password: { type: String, required: true, 
-        select: false,
+        //select: false,
         default: ''},
-      name: { type: String, required: true, default: '' },
-      phone: { type: String, required: true, default: '' },
-      image: { type: String, required: true, default: '' },
-      address: { type: String, required: true, default: '' },
+      name: { type: String, default: '' },
+      phone: { type: String, default: '' },
+      image: { type: String, default: '' },
+      address: { type: String, default: '' },
     },
     { timestamps: true }
   );

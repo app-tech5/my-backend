@@ -2,12 +2,9 @@ const mongoose = require('mongoose');
 
 const variantSchema = new mongoose.Schema({
   // Champs obligatoires pour react-select
-  name: { type: String, required: true },       // Ex: "Double Steak"
-  value: { type: String, required: true },     // Ex: "double_steak" (slug)
-  label: { type: String, required: true },     // Ex: "Double Steak (+2€)"
-  
+  name: { type: String, required: true, default: "" },       // Ex: "Double Steak"
   // Infos de base
-  price: { type: Number, required: true },     // Prix total (10.99)
+  price: { type: Number, required: true, default: 0 },     // Prix total (10.99)
   extra: { type: Number, default: 0 },         // Supplément (2.00)
   
   // Optionnel

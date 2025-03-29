@@ -8,9 +8,12 @@ const genericController = (Model) => {
     getAll: async (req, res) => {
       try {
         // console.log(req.query)
+        console.log("Requête reçue avec query params:");
         const items = await Model.find().setOptions({ queryParams: req.query });
+        console.log("Résultat de la requête:", items);
         res.json(items);
       } catch (error) {
+        console.log(error)
         res.status(500).json({ error: error.message });
       }
     },

@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const applyTransformHooks = require("../utils/applyTransformHooks");
 
 const MenuSchema = new mongoose.Schema(
   {
@@ -45,8 +46,9 @@ const MenuSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Product",
             required: true,
+            default: new mongoose.Types.ObjectId()
           },
-          label: { type: String, required: true },
+          label: { type: String, required: true, default: "" },
         },
     ],
       
@@ -85,28 +87,29 @@ MenuSchema.pre("find", function () {
   });
   
 
-function transformRestaurantsField(doc) {
-    console.log('Document initial:', doc);
-  doc.restaurant = doc.restaurants.value;
-  doc.restaurants = {
-    value: doc.restaurants.value,
-    label: doc.restaurants.label,
-  };
-  doc.updatedAt = Date.now();
-}
-MenuSchema.pre("save", function (next) {
-    transformRestaurantsField(this);
-  next();
-});
+// function transformRestaurantsField(doc) {
+//     console.log('Document initial:', doc);
+//   doc.restaurant = doc.restaurants.value;
+//   doc.restaurants = {
+//     value: doc.restaurants.value,
+//     label: doc.restaurants.label,
+//   };
+//   doc.updatedAt = Date.now();
+// }
+// MenuSchema.pre("save", function (next) {
+//     transformRestaurantsField(this);
+//   next();
+// });
 
-MenuSchema.pre("findOneAndUpdate", function (next) {
-    const update = this.getUpdate();
-    console.log(update)
-    transformRestaurantsField(update);
-    // this.setUpdate(update);
-    next();
-  });
+// MenuSchema.pre("findOneAndUpdate", function (next) {
+//     const update = this.getUpdate();
+//     console.log(update)
+//     transformRestaurantsField(update);
+//     // this.setUpdate(update);
+//     next();
+//   });
 
+applyTransformHooks(MenuSchema, ["restaurants", "products"]);
 
 
 module.exports = mongoose.model("Menu", MenuSchema);

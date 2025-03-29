@@ -4,21 +4,23 @@ const mongoose = require('mongoose');
 const TaxSchema = new mongoose.Schema({
     location: {
         type: String,
-        required: true, // Champ obligatoire
-        trim: true // Supprime les espaces inutiles
+        required: true,
+        trim: true,
+        default: "" // Valeur par défaut pour location
     },
     name: {
         type: String,
-        required: true, // Champ obligatoire
-        trim: true // Supprime les espaces inutiles
+        required: true,
+        trim: true,
+        default: "" // Valeur par défaut pour name
     },
     rate: {
         type: Number,
-        required: true, // Champ obligatoire
-        min: 0 // Valeur minimale de 0
+        required: true,
+        min: 0,
+        default: 0 // Valeur par défaut pour rate (minimum autorisé)
     }
-}, { timestamps: true } );
-
+}, { timestamps: true });
 // Création du modèle Taxe
 const Tax = mongoose.model('Tax', TaxSchema);
 

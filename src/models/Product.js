@@ -56,8 +56,8 @@ const ProductSchema = new mongoose.Schema({
   //   },
   // ],
   variants: [{
-    value: { type: mongoose.Schema.Types.ObjectId, ref: 'Variant' },
-    label: { type: String, required: true }
+    value: { type: mongoose.Schema.Types.ObjectId, ref: 'Variant', default: null},
+    label: { type: String, required: true, default: "" }
   }],
   created_at: {
     type: Date,
