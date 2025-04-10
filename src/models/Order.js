@@ -47,24 +47,6 @@ const orderSchema = new mongoose.Schema(
                 ],
                 total: { type: Number, required: true } 
             },
-        
-                
-            
-    // {
-    //     type: { type: String, 
-    //         enum: ["Menu", "product"], 
-    //         required: true },
-    //     itemId: { 
-    //       type: mongoose.Schema.Types.ObjectId, 
-    //       required: true, 
-    //       refPath: "items.type",
-    //     //   autopopulate: { maxDepth: 1 } 
-    //     },
-    //     // name: { type: String, required: true },
-        // quantity: { type: Number, required: true, min: 1 },
-        // price: { type: Number, required: true }
-    //   }
-
     ],
     totalPrice: { type: Number, required: true },
     subtotal: { type: Number, required: true },

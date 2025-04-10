@@ -33,10 +33,13 @@ const deliverySettingsSchema = new Schema({
     min: 0
   },
   dynamicDeliveryFee: {
-    baseFee: { type: Number, default: 1.5 },
-    perKmFee: { type: Number, default: 0.5 },
-    minFee: { type: Number, default: 1.5 },
-    maxFee: { type: Number, default: 10 }
+    type: Object,
+    default: {
+      baseFee: 1.5,
+      perKmFee: 0.5,
+      minFee: 1.5,
+      maxFee: 10
+    }
   },
   freeDeliveryThreshold: { // Montant minimum pour livraison gratuite
     type: Number,
@@ -50,8 +53,13 @@ const deliverySettingsSchema = new Schema({
     fee: Number
   }],
   deliveryHours: {
-    start: { type: String, default: '08:00' }, // Format HH:mm
-    end: { type: String, default: '23:00' }
+    type: Object,
+    // start: { type: String }, // Format HH:mm
+    // end: { type: String },
+    default: {
+      start : '08:00',
+      end: '23:00'
+    }
   },
   blackoutDays: [Date], // Jours sans livraison (fêtes, etc.)
 

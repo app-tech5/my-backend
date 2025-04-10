@@ -11,6 +11,36 @@ const UserSchema = new mongoose.Schema(
       phone: { type: String, default: '' },
       image: { type: String, default: '' },
       address: { type: String, default: '' },
+      // Nouveaux champs ajoutés pour Uber Eats
+      role: { 
+        type: String, 
+        enum: ['customer', 'restaurant', 'delivery'], 
+        default: 'customer' 
+      },
+      favorites: [{ 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Restaurant' 
+      }],
+      orders: [{ 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Order' 
+      }],
+      restaurant: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Restaurant' 
+      },
+      deliveryZones: [{ type: String }],
+      isActive: { type: Boolean, default: true },
+      paymentMethods: [{
+        type: { type: String, enum: ['card', 'paypal', 'cash'] },
+        details: mongoose.Schema.Types.Mixed
+      }],
+      ratings: {
+        asCustomer: { type: Number},
+        asRestaurant: { type: Number },
+        asDelivery: { type: Number }
+      },
+      deviceToken: { type: String, default: '' } // Pour les notifications push
     },
     { timestamps: true }
   );

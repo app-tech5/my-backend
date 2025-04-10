@@ -3,11 +3,13 @@ const mongoose = require('mongoose');
 const categorySchema = new mongoose.Schema({
     image: {
         type: String,
-        required: true
+        required: true,
+        default: ''
     },
     name: {
         type: String,
-        required: true
+        required: true,
+        default: ''
     },
 }, {
     timestamps: true

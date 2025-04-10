@@ -18,7 +18,6 @@ const upload = multer({ storage });
 
 // 📌 Route pour uploader une image
 router.post("/", upload.single("image"), (req, res) => {
-    console.log("-----");
   if (!req.file) {
     return res.status(400).json({ error: "Aucun fichier envoyé" });
   }

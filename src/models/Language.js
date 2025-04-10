@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 const Setting = require('./Setting');
 
 const LanguageSchema = new mongoose.Schema({
-    code: { type: String, required: true, unique: true },
-    name: { type: String, required: true },
-    isDefault: { type: Boolean, default: false },
+    code: { type: String, required: true, unique: true, default: ""},
+    name: { type: String, required: true, default: "" },
+    isDefault: { type: Boolean, default: false, default: ""},
 }, { timestamps: true });
 
 LanguageSchema.post('findOneAndUpdate', async function(doc) {

@@ -8,35 +8,32 @@ const restaurantSchema = new mongoose.Schema({
   //   longitude: { type: Number, required: true, default: 0 },
   // },
   review_count: { type: Number, required: true, default: 0 },
-  serviceModes: [
-    {
-      value: { type: String, default: "" },
-      label: { type: String, default: "" },
-    },
-  ],
+  serviceModes: { 
+    type: String, 
+    enum: ["delivery", "pickup"], 
+    default: "pending" 
+  },
+  // serviceModes: [
+  //   {
+  //     //value: { type: String, default: "" },
+  //     value: { type: mongoose.Schema.Types.ObjectId, ref: "ServiceMode", required: true},
+  //     label: { type: String, default: "" },
+  //   },
+  // ],
   url: { type: String, required: true, default: "" },
   display_phone: { type: String, required: true, default: "" },
   phone: { type: String, required: true, default: "" },
-  price: { type: String, required: true, default: "" },
+  price: { type: String, required: true, default: "", select: false },
   name: { type: String, required: true, default: "" },
   alias: { type: String, required: true, default: "" },
-  // location: {
-  //   country: { type: String, required: true, default: "" },
-  //   address3: { type: String, default: "" },
-  //   city: { type: String, required: true, default: "" },
-  //   address2: { type: String, default: "" },
-  //   address1: { type: String, required: true, default: "" },
-  //   display_address: { type: [String], default: [] },
-  //   state: { type: String, required: true, default: "" },
-  //   zip_code: { type: String, required: true, default: "" },
-  // },
   id: { type: String, required: true, default: "" },
   categories: [
     {
       alias: { type: String, required: true, default: "" },
       title: { type: String, required: true, default: "" },
       image: { type: String, default: "" },
-      value: { type: String, default: "" },
+      // value: { type: String, default: "" },
+      value: { type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true, default: null },
       label: { type: String, default: "" },
     },
   ],
@@ -52,7 +49,7 @@ const restaurantSchema = new mongoose.Schema({
   longitude: { type: String, default: "" },
   image: { type: String, default: "" },
   users: {
-    value: { type: String },
+    value: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true},
     label: { type: String },
   },
   address: { type: String, default: "" },
@@ -60,20 +57,20 @@ const restaurantSchema = new mongoose.Schema({
   openingTime: { type: String, default: "09:00" },
   closingTime: { type: String, default: "21:00" },
   createdAt: { type: Date, default: Date.now },
-  deliveryOptions: {
-    deliveryType: { type: String, default: "standard" },
-    isDeliveryAvailable: { type: Boolean, default: true },
-    isOrderAmountBasedFee: { type: Boolean, default: false },
-    fixedFee: { type: Number, default: 2.5 },
-    distanceFee: {
-      base: { type: String, default: "1.00" },
-      perKm: { type: String, default: "0.50" },
-    },
-    isFreeDelivery: {
-      enabled: { type: Boolean, default: false },
-    },
-    orderAmountThreshold: { type: Number, default: 20 },
-  },
+  // deliveryOptions: {
+  //   deliveryType: { type: String, default: "standard" },
+  //   isDeliveryAvailable: { type: Boolean, default: true },
+  //   isOrderAmountBasedFee: { type: Boolean, default: false },
+  //   fixedFee: { type: Number, default: 2.5 },
+  //   distanceFee: {
+  //     base: { type: String, default: "1.00" },
+  //     perKm: { type: String, default: "0.50" },
+  //   },
+  //   isFreeDelivery: {
+  //     enabled: { type: Boolean, default: false },
+  //   },
+  //   orderAmountThreshold: { type: Number, default: 20 },
+  // },
   tax: {
     type: Object,
     default:{
@@ -82,19 +79,24 @@ const restaurantSchema = new mongoose.Schema({
       location:"",
       rate:"0.00",
       name:"TVA",
-      value:"",
+      // value:"",
+      value: { type: mongoose.Schema.Types.ObjectId, ref: "Tax", required: true},
       label:"",
 
     }
-    // id: { type: String },
-    // location: { type: String, default: "" },
-    // rate: { type: String, default: "0.00" },
-    // name: { type: String, default: "TVA" },
-    // value: { type: String, default: "" },
-    // label: { type: String, default: "" },
   },
   commission_rate: { type: Number, default: 0 },
   reward: { type: String, default: "" },
+});
+
+restaurantSchema.pre("find", function (next) {
+  this.populate([
+    { path: "serviceModes.value", model: "ServiceMode" },
+    { path: "categories.value", model: "Category" },
+    { path: "users.value", model: "User" },
+    { path: "tax.value", model: "Tax" },
+  ]);
+  next();
 });
 
 const Restaurant = mongoose.model('Restaurant', restaurantSchema);

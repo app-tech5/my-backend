@@ -6,47 +6,57 @@ const notificationSettingSchema = new mongoose.Schema({
     type: String, 
     enum: ['admin', 'restaurant', 'driver', 'customer'], 
     required: true,
-    index: true
+    index: true,
+    default: 'customer'
   },
   userId: { 
     type: mongoose.Schema.Types.ObjectId, 
     refPath: 'userType',
-    index: true 
+    index: true,
+    default: new mongoose.Types.ObjectId()
   },
   channels: {
-    email: { 
-      enabled: { type: Boolean, default: true },
-      types: {
-        newOrder: { type: Boolean, default: true },
-        promotion: { type: Boolean, default: true },
-        deliveryUpdate: { type: Boolean, default: true }
-      }
-    },
-    push: { 
-      enabled: { type: Boolean, default: true },
-      types: {
-        newOrder: { type: Boolean, default: true },
-        assignedOrder: { type: Boolean, default: true }
-      }
-    },
-    sms: { 
-      enabled: { type: Boolean, default: false },
-      types: {
-        otp: { type: Boolean, default: true },
-        urgent: { type: Boolean, default: false }
+    type: Object,
+    default: {
+      email: { 
+        enabled: true,
+        types: {
+          newOrder: true,
+          promotion: true,
+          deliveryUpdate: true
+        }
+      },
+      push: { 
+        enabled: true,
+        types: {
+          newOrder: true,
+          assignedOrder: true
+        }
+      },
+      sms: { 
+        enabled: false,
+        types: {
+          otp: true,
+          urgent: false
+        }
       }
     }
   },
   preferences: {
-    muteAll: { type: Boolean, default: false },
-    quietHours: {
-      start: { type: String, default: "22:00" },
-      end: { type: String, default: "08:00" }
+    type: Object,
+    default: {
+      muteAll: false,
+      quietHours: {
+        start: "22:00",
+        end: "08:00"
+      }
     }
   },
-  lastUpdated: { type: Date, default: Date.now }
+  lastUpdated: { 
+    type: Date, 
+    default: Date.now 
+  }
 }, { 
   timestamps: true 
 });
-
 module.exports = mongoose.model('NotificationSetting', notificationSettingSchema);

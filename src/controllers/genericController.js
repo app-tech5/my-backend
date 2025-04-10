@@ -10,7 +10,7 @@ const genericController = (Model) => {
         // console.log(req.query)
         console.log("Requête reçue avec query params:");
         const items = await Model.find().setOptions({ queryParams: req.query });
-        console.log("Résultat de la requête:", items);
+        // console.log("Résultat de la requête:", items);
         res.json(items);
       } catch (error) {
         console.log(error)

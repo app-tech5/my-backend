@@ -29,7 +29,8 @@ const SubscriptionSchema = new Schema({
     type: String,
     default: 'USD',
     uppercase: true,
-    trim: true
+    trim: true,
+    select: false
   },
   billing_cycle: {
     type: String,
@@ -65,12 +66,14 @@ const SubscriptionSchema = new Schema({
       type: String,
       required: true,
       enum: ['delivery', 'pickup', 'dinein'],
-      lowercase: true
+      lowercase: true,
+      default: ""
     },
     label: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
+      default: ""
     }
   }],
 
@@ -85,5 +88,11 @@ const SubscriptionSchema = new Schema({
   versionKey: false
 });
 
+SubscriptionSchema.pre("find", function () {
+  this.populate({
+    path: "created_by",
+    select: "name"
+  });
+});
 
 module.exports = mongoose.model('Subscription', SubscriptionSchema);

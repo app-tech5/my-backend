@@ -15,7 +15,7 @@ class BaseController {
     async getById (req, res) {
         try {
             const item = await this.Model.findById(req.params.id);
-            // if (!item) return res.status(404).json({ message: "Not Found" });
+            if (!item) return res.status(404).json({ message: "Not Found" });
             res.json(item);
         } catch (error) {
             res.status(500).json({ error: error.message });

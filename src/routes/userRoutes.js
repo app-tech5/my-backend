@@ -97,6 +97,41 @@ router.get('/me', async (req, res) => {
     }
 });
 
+
+router.put('/me', async (req, res) => {
+    try {
+        // Récupère l'utilisateur courant (via le middleware d'authentification)
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(401).json({ message: res.__("user_not_found") });
+        }
+
+        // Met à jour uniquement les champs autorisés
+        const { name, phone, address, image } = req.body;
+        
+        if (name) user.name = name;
+        if (phone) user.phone = phone;
+        if (address) user.address = address;
+        if (image) user.image = image;
+
+        // Sauvegarde les modifications
+        const updatedUser = await user.save();
+
+        // Retourne l'utilisateur sans le mot de passe
+        const userWithoutPassword = updatedUser.toObject();
+        delete userWithoutPassword.password;
+
+        res.json(userWithoutPassword);
+
+    } catch (error) {
+        console.error('Update error:', error);
+        res.status(400).json({ 
+            message: res.__("update_error"),
+            error: error.message 
+        });
+    }
+});
+
 router.post("/logout", (req, res) => {
     res.clearCookie("token", { httpOnly: true, secure: false, sameSite: "Strict" });
     res.json({ message: res.__("logout_successful") });

@@ -97,11 +97,6 @@ const transactionSchema = new mongoose.Schema({
     amount: { type: Number },
     description: { type: String }
   },
-//   metadata: {
-//     processor_id: { type: String },  // Payment processor transaction ID
-//     invoice_id: { type: String },    // For accounting purposes
-//     notes: { type: String },         // Any additional notes
-//   }
 }, {
   timestamps: true,
   toJSON: { virtuals: true },

@@ -46,15 +46,6 @@ const ProductSchema = new mongoose.Schema({
       // etc.
     },
   },
-  // variants: [
-  //   {
-  //     name: { type: String, required: true },
-  //     price: { type: Number, required: true },
-  //     extra: { type: Number, required: true },
-  //     value: { type: String, required: true },
-  //     label: { type: String, required: true },
-  //   },
-  // ],
   variants: [{
     value: { type: mongoose.Schema.Types.ObjectId, ref: 'Variant', default: null},
     label: { type: String, required: true, default: "" }
@@ -141,6 +132,14 @@ ProductSchema.pre("findOne", function () {
 });
 
 ProductSchema.pre("find", function () {
+  const { queryParams } = this.options;
+
+  // 🧠 Filtrage par restaurant si 'type' est passé
+  if (queryParams?.type) {
+    this.where({ restaurant: queryParams.type });
+  }
+
+  // 🧠 Populate des relations
   this.populate([
     {
       path: "restaurant",
@@ -148,10 +147,11 @@ ProductSchema.pre("find", function () {
     },
     {
       path: "category",
-      select: "name", // On suppose que votre modèle Category a un champ "name"
+      select: "name", // Idem pour la catégorie
     },
   ]);
 });
+
 
 const Product = mongoose.model("Product", ProductSchema);
 

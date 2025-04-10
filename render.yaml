@@ -1,0 +1,18 @@
+services:
+  - name: my-app
+    type: web
+    runtime: node
+    repo: https://github.com/ton-repo.git
+    plan: free
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        fromDatabase:
+          name: my-mongodb
+          property: connectionString
+
+databases:
+  - name: my-mongodb
+    plan: free
+    region: oregon

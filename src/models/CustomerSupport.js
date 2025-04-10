@@ -121,7 +121,18 @@ const CustomerSupportSchema = new Schema({
   }
 }, { timestamps: true });
 
-
+CustomerSupportSchema.pre("find", function () {
+  this.populate([
+    {
+      path: "user",
+      select: "name", // On ne récupère que le nom du restaurant
+    },
+    {
+      path: "assigned_to",
+      select: "name", // On suppose que votre modèle Category a un champ "name"
+    },
+  ]);
+});
 
 // Index pour les requêtes fréquentes
 CustomerSupportSchema.index({ type: 1, status: 1 });
