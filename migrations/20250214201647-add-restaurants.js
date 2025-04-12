@@ -26,6 +26,7 @@ module.exports = {
 
     if (!categories.length || !taxes.length || !users.length) {
       console.warn('⚠️  Avertissement : les collections categories, taxes ou users sont vides.');
+      return;
       // throw new Error('Les collections categories, taxes ou users sont vides');
     }
 
