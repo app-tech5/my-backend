@@ -2,6 +2,11 @@
 
 module.exports = {
   up: async (db) => {
+    try {
+      await db.collection("settings").drop();
+    } catch (e) {
+      if (e.codeName !== "NamespaceNotFound") throw e;
+    }
     await db.createCollection('settings');
 
     // Ajout d'un enregistrement par défaut avec un _id fixe "app_settings"
