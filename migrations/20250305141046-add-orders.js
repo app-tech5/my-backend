@@ -19,12 +19,18 @@ module.exports = {
       db.collection('menus').find({}).project({ _id: 1, name: 1, price: 1, image: 1 }).toArray()
     ]);
 
+    // // Vérifications des données
+    // if (users.length === 0) throw new Error('Aucun utilisateur trouvé');
+    // if (restaurants.length === 0) throw new Error('Aucun restaurant trouvé');
+    // if (drivers.length === 0) throw new Error('Aucun driver trouvé');
+    // if (products.length === 0) throw new Error('Aucun produit trouvé');
+    // if (menus.length === 0) throw new Error('Aucun menu trouvé');
+
     // Vérifications des données
-    if (users.length === 0) throw new Error('Aucun utilisateur trouvé');
-    if (restaurants.length === 0) throw new Error('Aucun restaurant trouvé');
-    if (drivers.length === 0) throw new Error('Aucun driver trouvé');
-    if (products.length === 0) throw new Error('Aucun produit trouvé');
-    if (menus.length === 0) throw new Error('Aucun menu trouvé');
+    if (!users.length || !restaurants.length || !drivers.length || !products.length || !menus.length) {
+      console.log("⏭  Migration sautée : certaines collections nécessaires sont vides.");
+      return; // skip toute la migration
+    }
 
     // Générer des commandes fictives
     const mockOrders = Array.from({ length: 50 }, (_, i) => {
