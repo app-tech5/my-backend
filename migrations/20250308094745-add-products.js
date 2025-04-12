@@ -33,7 +33,8 @@ module.exports = {
       .toArray();
 
     if (existingCategories.length === 0) {
-      throw new Error('Aucune catégorie trouvée dans la base de données');
+      // throw new Error('Aucune catégorie trouvée dans la base de données');
+      return
     }
 
     // Récupérer les restaurants existants
@@ -43,7 +44,8 @@ module.exports = {
       .toArray();
 
     if (existingRestaurants.length === 0) {
-      throw new Error('Aucun restaurant trouvé dans la base de données');
+      //throw new Error('Aucun restaurant trouvé dans la base de données');
+      return
     }
 
     // Récupérer les variants existants
