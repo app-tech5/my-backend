@@ -17,8 +17,11 @@ module.exports = {
       db.collection('orders').find({}).project({ _id: 1 }).toArray()
     ]);
 
-    if (users.length === 0 || drivers.length === 0) {
-      throw new Error('Users et Drivers doivent exister dans la base de données');
+    // if (users.length === 0 || drivers.length === 0) {
+    //   throw new Error('Users et Drivers doivent exister dans la base de données');
+    // }
+    if (users.length === 0 || drivers.length === 0 || orders.length === 0){
+      return
     }
 
     // Types de signalements disponibles
