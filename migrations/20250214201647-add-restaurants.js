@@ -25,7 +25,8 @@ module.exports = {
     const users = await db.collection('users').find({}).project({ _id: 1, name: 1 }).toArray();
 
     if (!categories.length || !taxes.length || !users.length) {
-      throw new Error('Les collections categories, taxes ou users sont vides');
+      console.warn('⚠️  Avertissement : les collections categories, taxes ou users sont vides.');
+      // throw new Error('Les collections categories, taxes ou users sont vides');
     }
 
     // Générer des restaurants fictifs
