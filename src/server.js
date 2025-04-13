@@ -64,16 +64,16 @@ app.use("/api/uploads", express.static("uploads"));
 app.use('/api', cleanupRouter);
 
 
-const options = {
-    key: fs.readFileSync('/etc/letsencrypt/live/good-foods.digitaldienste.fr/privkey.pem'),
-    cert: fs.readFileSync('/etc/letsencrypt/live/good-foods.digitaldienste.fr/fullchain.pem')
-  };
+// const options = {
+//     key: fs.readFileSync('/etc/letsencrypt/live/good-foods.digitaldienste.fr/privkey.pem'),
+//     cert: fs.readFileSync('/etc/letsencrypt/live/good-foods.digitaldienste.fr/fullchain.pem')
+//   };
   
-const PORT = process.env.PORT || 443;
-https.createServer(options, app).listen(PORT, () => {
-console.log(`Serveur démarré sur le port ${PORT}`);
-});
+// const PORT = process.env.PORT || 443;
+// https.createServer(options, app).listen(PORT, () => {
+// console.log(`Serveur démarré sur le port ${PORT}`);
+// });
 
 
-// const PORT = process.env.PORT || 5000;
-// app.listen(PORT, () => console.log(`Serveur démarré sur le port ${PORT}`));
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Serveur démarré sur le port ${PORT}`));
