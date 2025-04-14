@@ -70,11 +70,10 @@ const options = {
   };
   
 // const PORT = process.env.PORT || 443;
+// https.createServer(options, app).listen(PORT, () => {
+// console.log(`Serveur démarré sur le port ${PORT}`);
+// });
+
+
 const PORT = process.env.PORT || 5000;
-https.createServer(options, app).listen(PORT, () => {
-console.log(`Serveur démarré sur le port ${PORT}`);
-});
-
-
-// const PORT = process.env.PORT || 5000;
-// app.listen(PORT, () => console.log(`Serveur démarré sur le port ${PORT}`));
+app.listen(PORT, () => console.log(`Serveur démarré sur le port ${PORT}`));
