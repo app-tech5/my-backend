@@ -21,7 +21,8 @@ module.exports = {
       currency: { 
         value: '67a64237b782d2379aab2ae7', 
         label: 'Euro',
-        symbol: "€"
+        symbol: "€",
+        code: "EUR"
       },
       language: {
         code: "en",
