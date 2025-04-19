@@ -68,13 +68,13 @@ const genericController = (Model) => {
     },
 
     delete: async (req, res) => {
-      try {
-        const deletedItem = await Model.findByIdAndDelete(req.params.id);
-        if (!deletedItem) return res.status(404).json({ message: "Not Found" });
-        res.json({ message: "Deleted successfully" });
-      } catch (error) {
-        res.status(500).json({ error: error.message });
-      }
+      // try {
+      //   const deletedItem = await Model.findByIdAndDelete(req.params.id);
+      //   if (!deletedItem) return res.status(404).json({ message: "Not Found" });
+      //   res.json({ message: "Deleted successfully" });
+      // } catch (error) {
+      //   res.status(500).json({ error: error.message });
+      // }
     },
 
     getDefaultFields: async (req, res) => {
