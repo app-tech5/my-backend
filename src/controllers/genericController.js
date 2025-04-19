@@ -33,38 +33,38 @@ const genericController = (Model) => {
     },
 
     create: async (req, res) => {
-      try {
-        if (req.body.isDefault) {
-          await Model.updateMany({}, { isDefault: false });
-        }
-        const newItem = new Model(req.body);
-        await newItem.save();
-        res.status(201).json(newItem);
-      } catch (error) {
-        console.log(error);
-        res.status(400).json({ error: error.message });
-      }
+      // try {
+      //   if (req.body.isDefault) {
+      //     await Model.updateMany({}, { isDefault: false });
+      //   }
+      //   const newItem = new Model(req.body);
+      //   await newItem.save();
+      //   res.status(201).json(newItem);
+      // } catch (error) {
+      //   console.log(error);
+      //   res.status(400).json({ error: error.message });
+      // }
     },
 
     update: async (req, res) => {
-      try {
-        if (req.body.isDefault) {
-          await Model.updateMany(
-            { _id: { $ne: req.params.id } },
-            { isDefault: false }
-          );
-        }
-        const updatedItem = await Model.findByIdAndUpdate(
-          req.params.id,
-          req.body,
-          { new: true }
-        );
-        if (!updatedItem) return res.status(404).json({ message: "Not Found" });
-        console.log(updatedItem, req.params.id);
-        res.json(updatedItem);
-      } catch (error) {
-        res.status(500).json({ error: error.message });
-      }
+      // try {
+      //   if (req.body.isDefault) {
+      //     await Model.updateMany(
+      //       { _id: { $ne: req.params.id } },
+      //       { isDefault: false }
+      //     );
+      //   }
+      //   const updatedItem = await Model.findByIdAndUpdate(
+      //     req.params.id,
+      //     req.body,
+      //     { new: true }
+      //   );
+      //   if (!updatedItem) return res.status(404).json({ message: "Not Found" });
+      //   console.log(updatedItem, req.params.id);
+      //   res.json(updatedItem);
+      // } catch (error) {
+      //   res.status(500).json({ error: error.message });
+      // }
     },
 
     delete: async (req, res) => {
