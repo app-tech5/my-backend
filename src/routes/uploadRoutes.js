@@ -17,16 +17,16 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // 📌 Route pour uploader une image
-router.post("/", upload.single("image"), (req, res) => {
-  // if (!req.file) {
-  //   return res.status(400).json({ error: "Aucun fichier envoyé" });
-  // }
+// router.post("/", upload.single("image"), (req, res) => {
+//   if (!req.file) {
+//     return res.status(400).json({ error: "Aucun fichier envoyé" });
+//   }
 
 
-  // const fileUrl = `${process.env.BASE_URL}/uploads/${req.file.filename}`;
+//   const fileUrl = `${process.env.BASE_URL}/uploads/${req.file.filename}`;
 
-  // console.log(fileUrl);
-  // res.json({ url: fileUrl });
-});
+//   console.log(fileUrl);
+//   res.json({ url: fileUrl });
+// });
 
 module.exports = router;
