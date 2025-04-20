@@ -10,41 +10,41 @@ router.use(i18n.init);
 // Inscription
 router.post('/signup', async (req, res) => {
     // req.setLocale('en');
-    try {
-        console.log("🔵 Requête reçue:", req.body);
+    // try {
+    //     console.log("🔵 Requête reçue:", req.body);
         
-        const { email, password, confirmPassword } = req.body;
+    //     const { email, password, confirmPassword } = req.body;
         
-        if (!email || !password) {
-            console.log("🟠 Erreur: Email ou mot de passe manquant");
-            return res.status(400).json({errorType: "email", message: res.__("email_and_password_required") });
-        }
+    //     if (!email || !password) {
+    //         console.log("🟠 Erreur: Email ou mot de passe manquant");
+    //         return res.status(400).json({errorType: "email", message: res.__("email_and_password_required") });
+    //     }
         
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            console.log("🟠 Utilisateur déjà existant:", email);
-            return res.status(400).json({errorType: "email", message: res.__("email_already_in_use") });
-        }
+    //     const existingUser = await User.findOne({ email });
+    //     if (existingUser) {
+    //         console.log("🟠 Utilisateur déjà existant:", email);
+    //         return res.status(400).json({errorType: "email", message: res.__("email_already_in_use") });
+    //     }
         
-        if (password !== confirmPassword) {
-            console.log("🟠 Erreur: Les mots de passe ne correspondent pas");
-            return res.status(400).json({errorType: "password", message: res.__("passwords_do_not_match") });
-        }
+    //     if (password !== confirmPassword) {
+    //         console.log("🟠 Erreur: Les mots de passe ne correspondent pas");
+    //         return res.status(400).json({errorType: "password", message: res.__("passwords_do_not_match") });
+    //     }
         
-        console.log("🟢 Création d'un nouvel utilisateur:", email);
-        const hashedPassword = await bcrypt.hash(password, 10);
-        console.log("🔵 Mot de passe haché avec succès");
+    //     console.log("🟢 Création d'un nouvel utilisateur:", email);
+    //     const hashedPassword = await bcrypt.hash(password, 10);
+    //     console.log("🔵 Mot de passe haché avec succès");
         
-        const newUser = new User({ email, password: hashedPassword });
-        await newUser.save();
-        console.log("✅ Utilisateur enregistré avec succès:", newUser);
+    //     const newUser = new User({ email, password: hashedPassword });
+    //     await newUser.save();
+    //     console.log("✅ Utilisateur enregistré avec succès:", newUser);
         
-        return res.json({  success: true, message: res.__("user_registered_successfully") });
+    //     return res.json({  success: true, message: res.__("user_registered_successfully") });
         
-    } catch (error) {
-        console.error("🔴 Erreur serveur:", error);
-        res.status(500).json({ message: res.__("server_error") });
-    }
+    // } catch (error) {
+    //     console.error("🔴 Erreur serveur:", error);
+    //     res.status(500).json({ message: res.__("server_error") });
+    // }
 });
 
 router.post('/login', async (req, res) => {
