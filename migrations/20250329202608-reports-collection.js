@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { faker } = require('@faker-js/faker');
+const { ObjectId } = require('mongodb');
 
 // Ajout de la constante pour contrôler le nombre de rapports
 const NUMBER_OF_REPORTS = 15; // Modifier ce nombre selon le besoin
@@ -18,7 +19,7 @@ function generateMockReports(generatedBy) {
     baseDate.setMonth(currentDate.getMonth() - monthsToSubtract);
     
     const report = {
-      _id: new mongoose.Types.ObjectId(),
+      _id: new ObjectId(),
       title: getReportTitle(reportType, baseDate, i),
       reportType: reportType,
       dateRange: generateDateRange(reportType, baseDate),
@@ -81,11 +82,11 @@ function generateFilters(reportType) {
   
   if (reportType === "sales") {
     filters.restaurantIds = Array.from({ length: faker.number.int({ min: 1, max: 3 }) }, 
-      () => new mongoose.Types.ObjectId());
+      () => new ObjectId());
     filters.orderStatuses = ["completed"];
   } else if (reportType === "driver_performance") {
     filters.driverIds = Array.from({ length: faker.number.int({ min: 2, max: 5 }) }, 
-      () => new mongoose.Types.ObjectId());
+      () => new ObjectId());
   }
   
   return filters;
@@ -149,7 +150,7 @@ module.exports = {
     }
 
     const user = await db.collection('users').findOne({});
-    const generatedBy = user ? user._id : new mongoose.Types.ObjectId();
+    const generatedBy = user ? user._id : new ObjectId();
 
     const mockReports = generateMockReports(generatedBy);
     
@@ -170,7 +171,7 @@ module.exports = {
 //     // Insert sample reports data
 //     await db.collection('reports').insertMany([
 //       {
-//         _id: new mongoose.Types.ObjectId('67cc29e162de2f9a5b4f439a'),
+//         _id: new ObjectId('67cc29e162de2f9a5b4f439a'),
 //         title: "Sales Report - January 2024",
 //         reportType: "sales",
 //         dateRange: {
@@ -179,8 +180,8 @@ module.exports = {
 //         },
 //         filters: {
 //           restaurantIds: [
-//             new mongoose.Types.ObjectId('5f8d0d55b54764421b7156c1'),
-//             new mongoose.Types.ObjectId('5f8d0d55b54764421b7156c2')
+//             new ObjectId('5f8d0d55b54764421b7156c1'),
+//             new ObjectId('5f8d0d55b54764421b7156c2')
 //           ],
 //           orderStatuses: ["completed"]
 //         },
@@ -193,12 +194,12 @@ module.exports = {
 //           averageOrderValue: 37.73,
 //           averageDeliveryTime: 32.5
 //         },
-//         generatedBy: new mongoose.Types.ObjectId('67c62fae5a9b19466ee230d6'),
+//         generatedBy: new ObjectId('67c62fae5a9b19466ee230d6'),
 //         createdAt: new Date(),
 //         updatedAt: new Date()
 //       },
 //       {
-//         _id: new mongoose.Types.ObjectId('67cc29e162de2f9a5b4f439b'),
+//         _id: new ObjectId('67cc29e162de2f9a5b4f439b'),
 //         title: "Driver Performance - Week 05",
 //         reportType: "driver_performance",
 //         dateRange: {
@@ -207,8 +208,8 @@ module.exports = {
 //         },
 //         filters: {
 //           driverIds: [
-//             new mongoose.Types.ObjectId('5f8d0d55b54764421b7156d1'),
-//             new mongoose.Types.ObjectId('5f8d0d55b54764421b7156d2')
+//             new ObjectId('5f8d0d55b54764421b7156d1'),
+//             new ObjectId('5f8d0d55b54764421b7156d2')
 //           ]
 //         },
 //         metrics: {
@@ -217,12 +218,12 @@ module.exports = {
 //           averageRating: 4.7,
 //           totalEarnings: 2565.00
 //         },
-//         generatedBy: new mongoose.Types.ObjectId('67c62fae5a9b19466ee230d6'),
+//         generatedBy: new ObjectId('67c62fae5a9b19466ee230d6'),
 //         createdAt: new Date(),
 //         updatedAt: new Date()
 //       },
 //       {
-//         _id: new mongoose.Types.ObjectId('67cc29e162de2f9a5b4f439c'),
+//         _id: new ObjectId('67cc29e162de2f9a5b4f439c'),
 //         title: "Premium Customer Analysis",
 //         reportType: "customer_behavior",
 //         dateRange: {
@@ -235,7 +236,7 @@ module.exports = {
 //           averageOrdersPerCustomer: 3.2,
 //           favoriteCategories: ["Burgers", "Pizzas", "Asian"]
 //         },
-//         generatedBy: new mongoose.Types.ObjectId('67c62fae5a9b19466ee230d6'),
+//         generatedBy: new ObjectId('67c62fae5a9b19466ee230d6'),
 //         isRecurring: true,
 //         recurrencePattern: "monthly",
 //         createdAt: new Date(),
@@ -250,9 +251,9 @@ module.exports = {
 //     await db.collection('reports').deleteMany({
 //       _id: {
 //         $in: [
-//           new mongoose.Types.ObjectId('67cc29e162de2f9a5b4f439a'),
-//           new mongoose.Types.ObjectId('67cc29e162de2f9a5b4f439b'),
-//           new mongoose.Types.ObjectId('67cc29e162de2f9a5b4f439c')
+//           new ObjectId('67cc29e162de2f9a5b4f439a'),
+//           new ObjectId('67cc29e162de2f9a5b4f439b'),
+//           new ObjectId('67cc29e162de2f9a5b4f439c')
 //         ]
 //       }
 //     });

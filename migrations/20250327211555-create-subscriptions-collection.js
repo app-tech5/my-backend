@@ -1,6 +1,7 @@
 // migrations/XXXXXX-generate-mock-subscriptions.js
 const { faker } = require('@faker-js/faker');
 const mongoose = require('mongoose');
+const { ObjectId } = require('mongodb');
 
 module.exports = {
   async up(db) {
@@ -11,7 +12,7 @@ module.exports = {
     }
     // Récupérer un utilisateur admin existant pour created_by
     const adminUser = await db.collection('users').findOne({ role: 'admin' });
-    const createdBy = adminUser ? adminUser._id : new mongoose.Types.ObjectId();
+    const createdBy = adminUser ? adminUser._id : new ObjectId();
 
     // Options possibles pour les champs enum
     const TARGETS = ['customer', 'restaurant', 'driver'];

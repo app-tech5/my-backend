@@ -4,7 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "setup": "node scripts/setup.js",
+    "test:db": "node scripts/test-db-connection.js",
+    "migrate:status": "migrate-mongo status",
+    "migrate:up": "migrate-mongo up",
+    "migrate:down": "migrate-mongo down",
+    "migrate:create": "migrate-mongo create"
   },
   "keywords": [],
   "author": "",
@@ -28,5 +36,8 @@
     "reflect-metadata": "^0.2.2",
     "socket.io": "^4.8.1",
     "typeorm": "^0.3.20"
+  },
+  "devDependencies": {
+    "migrate-mongo": "^11.0.0"
   }
 }

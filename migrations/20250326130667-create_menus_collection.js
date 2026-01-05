@@ -2,6 +2,7 @@
 
 const { faker } = require('@faker-js/faker');
 const mongoose = require('mongoose');
+const { ObjectId } = require('mongodb');
 
 module.exports = {
   async up(db) {
@@ -15,7 +16,7 @@ module.exports = {
     let mockRestaurants = await db.collection('restaurants').find({}).toArray();
     if (mockRestaurants.length === 0) {
       mockRestaurants = Array.from({ length: 5 }, (_, i) => ({
-        _id: new mongoose.Types.ObjectId(),
+        _id: new ObjectId(),
         name: faker.company.name(),
         address: faker.location.streetAddress(),
       }));
@@ -26,7 +27,7 @@ module.exports = {
     let mockProducts = await db.collection('products').find({}).toArray();
     if (mockProducts.length === 0) {
       mockProducts = Array.from({ length: 20 }, (_, i) => ({
-        _id: new mongoose.Types.ObjectId(),
+        _id: new ObjectId(),
         name: faker.commerce.productName(),
         description: faker.commerce.productDescription(),
       }));
@@ -112,12 +113,12 @@ module.exports = {
 //     // Insérer des menus dans la collection "menus"
 //     await db.collection("menus").insertMany([
 //       {
-//         _id: new mongoose.Types.ObjectId("67cc30e162de2f9a5b4f5001"),
+//         _id: new ObjectId("67cc30e162de2f9a5b4f5001"),
 //         name: "Menu Burger Deluxe",
 //         description: "Un menu complet avec burger, frites et boisson.",
 //         price: 12.99,
 //         image: "http://localhost:5000/api/uploads/menu_burger_deluxe.jpg",
-//         restaurant: new mongoose.Types.ObjectId("67c69119d778f63b5e5997ca"),
+//         restaurant: new ObjectId("67c69119d778f63b5e5997ca"),
 //         availability: true,
 //         preparation_time: 20,
 //         products: [
@@ -139,12 +140,12 @@ module.exports = {
 //         updated_at: new Date("2024-03-08T12:00:00Z")
 //       },
 //       {
-//         _id: new mongoose.Types.ObjectId("67cc30e162de2f9a5b4f5006"),
+//         _id: new ObjectId("67cc30e162de2f9a5b4f5006"),
 //         name: "Menu Pizza Duo",
 //         description: "Une pizza moyenne avec une boisson au choix.",
 //         price: 14.99,
 //         image: "http://localhost:5000/api/uploads/menu_pizza_duo.jpg",
-//         restaurant: new mongoose.Types.ObjectId("67c69119d778f63b5e5997ca"),
+//         restaurant: new ObjectId("67c69119d778f63b5e5997ca"),
 //         availability: true,
 //         preparation_time: 25,
 //         products: [
@@ -182,13 +183,13 @@ module.exports = {
 // //     // Insérer des menus dans la collection "menus"
 // //     await db.collection("menus").insertMany([
 // //       {
-// //         _id: new mongoose.Types.ObjectId("67cc30e162de2f9a5b4f5001"),
+// //         _id: new ObjectId("67cc30e162de2f9a5b4f5001"),
 // //         name: "Menu Burger Deluxe",
 // //         description: "Un menu complet avec burger, frites et boisson.",
 // //         price: 12.99,
 // //         currency: "EUR",
 // //         image: "http://localhost:5000/api/uploads/menu_burger_deluxe.jpg",
-// //         restaurant: new mongoose.Types.ObjectId("67c69119d778f63b5e5997ca"),
+// //         restaurant: new ObjectId("67c69119d778f63b5e5997ca"),
 // //         availability: true,
 // //         preparation_time: 20,
 // //         items: [
@@ -197,7 +198,7 @@ module.exports = {
 // //             required: true,
 // //             choices: [
 // //               {
-// //                 product_id: new mongoose.Types.ObjectId("67cc29e162de2f9a5b4f439a"),
+// //                 product_id: new ObjectId("67cc29e162de2f9a5b4f439a"),
 // //                 name: "Classic Burger"
 // //               }
 // //             ]
@@ -207,11 +208,11 @@ module.exports = {
 // //             required: true,
 // //             choices: [
 // //               {
-// //                 product_id: new mongoose.Types.ObjectId("67cc29e162de2f9a5b4f5002"),
+// //                 product_id: new ObjectId("67cc29e162de2f9a5b4f5002"),
 // //                 name: "Frites"
 // //               },
 // //               {
-// //                 product_id: new mongoose.Types.ObjectId("67cc29e162de2f9a5b4f5003"),
+// //                 product_id: new ObjectId("67cc29e162de2f9a5b4f5003"),
 // //                 name: "Salade"
 // //               }
 // //             ]
@@ -221,11 +222,11 @@ module.exports = {
 // //             required: true,
 // //             choices: [
 // //               {
-// //                 product_id: new mongoose.Types.ObjectId("67cc29e162de2f9a5b4f5004"),
+// //                 product_id: new ObjectId("67cc29e162de2f9a5b4f5004"),
 // //                 name: "Coca-Cola"
 // //               },
 // //               {
-// //                 product_id: new mongoose.Types.ObjectId("67cc29e162de2f9a5b4f5005"),
+// //                 product_id: new ObjectId("67cc29e162de2f9a5b4f5005"),
 // //                 name: "Eau Minérale"
 // //               }
 // //             ]
@@ -243,13 +244,13 @@ module.exports = {
 // //         updated_at: new Date("2024-03-08T12:00:00Z")
 // //       },
 // //       {
-// //         _id: new mongoose.Types.ObjectId("67cc30e162de2f9a5b4f5006"),
+// //         _id: new ObjectId("67cc30e162de2f9a5b4f5006"),
 // //         name: "Menu Pizza Duo",
 // //         description: "Une pizza moyenne avec une boisson au choix.",
 // //         price: 14.99,
 // //         currency: "EUR",
 // //         image: "http://localhost:5000/api/uploads/menu_pizza_duo.jpg",
-// //         restaurant: new mongoose.Types.ObjectId("67c69119d778f63b5e5997ca"),
+// //         restaurant: new ObjectId("67c69119d778f63b5e5997ca"),
 // //         availability: true,
 // //         preparation_time: 25,
 // //         items: [
@@ -258,11 +259,11 @@ module.exports = {
 // //             required: true,
 // //             choices: [
 // //               {
-// //                 product_id: new mongoose.Types.ObjectId("67cc29e162de2f9a5b4f439b"),
+// //                 product_id: new ObjectId("67cc29e162de2f9a5b4f439b"),
 // //                 name: "Margherita Pizza"
 // //               },
 // //               {
-// //                 product_id: new mongoose.Types.ObjectId("67cc29e162de2f9a5b4f5007"),
+// //                 product_id: new ObjectId("67cc29e162de2f9a5b4f5007"),
 // //                 name: "Pepperoni Pizza"
 // //               }
 // //             ]
@@ -272,11 +273,11 @@ module.exports = {
 // //             required: true,
 // //             choices: [
 // //               {
-// //                 product_id: new mongoose.Types.ObjectId("67cc29e162de2f9a5b4f5004"),
+// //                 product_id: new ObjectId("67cc29e162de2f9a5b4f5004"),
 // //                 name: "Coca-Cola"
 // //               },
 // //               {
-// //                 product_id: new mongoose.Types.ObjectId("67cc29e162de2f9a5b4f5005"),
+// //                 product_id: new ObjectId("67cc29e162de2f9a5b4f5005"),
 // //                 name: "Eau Minérale"
 // //               }
 // //             ]

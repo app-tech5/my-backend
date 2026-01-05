@@ -50,32 +50,32 @@ router.post('/signup', async (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         console.log("🔵 Requête de connexion reçue:", req.body);
-        
+
         const { email, password } = req.body;
-        
+
         if (!email || !password) {
             console.log("🟠 Erreur: Email ou mot de passe manquant");
             return res.status(400).json({ message: res.__("email_and_password_required") });
         }
-        
+
         const user = await User.findOne({ email });
         if (!user) {
             console.log("🟠 Erreur: Utilisateur non trouvé");
             return res.status(400).json({errorType: "email", message: res.__("user_not_found") });
         }
-        
+
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             console.log("🟠 Erreur: Mot de passe incorrect");
             return res.status(400).json({errorType: "password", message: res.__("incorrect_password") });
         }
-        
+
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
         res.cookie('token', token, { httpOnly: true, secure: false, sameSite: 'Strict' });
-        
+
         console.log("✅ Utilisateur connecté avec succès:", user.email);
         return res.json({ message: res.__("login_successful"), token, user });
-        
+
     } catch (error) {
         console.error("🔴 Erreur serveur:", error);
         res.status(500).json({ message: res.__("server_error") });

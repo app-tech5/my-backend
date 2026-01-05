@@ -43,7 +43,7 @@ const io = new Server(server, { cors: { origin: '*' } });
 // handleSettingsChange(io);
 
 app.use(express.json());
-app.use(cors({ origin: 'https://good-foods.digitaldienste.fr', credentials: true }));
+// app.use(cors({ origin: 'https://good-foods.digitaldienste.fr', credentials: true }));
 app.use(cookieParser());
 
 app.use("/api/auth", authRoutes); 

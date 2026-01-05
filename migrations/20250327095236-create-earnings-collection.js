@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { faker } = require('@faker-js/faker');
+const { ObjectId } = require('mongodb');
 
 module.exports = {
   async up(db, client) {
@@ -37,7 +38,7 @@ module.exports = {
           const randomRestaurant = faker.helpers.arrayElement(restaurants);
           
           transactions.push({
-            _id: new mongoose.Types.ObjectId(),
+            _id: new ObjectId(),
             date: faker.date.between({ from: startDate, to: endDate }),
             restaurant: randomRestaurant._id,
             amount: amount,
@@ -61,7 +62,7 @@ module.exports = {
           : faker.helpers.arrayElement(restaurants)._id;
 
         earnings.push({
-          _id: new mongoose.Types.ObjectId(),
+          _id: new ObjectId(),
           total_earnings: totalAmount,
           currency: "USD",
           time_period: {
@@ -76,7 +77,7 @@ module.exports = {
           },
           transactions: transactions,
           payouts: [{
-            _id: new mongoose.Types.ObjectId(),
+            _id: new ObjectId(),
             date: faker.date.between({ 
               from: startDate, 
               to: new Date(endDate.getTime() + 15 * 24 * 60 * 60 * 1000)
@@ -130,9 +131,9 @@ module.exports = {
 //     for (let j = 0; j < transactionCount; j++) {
 //       const amount = faker.datatype.number({ min: 100, max: 1000 });
 //       transactions.push({
-//         _id: new mongoose.Types.ObjectId(),
+//         _id: new ObjectId(),
 //         date: faker.date.between(startDate, endDate),
-//         restaurant: new mongoose.Types.ObjectId(),
+//         restaurant: new ObjectId(),
 //         amount: amount,
 //         commission: amount * 0.2,
 //         delivery_fee: amount * 0.1,
@@ -148,7 +149,7 @@ module.exports = {
 //     const restaurantEarnings = totalAmount - platformCommission - deliveryEarnings - taxes;
 
 //     earnings.push({
-//       _id: new mongoose.Types.ObjectId(),
+//       _id: new ObjectId(),
 //       total_earnings: totalAmount,
 //       currency: "USD",
 //       time_period: {
@@ -163,9 +164,9 @@ module.exports = {
 //       },
 //       transactions: transactions,
 //       payouts: [{
-//         _id: new mongoose.Types.ObjectId(),
+//         _id: new ObjectId(),
 //         date: faker.date.between(startDate, new Date(endDate.getTime() + 15 * 24 * 60 * 60 * 1000)), // +15 jours
-//         recipient: new mongoose.Types.ObjectId(),
+//         recipient: new ObjectId(),
 //         recipientType: faker.helpers.arrayElement(["Driver", "Restaurant"]),
 //         amount: restaurantEarnings,
 //         status: faker.helpers.arrayElement(["completed", "pending"])
@@ -189,7 +190,7 @@ module.exports = {
 
 //     const earnings = [
 //       {
-//         _id: new mongoose.Types.ObjectId("67ebc4d021c649eb3e87b7d1"),
+//         _id: new ObjectId("67ebc4d021c649eb3e87b7d1"),
 //         total_earnings: 1500,
 //         currency: "USD",
 //         time_period: {
@@ -204,18 +205,18 @@ module.exports = {
 //         },
 //         transactions: [
 //           {
-//             _id: new mongoose.Types.ObjectId(),
+//             _id: new ObjectId(),
 //             date: new Date("2023-01-15"),
-//             restaurant: new mongoose.Types.ObjectId("67c69119d778f63b5e5997ca"),
+//             restaurant: new ObjectId("67c69119d778f63b5e5997ca"),
 //             amount: 500,
 //             commission: 100,
 //             delivery_fee: 50,
 //             status: "completed"
 //           },
 //           {
-//             _id: new mongoose.Types.ObjectId(),
+//             _id: new ObjectId(),
 //             date: new Date("2023-01-20"),
-//             restaurant: new mongoose.Types.ObjectId("67c69119d778f63b5e5997cb"),
+//             restaurant: new ObjectId("67c69119d778f63b5e5997cb"),
 //             amount: 1000,
 //             commission: 200,
 //             delivery_fee: 100,
@@ -224,9 +225,9 @@ module.exports = {
 //         ],
 //         payouts: [
 //           {
-//             _id: new mongoose.Types.ObjectId(),
+//             _id: new ObjectId(),
 //             date: new Date("2023-02-05"),
-//             recipient: new mongoose.Types.ObjectId("67e42186605ac4ba474a2795"),
+//             recipient: new ObjectId("67e42186605ac4ba474a2795"),
 //             recipientType: "Driver",
 //             amount: 1000,
 //             status: "completed"
@@ -236,7 +237,7 @@ module.exports = {
 //         updatedAt: new Date()
 //       },
 //       {
-//         _id: new mongoose.Types.ObjectId("67ebc4d021c649eb3e87b7d2"),
+//         _id: new ObjectId("67ebc4d021c649eb3e87b7d2"),
 //         total_earnings: 2000,
 //         currency: "USD",
 //         time_period: {
@@ -251,18 +252,18 @@ module.exports = {
 //         },
 //         transactions: [
 //           {
-//             _id: new mongoose.Types.ObjectId(),
+//             _id: new ObjectId(),
 //             date: new Date("2023-02-10"),
-//             restaurant: new mongoose.Types.ObjectId("67c69119d778f63b5e5997ca"),
+//             restaurant: new ObjectId("67c69119d778f63b5e5997ca"),
 //             amount: 800,
 //             commission: 160,
 //             delivery_fee: 60,
 //             status: "completed"
 //           },
 //           {
-//             _id: new mongoose.Types.ObjectId(),
+//             _id: new ObjectId(),
 //             date: new Date("2023-02-15"),
-//             restaurant: new mongoose.Types.ObjectId("67c69119d778f63b5e5997cb"),
+//             restaurant: new ObjectId("67c69119d778f63b5e5997cb"),
 //             amount: 1200,
 //             commission: 240,
 //             delivery_fee: 90,
@@ -271,9 +272,9 @@ module.exports = {
 //         ],
 //         payouts: [
 //           {
-//             _id: new mongoose.Types.ObjectId(),
+//             _id: new ObjectId(),
 //             date: new Date("2023-03-05"),
-//             recipient: new mongoose.Types.ObjectId("67c69119d778f63b5e5997ca"),
+//             recipient: new ObjectId("67c69119d778f63b5e5997ca"),
 //             recipientType: "Restaurant",
 //             amount: 1400,
 //             status: "pending"
@@ -291,8 +292,8 @@ module.exports = {
 //     // await db.collection("earnings").deleteMany({
 //     //   _id: {
 //     //     $in: [
-//     //       new mongoose.Types.ObjectId("67ebc4d021c649eb3e87b7d1"),
-//     //       new mongoose.Types.ObjectId("67ebc4d021c649eb3e87b7d2")
+//     //       new ObjectId("67ebc4d021c649eb3e87b7d1"),
+//     //       new ObjectId("67ebc4d021c649eb3e87b7d2")
 //     //     ]
 //     //   }
 //     // });

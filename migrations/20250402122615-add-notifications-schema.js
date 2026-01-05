@@ -2,6 +2,7 @@
 
 const { faker } = require('@faker-js/faker');
 const mongoose = require('mongoose');
+const { ObjectId } = require('mongodb');
 
 module.exports = {
   async up(db) {
@@ -59,7 +60,7 @@ module.exports = {
 
       // Ajouter les champs conditionnels
       if (requiresEntity) {
-        notification.relatedEntity = new mongoose.Types.ObjectId();
+        notification.relatedEntity = new ObjectId();
         notification.relatedEntityModel = faker.helpers.arrayElement(entityModels);
       }
 

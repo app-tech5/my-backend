@@ -1,6 +1,6 @@
 const { faker } = require('@faker-js/faker');
 const bcrypt = require('bcryptjs');
-// const { ObjectId } = require('mongodb');
+const { ObjectId } = require('mongodb');
 const mongoose = require("mongoose");
 
 module.exports = {
@@ -12,7 +12,7 @@ module.exports = {
     }
     // 1. Ajout de l'utilisateur admin fixe
     const adminUser = {
-      _id: new mongoose.Types.ObjectId('67c62fae5a9b19466ee230d6'),
+      _id: new ObjectId('67c62fae5a9b19466ee230d6'),
       email: "admin@example.com",
       password: "$2a$10$x0Zm/JF2cW/akjwoEpBpvueirfPSdpbyfCVz.UAF6osK9NxN8F1lG", // "admin123"
       name: "Admin System",
@@ -104,7 +104,7 @@ module.exports = {
     const result = await db.collection('users').deleteMany({
       $or: [
         { email: { $regex: /@mock\.com$/ } },
-        { _id: new mongoose.Types.ObjectId('67c62fae5a9b19466ee230d6') }
+        { _id: new ObjectId('67c62fae5a9b19466ee230d6') }
       ]
     });
     console.log(`Deleted ${result.deletedCount} users`);

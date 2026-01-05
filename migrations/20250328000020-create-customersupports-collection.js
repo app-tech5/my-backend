@@ -2,6 +2,7 @@
 
 const { faker } = require('@faker-js/faker');
 const mongoose = require('mongoose');
+const { ObjectId } = require('mongodb');
 
 // Déplacer les fonctions helper en haut du fichier et les rendre dépendantes des paramètres
 function generateTicket(user, existingUsers, existingOrders) {
@@ -36,11 +37,59 @@ function generateTicket(user, existingUsers, existingOrders) {
 }
 
 function generateLiveChat(user) {
-  // ... (le reste de la fonction reste inchangé)
+  return {
+    type: 'live_chat',
+    user: user._id,
+    users: { value: user._id.toString(), label: user.name || user.email },
+    subject: `Chat en direct - ${faker.lorem.words(3)}`,
+    description: faker.lorem.paragraphs(1),
+    status: faker.helpers.arrayElement(['open', 'resolved', 'closed']),
+    priority: faker.helpers.arrayElement(['low', 'medium']),
+    created_at: faker.date.recent({ days: 7 }),
+    updated_at: faker.date.recent({ days: 1 }),
+  };
 }
 
 function generateFAQ() {
-  // ... (le reste de la fonction reste inchangé)
+  const faqCategories = ['orders', 'payments', 'delivery', 'account', 'technical'];
+  const questions = {
+    orders: ['Comment annuler une commande ?', 'Puis-je modifier ma commande ?', 'Où voir l\'état de ma commande ?'],
+    payments: ['Quels moyens de paiement acceptez-vous ?', 'Ma carte a été débitée mais pas la commande', 'Comment obtenir un remboursement ?'],
+    delivery: ['Quand sera livrée ma commande ?', 'Puis-je changer l\'adresse de livraison ?', 'Que faire si ma commande est endommagée ?'],
+    account: ['Comment changer mon mot de passe ?', 'Comment modifier mes informations ?', 'Comment supprimer mon compte ?'],
+    technical: ['L\'application ne fonctionne pas', 'Comment contacter le support ?', 'Problème de connexion']
+  };
+
+  const category = faker.helpers.arrayElement(faqCategories);
+  const question = faker.helpers.arrayElement(questions[category]);
+
+  const answers = {
+    'Comment annuler une commande ?': 'Allez dans "Mes commandes" > sélectionnez la commande > "Annuler". L\'annulation est possible jusqu\'à 30 minutes après validation.',
+    'Puis-je modifier ma commande ?': 'Les modifications sont possibles uniquement par téléphone au service client dans les 15 minutes suivant la commande.',
+    'Où voir l\'état de ma commande ?': 'Dans l\'onglet "Mes commandes" de l\'application, vous verrez l\'état en temps réel.',
+    'Quels moyens de paiement acceptez-vous ?': 'Nous acceptons les cartes bancaires (Visa, Mastercard), PayPal et le paiement à la livraison.',
+    'Ma carte a été débitée mais pas la commande': 'Le débit est temporaire. Contactez notre service client pour vérifier le statut de votre commande.',
+    'Comment obtenir un remboursement ?': 'Les remboursements sont traités sous 48h ouvrées. Vous serez notifié par email.',
+    'Quand sera livrée ma commande ?': 'Le délai de livraison est indiqué lors de la commande. Vous recevrez des notifications en temps réel.',
+    'Puis-je changer l\'adresse de livraison ?': 'L\'adresse peut être modifiée jusqu\'à 30 minutes avant l\'heure de livraison prévue.',
+    'Que faire si ma commande est endommagée ?': 'Prenez des photos et contactez immédiatement notre service client pour un remboursement.',
+    'Comment changer mon mot de passe ?': 'Allez dans "Mon compte" > "Sécurité" > "Changer mot de passe".',
+    'Comment modifier mes informations ?': 'Dans "Mon compte" > "Informations personnelles", vous pouvez modifier vos données.',
+    'Comment supprimer mon compte ?': 'Contactez notre service client pour la suppression définitive de votre compte.',
+    'L\'application ne fonctionne pas': 'Essayez de redémarrer l\'application ou de mettre à jour vers la dernière version.',
+    'Comment contacter le support ?': 'Utilisez le chat en direct dans l\'app ou appelez le 01-XX-XX-XX-XX.',
+    'Problème de connexion': 'Vérifiez votre connexion internet et essayez de vous reconnecter.'
+  };
+
+  return {
+    type: 'faq',
+    question: question,
+    answer: answers[question],
+    category: category,
+    status: 'published',
+    created_at: faker.date.past({ years: 1 }),
+    updated_at: faker.date.recent({ days: 30 }),
+  };
 }
 
 module.exports = {
@@ -101,7 +150,7 @@ module.exports = {
 //         status: 'open',
 //         priority: 'medium',
 //         type: 'ticket',
-//         user: new mongoose.Types.ObjectId(), // Remplacez par un vrai ID utilisateur
+//         user: new ObjectId(), // Remplacez par un vrai ID utilisateur
 //         subject: 'Problème de livraison',
 //         description: 'Ma commande est en retard',
 //         createdAt: new Date(),
