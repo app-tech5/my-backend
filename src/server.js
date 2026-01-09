@@ -39,6 +39,10 @@ app.use(i18n.init);
 
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
+app.use(cors({
+  origin: ['http://localhost:3000', 'https://good-foods.digitaldienste.fr'],
+  credentials: true
+}));
 
 // handleSettingsChange(io);
 

@@ -8,7 +8,7 @@ const config = {
     url: process.env.MONGO_URI,
 
     // TODO Change this to your database name:
-    databaseName: "test",
+    databaseName: process.env.MONGODB_DATABASE,
 
     options: {
       useNewUrlParser: true, // removes a deprecation warning when connecting

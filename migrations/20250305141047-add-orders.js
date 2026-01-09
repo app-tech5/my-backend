@@ -26,31 +26,44 @@ module.exports = {
     // if (products.length === 0) throw new Error('Aucun produit trouvé');
     // if (menus.length === 0) throw new Error('Aucun menu trouvé');
 
-    // Vérifications des données
-    if (!users.length || !restaurants.length || !drivers.length || !products.length || !menus.length) {
-      console.log("⏭  Migration sautée : certaines collections nécessaires sont vides.");
-      return; // skip toute la migration
+    // Vérifications minimales
+    if (!users.length || !restaurants.length) {
+      console.log("⏭  Migration sautée : utilisateurs ou restaurants manquants.");
+      return;
     }
+
+    console.log(`Génération de commandes avec: ${users.length} users, ${restaurants.length} restaurants, ${drivers.length} drivers, ${products.length} products, ${menus.length} menus`);
 
     // Générer des commandes fictives
     const mockOrders = Array.from({ length: 50 }, (_, i) => {
       const user = faker.helpers.arrayElement(users);
       const restaurant = faker.helpers.arrayElement(restaurants);
-      const driver = faker.helpers.arrayElement(drivers);
+      const driver = drivers.length > 0 ? faker.helpers.arrayElement(drivers) : null;
       
       // Générer 1 à 5 items par commande
       const items = Array.from({ length: faker.number.int({ min: 1, max: 5 }) }, () => {
-        const isMenu = faker.datatype.boolean({ probability: 0.6 }); // 60% de chance d'être un menu
-        const item = isMenu 
-          ? faker.helpers.arrayElement(menus) 
-          : faker.helpers.arrayElement(products);
+        // Choisir entre menu et produit selon disponibilité
+        let item, isMenu;
+        if (menus.length > 0 && products.length > 0) {
+          isMenu = faker.datatype.boolean({ probability: 0.6 });
+          item = isMenu ? faker.helpers.arrayElement(menus) : faker.helpers.arrayElement(products);
+        } else if (menus.length > 0) {
+          isMenu = true;
+          item = faker.helpers.arrayElement(menus);
+        } else if (products.length > 0) {
+          isMenu = false;
+          item = faker.helpers.arrayElement(products);
+        } else {
+          // Pas d'items disponibles, skip cette commande
+          return null;
+        }
         
         const quantity = faker.number.int({ min: 1, max: 3 });
         const basePrice = isMenu ? item.price : item.price;
         const itemTotal = basePrice * quantity;
 
-        // Générer des extras (0 à 3)
-        const extras = Array.from({ length: faker.number.int({ min: 0, max: 3 }) }, () => {
+        // Générer des extras (0 à 3) - seulement si products disponible
+        const extras = products.length > 0 ? Array.from({ length: faker.number.int({ min: 0, max: 3 }) }, () => {
           const product = faker.helpers.arrayElement(products);
           const extraQuantity = faker.number.int({ min: 1, max: 2 });
           return {
@@ -59,7 +72,7 @@ module.exports = {
             price: product.price,
             quantity: extraQuantity
           };
-        });
+        }) : [];
 
         // Générer des variants (0 à 2)
         const variants = Array.from({ length: faker.number.int({ min: 0, max: 2 }) }, () => ({
@@ -127,7 +140,13 @@ module.exports = {
         createdAt: faker.date.past({ years: 1 }),
         updatedAt: faker.date.recent({ days: 30 })
       };
-    });
+    }).filter(order => order.items && order.items.length > 0); // Filtrer les commandes sans items valides
+
+    // Skip si aucune commande valide
+    if (mockOrders.length === 0) {
+      console.log("⏭  Aucune commande valide générée.");
+      return;
+    }
 
     await db.collection('orders').insertMany(mockOrders);
   },
