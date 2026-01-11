@@ -132,6 +132,23 @@ router.put('/me', async (req, res) => {
     }
 });
 
+// Récupérer un utilisateur par ID
+router.get('/:id', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id).select('-password'); // Exclut le mot de passe
+        if (!user) {
+            console.log("🟠 Utilisateur non trouvé:", req.params.id);
+            return res.status(404).json({ message: res.__("user_not_found") });
+        }
+
+        console.log("✅ Utilisateur trouvé:", user.email);
+        res.json(user);
+    } catch (error) {
+        console.error("🔴 Erreur lors de la récupération de l'utilisateur:", error);
+        res.status(500).json({ message: res.__("server_error") });
+    }
+});
+
 router.post("/logout", (req, res) => {
     res.clearCookie("token", { httpOnly: true, secure: false, sameSite: "Strict" });
     res.json({ message: res.__("logout_successful") });

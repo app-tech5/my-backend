@@ -4,6 +4,12 @@ const convertToModelName = (collectionName) => {
   if (!collectionName || typeof collectionName !== "string") {
     throw new Error("Invalid collection name");
   }
+
+  // Exception spéciale pour deliverysettings -> DeliverySetting
+  if (collectionName === 'deliverysettings') {
+    return 'DeliverySetting';
+  }
+
   return (
     pluralize.singular(collectionName).charAt(0).toUpperCase() +
     pluralize.singular(collectionName).slice(1)

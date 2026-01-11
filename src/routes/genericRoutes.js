@@ -8,32 +8,35 @@ const router = express.Router();
 
 // Middleware pour récupérer dynamiquement le bon modèle
 router.use("/:model", async (req, res, next) => {
-  console.log(req.params.model);
-  const modelName = convertToModelName(req.params.model); // Conversion dynamique
-  console.log("Requested model:", modelName);
+  // Log spécifique pour deliverysettings
+  if (req.params.model === 'deliverysettings') {
+    console.log(`🔍 DELIVERY SETTINGS: Request received for /resource/deliverysettings`);
+  }
 
-  // if(modelName === "Driver")
-  //   req.body.userId = new mongoose.Types.ObjectId(req.body.users.value);
+  const modelName = convertToModelName(req.params.model); // Conversion dynamique
+
+  if (req.params.model === 'deliverysettings') {
+    console.log(`🔍 DELIVERY SETTINGS: Converting 'deliverysettings' to '${modelName}'`);
+  }
 
   try {
     req.Model = require(`../models/${modelName}`); // Importation dynamique du modèle
 
-    // await populateSelectFields(req.body);
-
-    // if (modelName === "Restaurant") {
-    //   const { tax } = req.body;
-    //   if (tax && tax.value) {
-    //     const taxExists = await Tax.findById(tax.value);
-    //     if (!taxExists) {
-    //       return res.status(400).json({ error: "Invalid tax ID" });
-    //     }
-    //     req.body.tax = taxExists; 
-    //   }
-    // }
+    if (req.params.model === 'deliverysettings') {
+      console.log(`✅ DELIVERY SETTINGS: Model '${modelName}' loaded successfully`);
+    }
 
     next();
   } catch (error) {
-    return res.status(400).json({ error: "Invalid model name" });
+    if (req.params.model === 'deliverysettings') {
+      console.error(`❌ DELIVERY SETTINGS ERROR: Failed to load model '${modelName}':`, error.message);
+      console.error(`❌ DELIVERY SETTINGS ERROR: Looking for file: ${modelName}.js`);
+    }
+    return res.status(400).json({
+      error: `Invalid model name: ${modelName}`,
+      details: error.message,
+      requested: req.params.model
+    });
   }
 });
 

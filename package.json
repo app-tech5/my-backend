@@ -9,6 +9,8 @@
     "dev": "nodemon src/server.js",
     "setup": "node scripts/setup.js",
     "test:db": "node scripts/test-db-connection.js",
+    "insert:demo": "node scripts/insert-demo-user.js",
+    "find:user": "node scripts/find-user-id.js",
     "migrate:status": "migrate-mongo status",
     "migrate:up": "migrate-mongo up",
     "migrate:down": "migrate-mongo down",

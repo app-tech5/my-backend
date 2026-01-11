@@ -55,7 +55,7 @@ module.exports = {
       .toArray();
 
     // Générer des produits fictifs
-    const mockProducts = Array.from({ length: 50 }, (_, i) => {
+    const mockProducts = Array.from({ length: 150 }, (_, i) => {
       const category = faker.helpers.arrayElement(existingCategories);
       const restaurant = faker.helpers.arrayElement(existingRestaurants);
       const selectedVariants = existingVariants.length > 0 

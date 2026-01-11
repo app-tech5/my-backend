@@ -7,13 +7,23 @@ const genericController = (Model) => {
   return {
     getAll: async (req, res) => {
       try {
-        // console.log(req.query)
-        console.log("Requête reçue avec query params:");
+        // Log spécifique pour deliverysettings
+        if (Model.modelName === 'Deliverysetting' || Model.collection?.name === 'deliverysettings') {
+          console.log(`🔍 DELIVERY SETTINGS: getAll called for collection: ${Model.collection.name}`);
+        }
+
         const items = await Model.find().setOptions({ queryParams: req.query });
-        // console.log("Résultat de la requête:", items);
+
+        if (Model.collection?.name === 'deliverysettings') {
+          console.log(`✅ DELIVERY SETTINGS: Found ${items.length} delivery settings`);
+          console.log(`✅ DELIVERY SETTINGS: Data:`, items[0] || 'No data found');
+        }
+
         res.json(items);
       } catch (error) {
-        console.log(error)
+        if (Model.collection?.name === 'deliverysettings') {
+          console.error(`❌ DELIVERY SETTINGS ERROR: Database query failed:`, error.message);
+        }
         res.status(500).json({ error: error.message });
       }
     },

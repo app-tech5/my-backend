@@ -9,6 +9,7 @@ const languageRoutes = require('./routes/languageRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 const currencyRoutes = require('./routes/currencyRoutes');
 const uploadRoutes = require("./routes/uploadRoutes");
+const productRoutes = require("./routes/productRoutes");
 const http = require('http');
 const cleanupRouter = require('./routes/cleanup');
 
@@ -59,6 +60,7 @@ app.use('/api/users', userRoutes);
 // app.use('/api/languages', languageRoutes);
 // app.use('/api/settings', settingsRoutes);
 // app.use('/api/currencies', currencyRoutes);
+app.use("/api/products", productRoutes);
 app.use("/api/resource", genericRoutes);
 app.use("/api/upload", uploadRoutes);
 
@@ -79,5 +81,5 @@ app.use('/api', cleanupRouter);
 // });
 
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Serveur démarré sur le port ${PORT}`));
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, 'localhost', () => console.log(`Serveur démarré sur le port ${PORT}`));

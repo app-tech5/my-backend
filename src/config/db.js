@@ -3,9 +3,8 @@ require('dotenv').config();
 
 const connectDB = async () => {
     try {
-        await mongoose.connect(process.env.MONGO_URI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
+        await mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/good-foods', {
+            // Options supprimées car dépréciées dans Mongoose 6+
         });
         console.log('MongoDB connecté');
     } catch (error) {

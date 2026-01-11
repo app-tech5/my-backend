@@ -32,6 +32,30 @@ module.exports = {
       updatedAt: new Date()
     };
 
+    // 1b. Ajout de l'utilisateur customer de démo fixe
+    const demoCustomer = {
+      _id: new ObjectId('67c62fae5a9b19466ee230d7'),
+      email: "demo@customer.com",
+      password: bcrypt.hashSync('demo123', 10),
+      name: "Demo Customer",
+      phone: "+33123456789",
+      image: "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/42.jpg",
+      address: "456 Demo Street, Paris",
+      role: "customer",
+      isActive: true,
+      favorites: [],
+      paymentMethods: [{
+        type: "card",
+        details: {
+          last4: "1234",
+          brand: "mastercard"
+        }
+      }],
+      ratings: { asCustomer: 4.5 },
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
     // 2. Algorithme de génération mock
     const generateMockUsers = (count, role) => {
       const users = [];
@@ -94,9 +118,10 @@ module.exports = {
     
     // 4. Insertion
     await db.collection('users').insertOne(adminUser);
+    await db.collection('users').insertOne(demoCustomer);
     await db.collection('users').insertMany(mockData);
 
-    console.log(`Inserted 1 admin + ${mockData.length} mock users`);
+    console.log(`Inserted 1 admin + 1 demo customer + ${mockData.length} mock users`);
   },
 
   async down(db) {
@@ -104,6 +129,7 @@ module.exports = {
     const result = await db.collection('users').deleteMany({
       $or: [
         { email: { $regex: /@mock\.com$/ } },
+        { email: "demo@customer.com" },
         { _id: new ObjectId('67c62fae5a9b19466ee230d6') }
       ]
     });
