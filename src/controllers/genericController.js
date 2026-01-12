@@ -7,22 +7,44 @@ const genericController = (Model) => {
   return {
     getAll: async (req, res) => {
       try {
-        // Log spécifique pour deliverysettings
-        if (Model.modelName === 'Deliverysetting' || Model.collection?.name === 'deliverysettings') {
-          console.log(`🔍 DELIVERY SETTINGS: getAll called for collection: ${Model.collection.name}`);
+        // Log spécifique pour restaurants
+        if (Model.modelName === 'Restaurant' || Model.collection?.name === 'restaurants') {
+          console.log(`🍽️ RESTAURANTS: getAll called for restaurants collection`);
         }
+
+        // Log spécifique pour deliverysettings
+        // if (Model.modelName === 'Deliverysetting' || Model.collection?.name === 'deliverysettings') {
+        //   console.log(`🔍 DELIVERY SETTINGS: getAll called for collection: ${Model.collection.name}`);
+        // }
 
         const items = await Model.find().setOptions({ queryParams: req.query });
 
-        if (Model.collection?.name === 'deliverysettings') {
-          console.log(`✅ DELIVERY SETTINGS: Found ${items.length} delivery settings`);
-          console.log(`✅ DELIVERY SETTINGS: Data:`, items[0] || 'No data found');
+        // Log spécifique pour restaurants
+        if (Model.collection?.name === 'restaurants') {
+          console.log(`🍽️ RESTAURANTS: Found ${items.length} restaurants`);
+          if (items.length > 0) {
+            console.log(`🍽️ RESTAURANTS: Sample restaurant:`, {
+              id: items[0]._id,
+              name: items[0].name,
+              categoriesCount: items[0].categories?.length || 0,
+              categories: items[0].categories?.slice(0, 2) || [], // Premières 2 catégories
+              hasCategories: !!items[0].categories && items[0].categories.length > 0
+            });
+          }
         }
+
+        // if (Model.collection?.name === 'deliverysettings') {
+        //   console.log(`✅ DELIVERY SETTINGS: Found ${items.length} delivery settings`);
+        //   console.log(`✅ DELIVERY SETTINGS: Data:`, items[0] || 'No data found');
+        // }
 
         res.json(items);
       } catch (error) {
-        if (Model.collection?.name === 'deliverysettings') {
-          console.error(`❌ DELIVERY SETTINGS ERROR: Database query failed:`, error.message);
+        // if (Model.collection?.name === 'deliverysettings') {
+        //   console.error(`❌ DELIVERY SETTINGS ERROR: Database query failed:`, error.message);
+        // }
+        if (Model.collection?.name === 'restaurants') {
+          console.error(`🍽️ RESTAURANTS ERROR: Database query failed:`, error.message);
         }
         res.status(500).json({ error: error.message });
       }

@@ -154,4 +154,86 @@ router.post("/logout", (req, res) => {
     res.json({ message: res.__("logout_successful") });
 });
 
+// GESTION DES FAVORIS
+
+// Ajouter un restaurant aux favoris
+router.post('/favorites/:restaurantId', async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ message: res.__("user_not_found") });
+        }
+
+        const restaurantId = req.params.restaurantId;
+
+        // Vérifier si déjà dans les favoris
+        if (user.favorites.includes(restaurantId)) {
+            return res.status(400).json({ message: "Restaurant already in favorites" });
+        }
+
+        // Ajouter aux favoris
+        user.favorites.push(restaurantId);
+        await user.save();
+
+        // Retourner la liste mise à jour
+        const updatedUser = await User.findById(req.user.id).populate('favorites');
+        res.json({
+            success: true,
+            favorites: updatedUser.favorites,
+            message: "Restaurant added to favorites"
+        });
+
+    } catch (error) {
+        console.error('Add to favorites error:', error);
+        res.status(500).json({ message: res.__("server_error") });
+    }
+});
+
+// Retirer un restaurant des favoris
+router.delete('/favorites/:restaurantId', async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ message: res.__("user_not_found") });
+        }
+
+        const restaurantId = req.params.restaurantId;
+
+        // Retirer des favoris
+        user.favorites = user.favorites.filter(id => id.toString() !== restaurantId);
+        await user.save();
+
+        // Retourner la liste mise à jour
+        const updatedUser = await User.findById(req.user.id).populate('favorites');
+        res.json({
+            success: true,
+            favorites: updatedUser.favorites,
+            message: "Restaurant removed from favorites"
+        });
+
+    } catch (error) {
+        console.error('Remove from favorites error:', error);
+        res.status(500).json({ message: res.__("server_error") });
+    }
+});
+
+// Récupérer les favoris de l'utilisateur
+router.get('/favorites', async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).populate('favorites');
+        if (!user) {
+            return res.status(404).json({ message: res.__("user_not_found") });
+        }
+
+        res.json({
+            success: true,
+            favorites: user.favorites
+        });
+
+    } catch (error) {
+        console.error('Get favorites error:', error);
+        res.status(500).json({ message: res.__("server_error") });
+    }
+});
+
 module.exports = router;
