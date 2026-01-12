@@ -8,44 +8,56 @@ const genericController = (Model) => {
     getAll: async (req, res) => {
       try {
         // Log spécifique pour restaurants
-        if (Model.modelName === 'Restaurant' || Model.collection?.name === 'restaurants') {
-          console.log(`🍽️ RESTAURANTS: getAll called for restaurants collection`);
-        }
+        // if (Model.modelName === 'Restaurant' || Model.collection?.name === 'restaurants') {
+        //   console.log(`🍽️ RESTAURANTS: getAll called for restaurants collection`);
+        // }
 
         // Log spécifique pour deliverysettings
         // if (Model.modelName === 'Deliverysetting' || Model.collection?.name === 'deliverysettings') {
-        //   console.log(`🔍 DELIVERY SETTINGS: getAll called for collection: ${Model.collection.name}`);
+        //   console.log(`🔥 DELIVERY SETTINGS BACKEND: getAll called for collection: ${Model.collection?.name}`);
         // }
 
         const items = await Model.find().setOptions({ queryParams: req.query });
 
         // Log spécifique pour restaurants
-        if (Model.collection?.name === 'restaurants') {
-          console.log(`🍽️ RESTAURANTS: Found ${items.length} restaurants`);
-          if (items.length > 0) {
-            console.log(`🍽️ RESTAURANTS: Sample restaurant:`, {
-              id: items[0]._id,
-              name: items[0].name,
-              categoriesCount: items[0].categories?.length || 0,
-              categories: items[0].categories?.slice(0, 2) || [], // Premières 2 catégories
-              hasCategories: !!items[0].categories && items[0].categories.length > 0
-            });
-          }
-        }
+        // if (Model.collection?.name === 'restaurants') {
+        //   console.log(`🍽️ RESTAURANTS: Found ${items.length} restaurants`);
+        //   if (items.length > 0) {
+        //     console.log(`🍽️ RESTAURANTS: Sample restaurant:`, {
+        //       id: items[0]._id,
+        //       name: items[0].name,
+        //       categoriesCount: items[0].categories?.length || 0,
+        //       categories: items[0].categories?.slice(0, 2) || [], // Premières 2 catégories
+        //       hasCategories: !!items[0].categories && items[0].categories.length > 0
+        //     });
+        //   }
+        // }
 
         // if (Model.collection?.name === 'deliverysettings') {
-        //   console.log(`✅ DELIVERY SETTINGS: Found ${items.length} delivery settings`);
-        //   console.log(`✅ DELIVERY SETTINGS: Data:`, items[0] || 'No data found');
+        //   console.log(`✅ DELIVERY SETTINGS BACKEND: Found ${items.length} delivery settings`);
+        //   if (items.length > 0) {
+        //     console.log(`✅ DELIVERY SETTINGS BACKEND: Complete data:`, JSON.stringify(items[0], null, 2));
+        //     console.log(`✅ DELIVERY SETTINGS BACKEND: Key fields:`, {
+        //       deliveryFeeType: items[0].deliveryFeeType,
+        //       fixedDeliveryFee: items[0].fixedDeliveryFee,
+        //       dynamicDeliveryFee: items[0].dynamicDeliveryFee,
+        //       freeDeliveryThreshold: items[0].freeDeliveryThreshold
+        //     });
+        //   } else {
+        //     console.log(`❌ DELIVERY SETTINGS BACKEND: No data found in collection!`);
+        //   }
         // }
 
         res.json(items);
       } catch (error) {
         // if (Model.collection?.name === 'deliverysettings') {
-        //   console.error(`❌ DELIVERY SETTINGS ERROR: Database query failed:`, error.message);
+        //   console.error(`❌ DELIVERY SETTINGS BACKEND ERROR: Database query failed:`, error.message);
+        //   console.error(`❌ DELIVERY SETTINGS BACKEND ERROR: Model:`, Model.modelName);
+        //   console.error(`❌ DELIVERY SETTINGS BACKEND ERROR: Collection:`, Model.collection?.name);
         // }
-        if (Model.collection?.name === 'restaurants') {
-          console.error(`🍽️ RESTAURANTS ERROR: Database query failed:`, error.message);
-        }
+        // if (Model.collection?.name === 'restaurants') {
+        //   console.error(`🍽️ RESTAURANTS ERROR: Database query failed:`, error.message);
+        // }
         res.status(500).json({ error: error.message });
       }
     },

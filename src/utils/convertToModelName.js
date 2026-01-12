@@ -21,7 +21,7 @@ const convertToModelName = (collectionName) => {
 // console.log(convertToModelName("children")); // Child
 // console.log(convertToModelName("people")); // Person
 
-console.log(convertToModelName("taxes")); 
+// console.log(convertToModelName("taxes"));
 
 // const convertToModelName = (collectionName) => {
 //     let modelName = collectionName;
