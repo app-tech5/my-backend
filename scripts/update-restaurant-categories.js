@@ -30,10 +30,52 @@ const connectDB = async () => {
 
 // Mapping des alias vers des vrais noms de catégories
 const categoryMapping = {
-  // Alias trouvés dans la DB vers vrais noms
+  // Alias originaux du script
   'cetera-calculus-tergo': 'Italian',
   'adsum-victus-expedita': 'Pizza',
   'dedecor-abundans-circumvenio': 'American',
+
+  // Nouveaux alias de la base de données - Catégories de RESTAURANT (générales)
+  'accusantium-tero-comedo': 'Italian',
+  'aegre-sequi-textilis': 'French',
+  'aiunt-totam-vetus': 'Mediterranean',
+  'alias-vis-ago': 'Seafood',
+  'amaritudo-derelinquo-curiositas': 'American',
+  'amor-avaritia-conspergo': 'Fast Food',
+  'astrum-aperio-vester': 'Italian',
+  'basium-aedificium-super': 'French',
+  'bos-torqueo-conculco': 'American',
+  'canis-video-culpa': 'Fast Food',
+  'chirographum-ver-bellum': 'Asian',
+  'consequatur-cunae-bos': 'Italian',
+  'considero-tempore-creo': 'American',
+  'cumque-quis-vis': 'Mediterranean',
+  'curto-solvo-stipes': 'French',
+  'decet-carpo-ante': 'Seafood',
+  'delibero-aurum-curtus': 'Italian',
+  'demergo-umquam-assentator': 'Fast Food',
+  'deripio-claro-angulus': 'Asian',
+  'esse-carmen-tandem': 'American',
+  'fugiat-facilis-viduo': 'Mediterranean',
+  'laboriosam-casus-vaco': 'French',
+  'necessitatibus-surculus-triumphus': 'Seafood',
+  'officia-coma-beneficium': 'Italian',
+  'saepe-calculus-volup': 'Fast Food',
+  'solum-inflammatio-avaritia': 'Asian',
+  'spargo-aspernatur-quidem': 'American',
+  'sublime-tabula-tracto': 'Mediterranean',
+  'talio-conicio-sodalitas': 'French',
+  'vallum-carmen-desparatus': 'Seafood',
+  'vehemens-adfero-ratione': 'Italian',
+  'vir-timor-confido': 'Fast Food',
+  'viscus-viriliter-vicinus': 'Asian',
+  'vita-cultura-traho': 'American',
+  'vix-defessus-audacia': 'Mediterranean',
+  'voluptas-cuppedia-certus': 'French',
+  'voluptatibus-thymum-volo': 'Seafood',
+  'voveo-audacia-dolorem': 'Italian',
+
+  // Catégories générales (au cas où)
   'fast-food': 'Fast Food',
   'seafood': 'Seafood',
   'thai': 'Thai',
@@ -73,22 +115,27 @@ const updateRestaurantCategories = async () => {
         updatedCategories = restaurant.categories.map(category => {
           let updatedCategory = { ...category };
 
-          // Si title est null ou undefined, essayer de le mapper depuis l'alias
-          if (!updatedCategory.title && updatedCategory.alias) {
+          // Toujours vérifier le mapping, même si title existe déjà
+          if (updatedCategory.alias) {
             const mappedTitle = categoryMapping[updatedCategory.alias];
             if (mappedTitle) {
-              console.log(`🔄 Restaurant "${restaurant.name}": ${updatedCategory.alias} → ${mappedTitle}`);
-              updatedCategory.title = mappedTitle;
-              restaurantUpdated = true;
+              // Vérifier si le titre actuel est différent du mapping
+              if (updatedCategory.title !== mappedTitle) {
+                console.log(`🔄 Restaurant "${restaurant.name}": ${updatedCategory.alias} → ${mappedTitle} (was: ${updatedCategory.title || 'null'})`);
+                updatedCategory.title = mappedTitle;
+                restaurantUpdated = true;
+              }
             } else {
-              // Si pas de mapping, utiliser l'alias formaté
-              const formattedTitle = updatedCategory.alias
-                .split('-')
-                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(' ');
-              console.log(`🔄 Restaurant "${restaurant.name}": ${updatedCategory.alias} → ${formattedTitle} (formatted)`);
-              updatedCategory.title = formattedTitle;
-              restaurantUpdated = true;
+              // Si pas de mapping, utiliser l'alias formaté seulement si pas de titre
+              if (!updatedCategory.title) {
+                const formattedTitle = updatedCategory.alias
+                  .split('-')
+                  .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                  .join(' ');
+                console.log(`🔄 Restaurant "${restaurant.name}": ${updatedCategory.alias} → ${formattedTitle} (formatted)`);
+                updatedCategory.title = formattedTitle;
+                restaurantUpdated = true;
+              }
             }
           }
           return updatedCategory;
