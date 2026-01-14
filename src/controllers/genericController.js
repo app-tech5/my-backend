@@ -17,6 +17,11 @@ const genericController = (Model) => {
         //   console.log(`🔥 DELIVERY SETTINGS BACKEND: getAll called for collection: ${Model.collection?.name}`);
         // }
 
+        // Log spécifique pour menus
+        if (Model.collection?.name === 'menus') {
+          console.log(`🍽️ MENUS BACKEND: getAll called for menus collection`);
+        }
+
         const items = await Model.find().setOptions({ queryParams: req.query });
 
         // Log spécifique pour restaurants
@@ -47,6 +52,22 @@ const genericController = (Model) => {
         //     console.log(`❌ DELIVERY SETTINGS BACKEND: No data found in collection!`);
         //   }
         // }
+
+        // Log détaillé pour menus
+        if (Model.collection?.name === 'menus') {
+          console.log(`🍽️ MENUS BACKEND: Found ${items.length} menus`);
+          if (items.length > 0) {
+            console.log(`🍽️ MENUS BACKEND: Sample menu:`, {
+              id: items[0]._id,
+              name: items[0].name,
+              restaurant: items[0].restaurant,
+              price: items[0].price
+            });
+            console.log(`🍽️ MENUS BACKEND: Sample menu full data:`, JSON.stringify(items[0], null, 2));
+          } else {
+            console.log(`❌ MENUS BACKEND: No menus found in collection!`);
+          }
+        }
 
         res.json(items);
       } catch (error) {
