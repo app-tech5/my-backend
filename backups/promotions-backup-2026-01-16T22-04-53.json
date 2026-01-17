@@ -1,0 +1,575 @@
+{
+  "metadata": {
+    "timestamp": "2026-01-16T22:04:53.181Z",
+    "totalPromotions": 20,
+    "database": "good-foods",
+    "collection": "promotions"
+  },
+  "promotions": [
+    {
+      "_id": "695d17e2ed0284bc20edc8f0",
+      "name": "Recycled Promotion",
+      "description": "New Towels model with 61 GB RAM, 546 GB storage, and ultimate features",
+      "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd",
+      "promotionType": "fixed_discount",
+      "discountValue": 6.318680447215045,
+      "scope": "category",
+      "applicableCategories": [
+        "dessert"
+      ],
+      "startDate": "2026-01-06T18:42:48.474Z",
+      "endDate": "2026-01-09T22:43:02.802Z",
+      "minOrderAmount": 28.021120985462986,
+      "maxDiscountAmount": null,
+      "userEligibility": "all",
+      "maxUsage": null,
+      "currentUsage": 0,
+      "createdBy": "695d17e1ed0284bc20edc5f0",
+      "isActive": true,
+      "priority": 9,
+      "createdAt": "2026-01-06T14:10:42.363Z",
+      "updatedAt": "2026-01-06T14:10:42.363Z"
+    },
+    {
+      "_id": "695d17e2ed0284bc20edc8f1",
+      "name": "Oriental Promotion",
+      "description": "The Advanced intangible conglomeration Mouse offers reliable performance and able design",
+      "image": "https://images.unsplash.com/photo-1467003909585-2f8a72700288",
+      "promotionType": "free_delivery",
+      "scope": "platform",
+      "startDate": "2026-01-06T21:46:59.284Z",
+      "endDate": "2026-01-23T17:27:14.707Z",
+      "minOrderAmount": null,
+      "maxDiscountAmount": null,
+      "userEligibility": "new_users",
+      "maxUsage": 262,
+      "currentUsage": 0,
+      "createdBy": "695d17e1ed0284bc20edc60f",
+      "isActive": true,
+      "priority": 7,
+      "createdAt": "2026-01-06T14:10:42.363Z",
+      "updatedAt": "2026-01-06T14:10:42.363Z"
+    },
+    {
+      "_id": "695d17e2ed0284bc20edc8f2",
+      "name": "Recycled Promotion",
+      "description": "Our gecko-friendly Chair ensures grounded comfort for your pets",
+      "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c",
+      "promotionType": "percentage_discount",
+      "discountValue": 15,
+      "scope": "platform",
+      "startDate": "2026-01-06T17:02:35.390Z",
+      "endDate": "2026-01-18T10:45:30.382Z",
+      "minOrderAmount": 46.599364817984565,
+      "maxDiscountAmount": 7.159563479977926,
+      "userEligibility": "existing_users",
+      "maxUsage": 500,
+      "currentUsage": 0,
+      "createdBy": "695d17e1ed0284bc20edc611",
+      "isActive": true,
+      "priority": 8,
+      "createdAt": "2026-01-06T14:10:42.363Z",
+      "updatedAt": "2026-01-06T14:10:42.363Z"
+    },
+    {
+      "_id": "695d17e2ed0284bc20edc8f3",
+      "name": "Refined Promotion",
+      "description": "Featuring Calcium-enhanced technology, our Chips offers unparalleled every performance",
+      "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38",
+      "promotionType": "happy_hour",
+      "happyHours": [
+        {
+          "start": "16:00",
+          "end": "20:00",
+          "days": [
+            0,
+            4,
+            5
+          ]
+        }
+      ],
+      "scope": "item",
+      "applicableItems": [
+        "695d17e1ed0284bc20edc6b9",
+        "695d17e1ed0284bc20edc6cf"
+      ],
+      "startDate": "2026-01-07T12:00:52.833Z",
+      "endDate": "2026-01-18T02:08:16.305Z",
+      "minOrderAmount": null,
+      "maxDiscountAmount": null,
+      "userEligibility": "vip",
+      "maxUsage": 215,
+      "currentUsage": 0,
+      "createdBy": "695d17e1ed0284bc20edc611",
+      "isActive": true,
+      "priority": 2,
+      "createdAt": "2026-01-06T14:10:42.363Z",
+      "updatedAt": "2026-01-06T14:10:42.363Z"
+    },
+    {
+      "_id": "695d17e2ed0284bc20edc8f4",
+      "name": "Fresh Promotion",
+      "description": "Larkin - Trantow's most advanced Tuna technology increases each capabilities",
+      "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd",
+      "promotionType": "flash_sale",
+      "scope": "category",
+      "applicableCategories": [
+        "sushi",
+        "dessert",
+        "pizza"
+      ],
+      "startDate": "2026-01-06T15:01:20.748Z",
+      "endDate": "2026-01-21T20:46:12.596Z",
+      "minOrderAmount": 47.685662250266255,
+      "maxDiscountAmount": null,
+      "userEligibility": "existing_users",
+      "maxUsage": 319,
+      "currentUsage": 0,
+      "createdBy": "695d17e1ed0284bc20edc5f0",
+      "isActive": true,
+      "priority": 8,
+      "createdAt": "2026-01-06T14:10:42.363Z",
+      "updatedAt": "2026-01-06T14:10:42.363Z"
+    },
+    {
+      "_id": "695d17e2ed0284bc20edc8f5",
+      "name": "Recycled Promotion",
+      "description": "Ergonomic Soap made with Cotton for all-day thick support",
+      "image": "https://images.unsplash.com/photo-1467003909585-2f8a72700288",
+      "promotionType": "free_delivery",
+      "scope": "category",
+      "applicableCategories": [
+        "sushi"
+      ],
+      "startDate": "2026-01-06T18:01:36.579Z",
+      "endDate": "2026-01-15T17:10:11.837Z",
+      "minOrderAmount": 48.856184315298336,
+      "maxDiscountAmount": null,
+      "userEligibility": "vip",
+      "maxUsage": 364,
+      "currentUsage": 0,
+      "createdBy": "695d17e1ed0284bc20edc616",
+      "isActive": true,
+      "priority": 7,
+      "createdAt": "2026-01-06T14:10:42.364Z",
+      "updatedAt": "2026-01-06T14:10:42.364Z"
+    },
+    {
+      "_id": "695d17e2ed0284bc20edc8f6",
+      "name": "Small Promotion",
+      "description": "New lavender Chair with ergonomic design for fatherly comfort",
+      "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c",
+      "promotionType": "combo_deal",
+      "comboItems": [
+        {
+          "item": "695d17e1ed0284bc20edc6b8",
+          "discountedPrice": 22.650807497848234
+        },
+        {
+          "item": "695d17e1ed0284bc20edc6bc",
+          "discountedPrice": 11.530773547270892
+        },
+        {
+          "item": "695d17e1ed0284bc20edc6bb",
+          "discountedPrice": 6.116290185707992
+        }
+      ],
+      "scope": "platform",
+      "startDate": "2026-01-06T15:26:15.299Z",
+      "endDate": "2026-01-14T17:59:26.450Z",
+      "minOrderAmount": null,
+      "maxDiscountAmount": null,
+      "userEligibility": "existing_users",
+      "maxUsage": 260,
+      "currentUsage": 0,
+      "createdBy": "695d17e1ed0284bc20edc617",
+      "isActive": false,
+      "priority": 3,
+      "createdAt": "2026-01-06T14:10:42.364Z",
+      "updatedAt": "2026-01-06T14:10:42.364Z"
+    },
+    {
+      "_id": "695d17e2ed0284bc20edc8f7",
+      "name": "Electronic Promotion",
+      "description": "Frozen Mouse designed with Ceramic for beloved performance",
+      "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38",
+      "promotionType": "percentage_discount",
+      "discountValue": 21,
+      "scope": "restaurant",
+      "applicableRestaurants": [
+        "695d17d9ed0284bc20edc5c4",
+        "695d17d9ed0284bc20edc5c5",
+        "695d17d9ed0284bc20edc5c1"
+      ],
+      "startDate": "2026-01-12T23:00:00.000Z",
+      "endDate": "2026-02-11T23:00:00.000Z",
+      "minOrderAmount": null,
+      "maxDiscountAmount": 5.500510271358582,
+      "userEligibility": "all",
+      "maxUsage": 490,
+      "currentUsage": 0,
+      "createdBy": "695d17e1ed0284bc20edc616",
+      "isActive": true,
+      "priority": 3,
+      "createdAt": "2026-01-06T14:10:42.364Z",
+      "updatedAt": "2026-01-13T10:07:27.972Z",
+      "__v": 1,
+      "applicableCategories": [],
+      "applicableItems": [],
+      "comboItems": [],
+      "happyHours": []
+    },
+    {
+      "_id": "695d17e2ed0284bc20edc8f8",
+      "name": "Frozen Promotion",
+      "description": "The Baylee Shirt is the latest in a series of juvenile products from Turner, Paucek and Schulist",
+      "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd",
+      "promotionType": "buy_x_get_y",
+      "buyQuantity": 1,
+      "getQuantity": 2,
+      "scope": "restaurant",
+      "applicableRestaurants": [
+        "695d17d9ed0284bc20edc5bb"
+      ],
+      "startDate": "2026-01-12T23:00:00.000Z",
+      "endDate": "2026-02-11T23:00:00.000Z",
+      "minOrderAmount": 34.62725010293308,
+      "maxDiscountAmount": null,
+      "userEligibility": "all",
+      "maxUsage": 303,
+      "currentUsage": 0,
+      "createdBy": "695d17e1ed0284bc20edc610",
+      "isActive": true,
+      "priority": 2,
+      "createdAt": "2026-01-06T14:10:42.364Z",
+      "updatedAt": "2026-01-13T10:07:27.984Z",
+      "__v": 1,
+      "applicableCategories": [],
+      "applicableItems": [],
+      "comboItems": [],
+      "happyHours": []
+    },
+    {
+      "_id": "695d17e2ed0284bc20edc8f9",
+      "name": "Elegant Promotion",
+      "description": "The sleek and stylish Tuna comes with orange LED lighting for smart functionality",
+      "image": "https://images.unsplash.com/photo-1467003909585-2f8a72700288",
+      "promotionType": "free_delivery",
+      "scope": "category",
+      "applicableCategories": [
+        "burger",
+        "pizza"
+      ],
+      "startDate": "2026-01-07T00:26:11.243Z",
+      "endDate": "2026-02-03T12:33:05.539Z",
+      "minOrderAmount": null,
+      "maxDiscountAmount": null,
+      "userEligibility": "new_users",
+      "maxUsage": 350,
+      "currentUsage": 0,
+      "createdBy": "695d17e1ed0284bc20edc5fe",
+      "isActive": true,
+      "priority": 6,
+      "createdAt": "2026-01-06T14:10:42.364Z",
+      "updatedAt": "2026-01-06T14:10:42.364Z"
+    },
+    {
+      "_id": "695d17e2ed0284bc20edc8fa",
+      "name": "Refined Promotion",
+      "description": "Experience the fuchsia brilliance of our Bike, perfect for reasonable environments",
+      "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c",
+      "promotionType": "percentage_discount",
+      "discountValue": 13,
+      "scope": "item",
+      "applicableItems": [
+        "695d17e1ed0284bc20edc6cf",
+        "695d17e1ed0284bc20edc6cb",
+        "695d17e1ed0284bc20edc6bb",
+        "695d17e1ed0284bc20edc6c2",
+        "695d17e1ed0284bc20edc6ba"
+      ],
+      "startDate": "2026-01-07T07:43:28.717Z",
+      "endDate": "2026-01-18T11:52:42.101Z",
+      "minOrderAmount": 40.337558831206024,
+      "maxDiscountAmount": 18.444842201803542,
+      "userEligibility": "all",
+      "maxUsage": 224,
+      "currentUsage": 0,
+      "createdBy": "695d17e1ed0284bc20edc61a",
+      "isActive": true,
+      "priority": 3,
+      "createdAt": "2026-01-06T14:10:42.364Z",
+      "updatedAt": "2026-01-06T14:10:42.364Z"
+    },
+    {
+      "_id": "695d17e2ed0284bc20edc8fb",
+      "name": "Incredible Promotion",
+      "description": "Discover the formal new Soap with an exciting mix of Bamboo ingredients",
+      "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38",
+      "promotionType": "fixed_discount",
+      "discountValue": 11.859150467687238,
+      "scope": "item",
+      "applicableItems": [
+        "695d17e1ed0284bc20edc6bc"
+      ],
+      "startDate": "2026-01-07T01:01:54.966Z",
+      "endDate": "2026-01-25T08:03:04.500Z",
+      "minOrderAmount": 32.18504483267467,
+      "maxDiscountAmount": null,
+      "userEligibility": "vip",
+      "maxUsage": 312,
+      "currentUsage": 0,
+      "createdBy": "695d17e1ed0284bc20edc608",
+      "isActive": true,
+      "priority": 7,
+      "createdAt": "2026-01-06T14:10:42.364Z",
+      "updatedAt": "2026-01-06T14:10:42.364Z"
+    },
+    {
+      "_id": "695d17e2ed0284bc20edc8fc",
+      "name": "Rustic Promotion",
+      "description": "Ergonomic Hat made with Plastic for all-day marvelous support",
+      "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd",
+      "promotionType": "fixed_discount",
+      "discountValue": 12.549931080431708,
+      "scope": "platform",
+      "startDate": "2026-01-07T02:00:44.277Z",
+      "endDate": "2026-01-24T04:35:07.734Z",
+      "minOrderAmount": null,
+      "maxDiscountAmount": null,
+      "userEligibility": "existing_users",
+      "maxUsage": 390,
+      "currentUsage": 0,
+      "createdBy": "695d17e1ed0284bc20edc60d",
+      "isActive": true,
+      "priority": 1,
+      "createdAt": "2026-01-06T14:10:42.364Z",
+      "updatedAt": "2026-01-06T14:10:42.364Z"
+    },
+    {
+      "_id": "695d17e2ed0284bc20edc8fd",
+      "name": "Generic Promotion",
+      "description": "Professional-grade Shoes perfect for mindless training and recreational use",
+      "image": "https://images.unsplash.com/photo-1467003909585-2f8a72700288",
+      "promotionType": "flash_sale",
+      "scope": "category",
+      "applicableCategories": [
+        "boisson",
+        "asiatique"
+      ],
+      "startDate": "2026-01-07T13:06:29.790Z",
+      "endDate": "2026-01-27T17:04:46.070Z",
+      "minOrderAmount": null,
+      "maxDiscountAmount": null,
+      "userEligibility": "existing_users",
+      "maxUsage": null,
+      "currentUsage": 0,
+      "createdBy": "695d17e1ed0284bc20edc60a",
+      "isActive": true,
+      "priority": 6,
+      "createdAt": "2026-01-06T14:10:42.364Z",
+      "updatedAt": "2026-01-06T14:10:42.364Z"
+    },
+    {
+      "_id": "695d17e2ed0284bc20edc8fe",
+      "name": "Fresh Promotion",
+      "description": "Innovative Computer featuring unused technology and Ceramic construction",
+      "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c",
+      "promotionType": "percentage_discount",
+      "discountValue": 28,
+      "scope": "restaurant",
+      "applicableRestaurants": [
+        "695d17d9ed0284bc20edc5c9"
+      ],
+      "startDate": "2026-01-12T23:00:00.000Z",
+      "endDate": "2026-02-11T23:00:00.000Z",
+      "minOrderAmount": 46.035346769088136,
+      "maxDiscountAmount": 16.50071894580018,
+      "userEligibility": "vip",
+      "maxUsage": 351,
+      "currentUsage": 0,
+      "createdBy": "695d17e1ed0284bc20edc5f6",
+      "isActive": true,
+      "priority": 6,
+      "createdAt": "2026-01-06T14:10:42.364Z",
+      "updatedAt": "2026-01-13T10:07:27.995Z",
+      "__v": 1,
+      "applicableCategories": [],
+      "applicableItems": [],
+      "comboItems": [],
+      "happyHours": []
+    },
+    {
+      "_id": "695d17e2ed0284bc20edc8ff",
+      "name": "Practical Promotion",
+      "description": "Featuring Titanium-enhanced technology, our Mouse offers unparalleled digital performance",
+      "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38",
+      "promotionType": "happy_hour",
+      "happyHours": [
+        {
+          "start": "17:00",
+          "end": "20:00",
+          "days": [
+            3,
+            6,
+            5,
+            4
+          ]
+        }
+      ],
+      "scope": "restaurant",
+      "applicableRestaurants": [
+        "695d17d9ed0284bc20edc5c7"
+      ],
+      "startDate": "2026-01-12T23:00:00.000Z",
+      "endDate": "2026-02-11T23:00:00.000Z",
+      "minOrderAmount": 39.556048993510906,
+      "maxDiscountAmount": null,
+      "userEligibility": "new_users",
+      "maxUsage": 186,
+      "currentUsage": 0,
+      "createdBy": "695d17e1ed0284bc20edc603",
+      "isActive": true,
+      "priority": 2,
+      "createdAt": "2026-01-06T14:10:42.364Z",
+      "updatedAt": "2026-01-13T10:07:28.001Z",
+      "__v": 1,
+      "applicableCategories": [],
+      "applicableItems": [],
+      "comboItems": []
+    },
+    {
+      "_id": "695d17e2ed0284bc20edc900",
+      "name": "Luxurious Promotion",
+      "description": "Innovative Cheese featuring hasty technology and Silk construction",
+      "image": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd",
+      "promotionType": "combo_deal",
+      "comboItems": [
+        {
+          "item": "695d17e1ed0284bc20edc6c7",
+          "discountedPrice": 26.234362553787633
+        },
+        {
+          "item": "695d17e1ed0284bc20edc6cc",
+          "discountedPrice": 27.90249680933848
+        },
+        {
+          "item": "695d17e1ed0284bc20edc6ce",
+          "discountedPrice": 12.48591767497255
+        }
+      ],
+      "scope": "category",
+      "applicableCategories": [
+        "burger",
+        "dessert",
+        "sushi"
+      ],
+      "startDate": "2026-01-07T12:19:55.718Z",
+      "endDate": "2026-01-18T16:50:47.444Z",
+      "minOrderAmount": 22.094399169472787,
+      "maxDiscountAmount": null,
+      "userEligibility": "new_users",
+      "maxUsage": 476,
+      "currentUsage": 0,
+      "createdBy": "695d17e1ed0284bc20edc602",
+      "isActive": true,
+      "priority": 2,
+      "createdAt": "2026-01-06T14:10:42.364Z",
+      "updatedAt": "2026-01-06T14:10:42.364Z"
+    },
+    {
+      "_id": "695d17e2ed0284bc20edc901",
+      "name": "Fantastic Promotion",
+      "description": "Featuring Protactinium-enhanced technology, our Chips offers unparalleled sparse performance",
+      "image": "https://images.unsplash.com/photo-1467003909585-2f8a72700288",
+      "promotionType": "buy_x_get_y",
+      "buyQuantity": 2,
+      "getQuantity": 2,
+      "scope": "restaurant",
+      "applicableRestaurants": [
+        "695d17d9ed0284bc20edc5c3"
+      ],
+      "startDate": "2026-01-12T23:00:00.000Z",
+      "endDate": "2026-02-11T23:00:00.000Z",
+      "minOrderAmount": null,
+      "maxDiscountAmount": null,
+      "userEligibility": "vip",
+      "maxUsage": 437,
+      "currentUsage": 0,
+      "createdBy": "695d17e1ed0284bc20edc602",
+      "isActive": true,
+      "priority": 1,
+      "createdAt": "2026-01-06T14:10:42.364Z",
+      "updatedAt": "2026-01-13T10:07:28.005Z",
+      "__v": 1,
+      "applicableCategories": [],
+      "applicableItems": [],
+      "comboItems": [],
+      "happyHours": []
+    },
+    {
+      "_id": "695d17e2ed0284bc20edc902",
+      "name": "Luxurious Promotion",
+      "description": "Innovative Ball featuring silky technology and Aluminum construction",
+      "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c",
+      "promotionType": "combo_deal",
+      "comboItems": [
+        {
+          "item": "695d17e1ed0284bc20edc6c4",
+          "discountedPrice": 27.046385884860054
+        },
+        {
+          "item": "695d17e1ed0284bc20edc6ba",
+          "discountedPrice": 24.304600326568
+        }
+      ],
+      "scope": "item",
+      "applicableItems": [
+        "695d17e1ed0284bc20edc6c1",
+        "695d17e1ed0284bc20edc6cb"
+      ],
+      "startDate": "2026-01-07T01:30:53.755Z",
+      "endDate": "2026-01-17T21:31:40.613Z",
+      "minOrderAmount": null,
+      "maxDiscountAmount": null,
+      "userEligibility": "new_users",
+      "maxUsage": 376,
+      "currentUsage": 0,
+      "createdBy": "695d17e1ed0284bc20edc5f6",
+      "isActive": true,
+      "priority": 9,
+      "createdAt": "2026-01-06T14:10:42.364Z",
+      "updatedAt": "2026-01-06T14:10:42.364Z"
+    },
+    {
+      "_id": "695d17e2ed0284bc20edc903",
+      "name": "Refined Promotion",
+      "description": "Discover the parrot-like agility of our Fish, perfect for silver users",
+      "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38",
+      "promotionType": "happy_hour",
+      "happyHours": [
+        {
+          "start": "17:00",
+          "end": "21:00",
+          "days": [
+            3,
+            5
+          ]
+        }
+      ],
+      "scope": "platform",
+      "startDate": "2026-01-07T08:26:40.763Z",
+      "endDate": "2026-01-11T20:26:11.587Z",
+      "minOrderAmount": 19.152685179764553,
+      "maxDiscountAmount": null,
+      "userEligibility": "new_users",
+      "maxUsage": null,
+      "currentUsage": 0,
+      "createdBy": "695d17e1ed0284bc20edc5fb",
+      "isActive": true,
+      "priority": 6,
+      "createdAt": "2026-01-06T14:10:42.364Z",
+      "updatedAt": "2026-01-06T14:10:42.364Z"
+    }
+  ]
+}
