@@ -17,3 +17,4 @@ router.get("/defaultFields", productController.getDefaultFields);
 module.exports = router;
 
 
+
