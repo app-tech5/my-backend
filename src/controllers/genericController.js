@@ -7,22 +7,21 @@ const genericController = (Model) => {
   return {
     getAll: async (req, res) => {
       try {
-        // Log spécifique pour restaurants
-        // if (Model.modelName === 'Restaurant' || Model.collection?.name === 'restaurants') {
-        //   console.log(`🍽️ RESTAURANTS: getAll called for restaurants collection`);
-        // }
+        console.log(`📋 ${Model.modelName}: getAll called - User:`, req.user?.id || 'No user');
 
-        // Log spécifique pour deliverysettings
-        // if (Model.modelName === 'Deliverysetting' || Model.collection?.name === 'deliverysettings') {
-        //   console.log(`🔥 DELIVERY SETTINGS BACKEND: getAll called for collection: ${Model.collection?.name}`);
-        // }
+        let query = {};
 
-        // Log spécifique pour menus
-        // if (Model.collection?.name === 'menus') {
-        //   console.log(`🍽️ MENUS BACKEND: getAll called for menus collection`);
-        // }
+        // Filtrage spécial pour les commandes - uniquement les commandes de l'utilisateur connecté
+        if (Model.modelName === 'Order') {
+          if (!req.user || !req.user.id) {
+            console.log('❌ ORDERS: No authenticated user found');
+            return res.status(401).json({ message: 'Authentication required' });
+          }
+          query.user = req.user.id;
+          console.log(`🔒 ORDERS: Filtering by user ${req.user.id}`);
+        }
 
-        const items = await Model.find().setOptions({ queryParams: req.query });
+        const items = await Model.find(query).setOptions({ queryParams: req.query });
 
         // Log spécifique pour restaurants
         // if (Model.collection?.name === 'restaurants') {
