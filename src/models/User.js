@@ -11,6 +11,10 @@ const UserSchema = new mongoose.Schema(
       phone: { type: String, default: '' },
       image: { type: String, default: '' },
       address: { type: String, default: '' },
+      location: {
+        latitude: { type: Number, default: null },
+        longitude: { type: Number, default: null }
+      },
       // Nouveaux champs ajoutés pour Uber Eats
       role: { 
         type: String, 

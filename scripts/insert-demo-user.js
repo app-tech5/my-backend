@@ -34,6 +34,10 @@ async function insertDemoUser() {
       phone: "+33123456789",
       image: "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/42.jpg",
       address: "456 Demo Street, Paris",
+      location: {
+        latitude: 48.8566,  // Latitude de Paris centre
+        longitude: 2.3522   // Longitude de Paris centre
+      },
       role: "customer",
       isActive: true,
       favorites: [],

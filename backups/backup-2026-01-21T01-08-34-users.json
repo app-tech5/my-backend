@@ -1,0 +1,1214 @@
+[
+  {
+    "_id": "67c62fae5a9b19466ee230d6",
+    "email": "admin@example.com",
+    "password": "$2a$10$x0Zm/JF2cW/akjwoEpBpvueirfPSdpbyfCVz.UAF6osK9NxN8F1lG",
+    "name": "Admin System",
+    "phone": "+33612345678",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/41.jpg",
+    "address": "123 Admin Street, Paris",
+    "role": "admin",
+    "isActive": true,
+    "paymentMethods": [
+      {
+        "type": "card",
+        "details": {
+          "last4": "4242",
+          "brand": "visa"
+        }
+      }
+    ],
+    "createdAt": "2026-01-06T14:10:33.381Z",
+    "updatedAt": "2026-01-06T14:10:33.381Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc5ef",
+    "email": "customer+jimmy1@mock.com",
+    "password": "$2a$10$2KxT/Rh9WryTidmJLQSEwu9XoThJ8JQGR6N5f6922p7UtDSiPL1e2",
+    "name": "Jimmy Mante",
+    "phone": "(821) 734-1283 x898",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/26.jpg",
+    "address": "47624 Mayert Parks, Asheville",
+    "role": "customer",
+    "favorites": [],
+    "paymentMethods": [
+      {
+        "type": "paypal",
+        "details": {
+          "last4": "8400"
+        }
+      }
+    ],
+    "ratings": {
+      "asCustomer": 3.7602727782156493
+    },
+    "createdAt": "2025-03-07T00:50:41.544Z",
+    "updatedAt": "2026-01-05T18:57:53.969Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc5f0",
+    "email": "customer+brenna3@mock.com",
+    "password": "$2a$10$bgqlnK0ZF5eVqsEDGfAUFuqPF0XLXmK.l4IOq8/1r5eVkWmsOiqL6",
+    "name": "Brenna Kassulke",
+    "phone": "226.690.0887",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/1.jpg",
+    "address": "435 Rodolfo Harbor, Gregoriohaven",
+    "role": "customer",
+    "favorites": [],
+    "paymentMethods": [
+      {
+        "type": "card",
+        "details": {
+          "last4": "3527"
+        }
+      }
+    ],
+    "ratings": {
+      "asCustomer": 4.241400358220732
+    },
+    "createdAt": "2025-03-03T02:16:56.631Z",
+    "updatedAt": "2026-01-06T01:01:07.714Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc5f1",
+    "email": "customer+eulalia4@mock.com",
+    "password": "$2a$10$y.JQxL/qcnzTlRbT7RlOpeWo80i9M8pdvXr3/AWCA1I5Th9CiMSoa",
+    "name": "Eulalia Torphy",
+    "phone": "435-679-5464 x238",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/71.jpg",
+    "address": "762 Paxton Shoals, Palmdale",
+    "role": "customer",
+    "favorites": [],
+    "paymentMethods": [
+      {
+        "type": "paypal",
+        "details": {
+          "last4": "0580"
+        }
+      }
+    ],
+    "ratings": {
+      "asCustomer": 2.283159107583962
+    },
+    "createdAt": "2025-05-05T05:55:03.672Z",
+    "updatedAt": "2026-01-05T22:10:30.586Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc5f2",
+    "email": "customer+margarete5@mock.com",
+    "password": "$2a$10$zrh26h5cN0.qGrn3vKs.KOo4CbigWro7smgYDUM8wF73r8vIZJRL6",
+    "name": "Margarete Kris",
+    "phone": "1-356-406-9600",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/3.jpg",
+    "address": "49513 E Bridge Street, Willmsborough",
+    "role": "customer",
+    "favorites": [],
+    "paymentMethods": [
+      {
+        "type": "paypal",
+        "details": {
+          "last4": "7134"
+        }
+      }
+    ],
+    "ratings": {
+      "asCustomer": 1.6010146493558155
+    },
+    "createdAt": "2025-09-10T01:22:02.562Z",
+    "updatedAt": "2026-01-05T17:19:11.830Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc5f3",
+    "email": "customer+alvena6@mock.com",
+    "password": "$2a$10$fNBAdIyfflD.rktJdFjcNOO1U6UN8o2SNV/lAUlrJlIrDnMyCte2q",
+    "name": "Alvena Boyle",
+    "phone": "517.223.5121 x7885",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/2.jpg",
+    "address": "7718 Wiza Place, Compton",
+    "role": "customer",
+    "favorites": [],
+    "paymentMethods": [
+      {
+        "type": "paypal",
+        "details": {
+          "last4": "2606"
+        }
+      }
+    ],
+    "ratings": {
+      "asCustomer": 2.908010421214027
+    },
+    "createdAt": "2025-06-11T08:31:18.322Z",
+    "updatedAt": "2026-01-06T13:56:07.457Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc5f4",
+    "email": "customer+loyal7@mock.com",
+    "password": "$2a$10$W7NHA8IpgLnESwv1ndJKiuwPDV9M3EiePoJ3.rAYATeMNq./SpWgu",
+    "name": "Loyal Beier",
+    "phone": "1-839-320-4104 x81197",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/75.jpg",
+    "address": "407 Hoeger Mountains, Ronaldotown",
+    "role": "customer",
+    "favorites": [],
+    "paymentMethods": [
+      {
+        "type": "paypal",
+        "details": {
+          "last4": "7466"
+        }
+      }
+    ],
+    "ratings": {
+      "asCustomer": 1.668270521916773
+    },
+    "createdAt": "2025-03-10T07:58:21.245Z",
+    "updatedAt": "2026-01-05T23:02:18.121Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc5f5",
+    "email": "customer+tad9@mock.com",
+    "password": "$2a$10$r5DF6dOAudxlCb01DQ5MfuuUUyn9fLijuDpWud.2i7f.4gQXfLcrm",
+    "name": "Tad Murray",
+    "phone": "(444) 277-9287",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/10.jpg",
+    "address": "22266 Rowe Expressway, Jonescester",
+    "role": "customer",
+    "favorites": [],
+    "paymentMethods": [
+      {
+        "type": "card",
+        "details": {
+          "last4": "9421"
+        }
+      }
+    ],
+    "ratings": {
+      "asCustomer": 2.590924426451967
+    },
+    "createdAt": "2025-03-30T03:57:41.774Z",
+    "updatedAt": "2026-01-06T08:53:02.245Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc5f6",
+    "email": "customer+abel12@mock.com",
+    "password": "$2a$10$SMwlY7s.hWbmtb2Z30ysH.gziaDdirC1bdWP/PY6.klMrf1MO1MEy",
+    "name": "Abel Schoen",
+    "phone": "354.269.6933 x502",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/90.jpg",
+    "address": "8150 Low Road, Fishers",
+    "role": "customer",
+    "favorites": [],
+    "paymentMethods": [
+      {
+        "type": "card",
+        "details": {
+          "last4": "3525"
+        }
+      }
+    ],
+    "ratings": {
+      "asCustomer": 2.6624676437879717
+    },
+    "createdAt": "2025-10-24T16:18:57.291Z",
+    "updatedAt": "2026-01-06T05:47:39.842Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc5f7",
+    "email": "customer+ulises13@mock.com",
+    "password": "$2a$10$4zcPTJe1CvmJs4FnA8avU.oTwcLo3.YfyPY7SoJb.jlp.Oc5I4yNK",
+    "name": "Ulises Monahan",
+    "phone": "650.544.9545 x3883",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/67.jpg",
+    "address": "5256 Church Close, Amaniton",
+    "role": "customer",
+    "favorites": [],
+    "paymentMethods": [
+      {
+        "type": "paypal",
+        "details": {
+          "last4": "4725"
+        }
+      }
+    ],
+    "ratings": {
+      "asCustomer": 1.0136817368115745
+    },
+    "createdAt": "2025-12-15T12:48:51.966Z",
+    "updatedAt": "2026-01-06T05:34:20.647Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc5f8",
+    "email": "customer+mckenna20@mock.com",
+    "password": "$2a$10$8lTBP.32mUsjxB.H8MN9Qefh3pwGXEn2dnZVgMLuRmaqyTALyL9P.",
+    "name": "Mckenna Brekke",
+    "phone": "325.461.3016 x3945",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/58.jpg",
+    "address": "6776 The Lane, Alannaburgh",
+    "role": "customer",
+    "favorites": [],
+    "paymentMethods": [
+      {
+        "type": "paypal",
+        "details": {
+          "last4": "5458"
+        }
+      }
+    ],
+    "ratings": {
+      "asCustomer": 3.131446151152552
+    },
+    "createdAt": "2025-08-01T09:27:07.348Z",
+    "updatedAt": "2026-01-05T19:24:07.948Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc5f9",
+    "email": "customer+adelbert21@mock.com",
+    "password": "$2a$10$RKP7AAAEbzO9qwaan5RKqeG4S8mP59b8478Pl4t5wbwB9qzgDDvfS",
+    "name": "Adelbert Hansen",
+    "phone": "408.637.9269",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/2.jpg",
+    "address": "3315 Lubowitz Fields, Port Nelsonview",
+    "role": "customer",
+    "favorites": [],
+    "paymentMethods": [
+      {
+        "type": "card",
+        "details": {
+          "last4": "8030"
+        }
+      }
+    ],
+    "ratings": {
+      "asCustomer": 3.0284708731583128
+    },
+    "createdAt": "2025-08-15T12:13:53.839Z",
+    "updatedAt": "2026-01-05T20:03:26.957Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc5fa",
+    "email": "customer+brant22@mock.com",
+    "password": "$2a$10$BrAy6Qlkrjc4jMHYwMGd0eaUlyqgAb1VVS8P1vNjKcDWNbAPdr/mi",
+    "name": "Brant Osinski",
+    "phone": "(604) 965-1658",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/68.jpg",
+    "address": "46805 Boyer Loaf, Beierfurt",
+    "role": "customer",
+    "favorites": [],
+    "paymentMethods": [
+      {
+        "type": "card",
+        "details": {
+          "last4": "1509"
+        }
+      }
+    ],
+    "ratings": {
+      "asCustomer": 2.555275572567482
+    },
+    "createdAt": "2025-04-01T20:49:31.356Z",
+    "updatedAt": "2026-01-06T09:21:17.785Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc5fb",
+    "email": "customer+jeff23@mock.com",
+    "password": "$2a$10$47r8v0T7tKMUEqDDnQ3Nf./mnvit6FDp1n6/nMBMXCooxhTSPjR2O",
+    "name": "Jeff Gerhold",
+    "phone": "974.673.0488",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/70.jpg",
+    "address": "1088 Molly Coves, North Jesseborough",
+    "role": "customer",
+    "favorites": [],
+    "paymentMethods": [
+      {
+        "type": "paypal",
+        "details": {
+          "last4": "1623"
+        }
+      }
+    ],
+    "ratings": {
+      "asCustomer": 3.046472927666737
+    },
+    "createdAt": "2025-07-12T20:52:08.852Z",
+    "updatedAt": "2026-01-06T00:41:45.326Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc5fc",
+    "email": "customer+winifred25@mock.com",
+    "password": "$2a$10$kh.r2pL/pnwRkGHVPfgkE.nkwpA1XQS.ENSHPToF7NBb3ttBKbJdu",
+    "name": "Winifred Leuschke",
+    "phone": "(532) 843-9756 x306",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/35.jpg",
+    "address": "1893 Chapel Road, West Chesleyfield",
+    "role": "customer",
+    "favorites": [],
+    "paymentMethods": [
+      {
+        "type": "paypal",
+        "details": {
+          "last4": "9909"
+        }
+      }
+    ],
+    "ratings": {
+      "asCustomer": 1.3865254920085714
+    },
+    "createdAt": "2025-01-17T16:29:51.996Z",
+    "updatedAt": "2026-01-05T17:12:31.980Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc5fd",
+    "email": "customer+allan26@mock.com",
+    "password": "$2a$10$S8UPVgqXne7QTTOkQsUlQ.4r.oqhUgGSoIM0zKkWZ85C2v536Blsy",
+    "name": "Allan Oberbrunner",
+    "phone": "880.217.7822 x320",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/45.jpg",
+    "address": "4390 South Road, Kylerville",
+    "role": "customer",
+    "favorites": [],
+    "paymentMethods": [
+      {
+        "type": "paypal",
+        "details": {
+          "last4": "2639"
+        }
+      }
+    ],
+    "ratings": {
+      "asCustomer": 2.8546738166150956
+    },
+    "createdAt": "2025-10-04T12:36:02.565Z",
+    "updatedAt": "2026-01-05T15:33:36.603Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc5fe",
+    "email": "customer+damaris32@mock.com",
+    "password": "$2a$10$hxEglxjTesROKxq8W26xQeZXOcg4CoLczXo37fSc77qsiCndUVCtu",
+    "name": "Damaris Fahey",
+    "phone": "795.692.1261",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/3.jpg",
+    "address": "8724 Jamel Lights, Michaelstad",
+    "role": "customer",
+    "favorites": [],
+    "paymentMethods": [
+      {
+        "type": "paypal",
+        "details": {
+          "last4": "5810"
+        }
+      }
+    ],
+    "ratings": {
+      "asCustomer": 4.477928150186219
+    },
+    "createdAt": "2025-08-29T01:32:47.180Z",
+    "updatedAt": "2026-01-05T22:45:21.365Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc5ff",
+    "email": "customer+kimberly33@mock.com",
+    "password": "$2a$10$yPjPR7DguA5bjv444KHEseTTM3YwKy4thNRKPPS/HuMO3xawFR4Uu",
+    "name": "Kimberly Kertzmann",
+    "phone": "655-271-4106 x5387",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/68.jpg",
+    "address": "2241 10th Street, Fort Isaacworth",
+    "role": "customer",
+    "favorites": [],
+    "paymentMethods": [
+      {
+        "type": "paypal",
+        "details": {
+          "last4": "6348"
+        }
+      }
+    ],
+    "ratings": {
+      "asCustomer": 3.9485114071906673
+    },
+    "createdAt": "2025-12-10T04:00:53.608Z",
+    "updatedAt": "2026-01-05T16:23:28.414Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc600",
+    "email": "customer+myrna34@mock.com",
+    "password": "$2a$10$jk7j/ZTyeKuQC6f8rB5GGeEi4jbXaEYNwa2vlIOzuDBhSkYvuyDR6",
+    "name": "Myrna Runte",
+    "phone": "1-511-761-4610 x895",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/78.jpg",
+    "address": "886 Walnut Street, San Rafael",
+    "role": "customer",
+    "favorites": [],
+    "paymentMethods": [
+      {
+        "type": "paypal",
+        "details": {
+          "last4": "3949"
+        }
+      }
+    ],
+    "ratings": {
+      "asCustomer": 1.6331289786837506
+    },
+    "createdAt": "2025-03-06T23:14:11.655Z",
+    "updatedAt": "2026-01-05T15:16:28.216Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc601",
+    "email": "customer+gunner37@mock.com",
+    "password": "$2a$10$Jb2MbfLa0T3LhoNv9S3c2uIHzdr58pX1pYhnX8.aj4O5MmeVO/oOi",
+    "name": "Gunner Heller",
+    "phone": "(737) 571-7644 x4377",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/93.jpg",
+    "address": "2805 Cole Flats, Hoppefort",
+    "role": "customer",
+    "favorites": [],
+    "paymentMethods": [
+      {
+        "type": "card",
+        "details": {
+          "last4": "1659"
+        }
+      }
+    ],
+    "ratings": {
+      "asCustomer": 3.248473694400018
+    },
+    "createdAt": "2025-09-02T03:54:10.742Z",
+    "updatedAt": "2026-01-05T19:37:02.798Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc602",
+    "email": "customer+brenda38@mock.com",
+    "password": "$2a$10$BRdLf5XDiNHVtLMiiJYKFutnclsRSc3XKdm2ix.GU/HFSvLqw3LVi",
+    "name": "Brenda Huel",
+    "phone": "785.612.0397 x5147",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/91.jpg",
+    "address": "9639 Leif Squares, Pedroworth",
+    "role": "customer",
+    "favorites": [],
+    "paymentMethods": [
+      {
+        "type": "card",
+        "details": {
+          "last4": "3256"
+        }
+      }
+    ],
+    "ratings": {
+      "asCustomer": 4.236468880827979
+    },
+    "createdAt": "2025-08-18T14:23:00.686Z",
+    "updatedAt": "2026-01-06T01:59:43.771Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc603",
+    "email": "customer+elvie41@mock.com",
+    "password": "$2a$10$U7/6rWRfBie7UuxAeg/PO.Cm/wgw7.esxEFi3P2BHBNitpFY3s/Gy",
+    "name": "Elvie Howell",
+    "phone": "1-674-407-5049 x9731",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/4.jpg",
+    "address": "1772 Ratke Manor, Brandyland",
+    "role": "customer",
+    "favorites": [],
+    "paymentMethods": [
+      {
+        "type": "card",
+        "details": {
+          "last4": "9778"
+        }
+      }
+    ],
+    "ratings": {
+      "asCustomer": 4.418812887872512
+    },
+    "createdAt": "2025-03-08T11:01:18.692Z",
+    "updatedAt": "2026-01-05T14:28:09.518Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc604",
+    "email": "customer+branson42@mock.com",
+    "password": "$2a$10$qR.5/.eqOMui6Jo4PEvzzO6TLOom6co5uoR4fN7zO8pxbdvOIqI2u",
+    "name": "Branson Kunze",
+    "phone": "608-508-8581",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/85.jpg",
+    "address": "8460 W Union Street, Rahultown",
+    "role": "customer",
+    "favorites": [],
+    "paymentMethods": [
+      {
+        "type": "paypal",
+        "details": {
+          "last4": "2072"
+        }
+      }
+    ],
+    "ratings": {
+      "asCustomer": 2.7595431333384353
+    },
+    "createdAt": "2025-02-03T21:17:11.059Z",
+    "updatedAt": "2026-01-05T16:49:18.966Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc605",
+    "email": "customer+reynold43@mock.com",
+    "password": "$2a$10$yt6tA9qZQGDV1IWFBebAgOZDC9QMQuZJplPb.azpaBik43kn8tksa",
+    "name": "Reynold Douglas-Yundt",
+    "phone": "(488) 931-3878",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/79.jpg",
+    "address": "205 Olen Crescent, East Lucious",
+    "role": "customer",
+    "favorites": [],
+    "paymentMethods": [
+      {
+        "type": "card",
+        "details": {
+          "last4": "6187"
+        }
+      }
+    ],
+    "ratings": {
+      "asCustomer": 2.208896701746255
+    },
+    "createdAt": "2025-09-22T07:47:27.779Z",
+    "updatedAt": "2026-01-06T08:53:39.510Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc606",
+    "email": "customer+novella44@mock.com",
+    "password": "$2a$10$GRYPXiUPNmcvzYp2Swh21.UqTTYCHmMOUNfa0qaA1dYXpJ/IZ8uAW",
+    "name": "Novella Johnson",
+    "phone": "(987) 382-9083 x0520",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/96.jpg",
+    "address": "93726 Grant Ridges, Rogerton",
+    "role": "customer",
+    "favorites": [],
+    "paymentMethods": [
+      {
+        "type": "card",
+        "details": {
+          "last4": "6253"
+        }
+      }
+    ],
+    "ratings": {
+      "asCustomer": 2.7562299017628233
+    },
+    "createdAt": "2025-03-24T14:28:41.467Z",
+    "updatedAt": "2026-01-05T23:28:45.083Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc607",
+    "email": "customer+rodrigo47@mock.com",
+    "password": "$2a$10$li/Bu2xmLJT46/EwJxIRD.1DkVNoSZotvGP.mRdSXSacA1PbcvvxS",
+    "name": "Rodrigo Lockman",
+    "phone": "871.460.9712 x69823",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/40.jpg",
+    "address": "5010 N Park Street, North Port",
+    "role": "customer",
+    "favorites": [],
+    "paymentMethods": [
+      {
+        "type": "paypal",
+        "details": {
+          "last4": "6392"
+        }
+      }
+    ],
+    "ratings": {
+      "asCustomer": 1.2784387415312266
+    },
+    "createdAt": "2025-09-07T00:55:30.719Z",
+    "updatedAt": "2026-01-06T00:52:13.301Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc608",
+    "email": "customer+hans49@mock.com",
+    "password": "$2a$10$Qo9hM.ScUnTE9nFsZcM0sOR9mLaxub0h6Aax3LFxyk57ek9Myoae2",
+    "name": "Hans Heller",
+    "phone": "1-655-744-5796 x30904",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/2.jpg",
+    "address": "574 Alycia Summit, Gutmannhaven",
+    "role": "customer",
+    "favorites": [],
+    "paymentMethods": [
+      {
+        "type": "paypal",
+        "details": {
+          "last4": "0207"
+        }
+      }
+    ],
+    "ratings": {
+      "asCustomer": 1.4510198474101372
+    },
+    "createdAt": "2025-02-05T07:12:51.878Z",
+    "updatedAt": "2026-01-06T09:00:34.585Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc609",
+    "email": "restaurant+delbert1@mock.com",
+    "password": "$2a$10$ECItbS4gcBXu19H4eODJmOmaB87Gr74nwMtYaZ3ReqrTeFEM2gsXC",
+    "name": "Delbert Kulas",
+    "phone": "273-546-6192 x0681",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/18.jpg",
+    "address": "384 Lilliana Estate, Kiannaville",
+    "role": "restaurant",
+    "restaurant": null,
+    "deliveryZones": [
+      "Lorenzastead",
+      "East Stephanstad"
+    ],
+    "ratings": {
+      "asRestaurant": 1.5360344869994798
+    },
+    "createdAt": "2025-07-02T17:50:55.090Z",
+    "updatedAt": "2026-01-06T04:58:00.725Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc60a",
+    "email": "restaurant+mckenzie2@mock.com",
+    "password": "$2a$10$I7sOY.5M1T0bdgnESVGhfOionkVoK6YGMBRr5jNgd1pxLFaeaj/C.",
+    "name": "Mckenzie Goodwin",
+    "phone": "589.676.6929 x4187",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/23.jpg",
+    "address": "83045 Carmel Rue, Salt Lake City",
+    "role": "restaurant",
+    "restaurant": null,
+    "deliveryZones": [
+      "Obieville",
+      "Samsonhaven"
+    ],
+    "ratings": {
+      "asRestaurant": 1.4053817290927149
+    },
+    "createdAt": "2025-08-11T01:10:46.287Z",
+    "updatedAt": "2026-01-05T21:21:17.343Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc60b",
+    "email": "restaurant+ayden3@mock.com",
+    "password": "$2a$10$.R5OPn9n0OwTiFID8pjtY.G2rIALaxWmnDmOriJIdDifbHN9A3yk.",
+    "name": "Ayden Anderson",
+    "phone": "(496) 609-9256 x714",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/75.jpg",
+    "address": "9530 Blind Lane, Grantport",
+    "role": "restaurant",
+    "restaurant": null,
+    "deliveryZones": [
+      "Cortezborough",
+      "Framimouth"
+    ],
+    "ratings": {
+      "asRestaurant": 1.4556981255545867
+    },
+    "createdAt": "2025-12-22T03:52:24.827Z",
+    "updatedAt": "2026-01-05T23:39:25.015Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc60c",
+    "email": "restaurant+ronny4@mock.com",
+    "password": "$2a$10$XJGisn0F5WK2MsFgF3gJkOwmW94SVyGtPix.5h0zAdeFYH9mknQiC",
+    "name": "Ronny Bartell",
+    "phone": "(384) 455-9654",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/70.jpg",
+    "address": "4353 Emily Shore, Duluth",
+    "role": "restaurant",
+    "restaurant": null,
+    "deliveryZones": [
+      "Tyler",
+      "North Judahborough"
+    ],
+    "ratings": {
+      "asRestaurant": 1.5982001957572605
+    },
+    "createdAt": "2025-07-08T23:18:42.171Z",
+    "updatedAt": "2026-01-05T19:53:39.395Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc60d",
+    "email": "restaurant+dave6@mock.com",
+    "password": "$2a$10$35L5.hdI/6Gxrg7Pe8GwFOsNfGr.tiZAqs9bq3O/KxI5cHtXQG4ai",
+    "name": "Dave Feest",
+    "phone": "673-256-6662 x156",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/56.jpg",
+    "address": "63878 Monahan Route, Kayleightown",
+    "role": "restaurant",
+    "restaurant": null,
+    "deliveryZones": [
+      "East Ilianaworth",
+      "Watsicaworth"
+    ],
+    "ratings": {
+      "asRestaurant": 3.920527960771349
+    },
+    "createdAt": "2025-09-08T22:54:25.099Z",
+    "updatedAt": "2026-01-05T16:34:42.799Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc60e",
+    "email": "restaurant+maeve9@mock.com",
+    "password": "$2a$10$KsWeurN1Z.YhwCjGM/hSruKVZ5NeE6h5pqtjqRLfoobpiLhRSwrEC",
+    "name": "Maeve Lesch",
+    "phone": "512.874.3342",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/85.jpg",
+    "address": "1963 Crist Fall, New Elzafurt",
+    "role": "restaurant",
+    "restaurant": null,
+    "deliveryZones": [
+      "New Nedra",
+      "Lake Josuemouth"
+    ],
+    "ratings": {
+      "asRestaurant": 1.94517551572853
+    },
+    "createdAt": "2025-06-19T14:10:10.590Z",
+    "updatedAt": "2026-01-05T19:11:46.480Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc60f",
+    "email": "restaurant+philip10@mock.com",
+    "password": "$2a$10$KOZ4jCrrgUarCHevEw8vl.88eT.LPT3XQypybTC.tiPGo6N3VbS4i",
+    "name": "Philip Mertz",
+    "phone": "883.414.7888 x66383",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/80.jpg",
+    "address": "77839 Margarette Plain, Cedar Park",
+    "role": "restaurant",
+    "restaurant": null,
+    "deliveryZones": [
+      "North Osborneview",
+      "Bayonne"
+    ],
+    "ratings": {
+      "asRestaurant": 2.5535301167330875
+    },
+    "createdAt": "2025-09-18T07:52:12.291Z",
+    "updatedAt": "2026-01-06T12:06:28.599Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc610",
+    "email": "restaurant+samara11@mock.com",
+    "password": "$2a$10$RypHwC/nRQRZrO42SHyRaOxjsVHFR5JiKkGDPoh6OkVeUN3OTGGGW",
+    "name": "Samara Bartell",
+    "phone": "1-877-569-7106 x13337",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/86.jpg",
+    "address": "25978 Rosella Fork, North Patricia",
+    "role": "restaurant",
+    "restaurant": null,
+    "deliveryZones": [
+      "Poway",
+      "Oak Lawn"
+    ],
+    "ratings": {
+      "asRestaurant": 3.4970177845281465
+    },
+    "createdAt": "2025-12-22T11:10:43.161Z",
+    "updatedAt": "2026-01-06T07:18:03.962Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc611",
+    "email": "restaurant+tabitha12@mock.com",
+    "password": "$2a$10$m18dl5/1GyeKx6f4nSgbd.ZO.47tVrdkFnhopDDHBkmKatWy3YyXm",
+    "name": "Tabitha Runolfsson",
+    "phone": "1-710-424-5913",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/21.jpg",
+    "address": "845 W Elm Street, Carterberg",
+    "role": "restaurant",
+    "restaurant": null,
+    "deliveryZones": [
+      "Collierland",
+      "Port Arthur"
+    ],
+    "ratings": {
+      "asRestaurant": 4.127285269564128
+    },
+    "createdAt": "2025-04-28T02:29:11.074Z",
+    "updatedAt": "2026-01-06T07:06:37.674Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc612",
+    "email": "restaurant+amir13@mock.com",
+    "password": "$2a$10$PVWOrxuTfiN3.2J.yhDEDuxSHF1gASAVekLOxyWzRTQ80dScY3dgq",
+    "name": "Amir Klein",
+    "phone": "348.498.2115 x79816",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/96.jpg",
+    "address": "4442 E Franklin Street, Kihnstead",
+    "role": "restaurant",
+    "restaurant": null,
+    "deliveryZones": [
+      "Fort Jane",
+      "Langoshside"
+    ],
+    "ratings": {
+      "asRestaurant": 4.910969184904287
+    },
+    "createdAt": "2025-11-15T00:03:47.366Z",
+    "updatedAt": "2026-01-05T21:52:52.329Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc613",
+    "email": "restaurant+rickie14@mock.com",
+    "password": "$2a$10$7KyVXGYGV8hCxyCftMqi1eRwjY0S.JCBe9awSH9dKgZwJ366nPdtO",
+    "name": "Rickie Marks",
+    "phone": "(809) 241-5418",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/35.jpg",
+    "address": "15445 E 11th Street, Deondrestead",
+    "role": "restaurant",
+    "restaurant": null,
+    "deliveryZones": [
+      "Jacobsonberg",
+      "St. Louis Park"
+    ],
+    "ratings": {
+      "asRestaurant": 3.717529828563036
+    },
+    "createdAt": "2025-05-30T06:28:35.421Z",
+    "updatedAt": "2026-01-05T23:25:14.094Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc614",
+    "email": "restaurant+berenice16@mock.com",
+    "password": "$2a$10$kUnryhJ1qzOnvinUuI.ApeHOH3qqwXAvTZNtcDBcri2iTm6Ip828G",
+    "name": "Berenice Johns",
+    "phone": "695-555-4463 x533",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/0.jpg",
+    "address": "3646 Amely Mountain, Port Coty",
+    "role": "restaurant",
+    "restaurant": null,
+    "deliveryZones": [
+      "Fort Alyssonfort",
+      "Altenwerthworth"
+    ],
+    "ratings": {
+      "asRestaurant": 3.9917776267344816
+    },
+    "createdAt": "2025-03-26T00:52:02.211Z",
+    "updatedAt": "2026-01-05T22:40:32.865Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc615",
+    "email": "restaurant+phyllis17@mock.com",
+    "password": "$2a$10$WvYjjkm7XwyRWSXNLGdptO2L6KzpWe5tZhmHRom8bZ.s658A2Xzbu",
+    "name": "Phyllis Murazik",
+    "phone": "589-342-0456 x76366",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/31.jpg",
+    "address": "54726 Bryce Lodge, Hilllside",
+    "role": "restaurant",
+    "restaurant": null,
+    "deliveryZones": [
+      "South Mack",
+      "Watsicastead"
+    ],
+    "ratings": {
+      "asRestaurant": 4.492726177105537
+    },
+    "createdAt": "2025-04-01T04:22:41.298Z",
+    "updatedAt": "2026-01-06T09:51:38.767Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc616",
+    "email": "restaurant+hayley19@mock.com",
+    "password": "$2a$10$7pFrj1xdXistdz6iOGUfZ.xd17eVlmTwQDKbl6mnCLePrKKceHFgm",
+    "name": "Hayley Carroll",
+    "phone": "224.536.6595 x29803",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/44.jpg",
+    "address": "436 Jarrell Divide, Ullrichview",
+    "role": "restaurant",
+    "restaurant": null,
+    "deliveryZones": [
+      "Cruickshankfurt",
+      "Fort Nicolette"
+    ],
+    "ratings": {
+      "asRestaurant": 3.242950199133953
+    },
+    "createdAt": "2025-09-11T14:48:32.339Z",
+    "updatedAt": "2026-01-05T18:17:13.397Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc617",
+    "email": "delivery+benjamin8@mock.com",
+    "password": "$2a$10$h87m12bI/MLkQDvfze3pUe1Mb7vDObJvZkSbPmg2h3xSfdC7/sOxO",
+    "name": "Benjamin Simonis-Howell",
+    "phone": "1-966-821-6465 x8996",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/98.jpg",
+    "address": "5392 E 5th Street, New Jade",
+    "role": "delivery",
+    "deliveryZones": [
+      "Lake Eryn",
+      "Lake Demetriusfield"
+    ],
+    "isActive": true,
+    "ratings": {
+      "asDelivery": 4.132583557582758
+    },
+    "vehicleType": "bike",
+    "createdAt": "2025-09-02T17:33:14.017Z",
+    "updatedAt": "2026-01-05T14:16:16.127Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc618",
+    "email": "delivery+itzel9@mock.com",
+    "password": "$2a$10$SXh72ukpTwWLKsNFypomCO.I3PDensMOhJWinTVZEFUhgClf9TJUq",
+    "name": "Itzel Lind",
+    "phone": "257.796.0028 x35885",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/20.jpg",
+    "address": "36776 Dare Pass, Bossier City",
+    "role": "delivery",
+    "deliveryZones": [
+      "North Gladyscester",
+      "Emilshire"
+    ],
+    "isActive": false,
+    "ratings": {
+      "asDelivery": 2.2688649224105606
+    },
+    "vehicleType": "car",
+    "createdAt": "2025-03-04T19:03:40.157Z",
+    "updatedAt": "2026-01-05T19:45:07.046Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc619",
+    "email": "delivery+aileen10@mock.com",
+    "password": "$2a$10$CYydD4W2hEPSVHKW.BxGXulcQDn7d2S1HzbU6n58GuX0ndEGQO2iG",
+    "name": "Aileen Bednar",
+    "phone": "1-930-695-2565",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/33.jpg",
+    "address": "86775 Auer Plaza, Downey",
+    "role": "delivery",
+    "deliveryZones": [
+      "Corpus Christi",
+      "Skokie"
+    ],
+    "isActive": false,
+    "ratings": {
+      "asDelivery": 2.2172851563272227
+    },
+    "vehicleType": "scooter",
+    "createdAt": "2025-07-14T00:55:52.439Z",
+    "updatedAt": "2026-01-06T02:20:31.582Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc61a",
+    "email": "delivery+brycen13@mock.com",
+    "password": "$2a$10$OxIJBGxvZXm5VupX/8DSoukc4zHYZE5M4a5ZBW7m4znSKLjd4Smhe",
+    "name": "Brycen Herzog",
+    "phone": "696-336-7204 x25018",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/78.jpg",
+    "address": "1256 Keanu Locks, Sengerside",
+    "role": "delivery",
+    "deliveryZones": [
+      "Abernathymouth",
+      "Pfannerstillton"
+    ],
+    "isActive": true,
+    "ratings": {
+      "asDelivery": 3.4314116860517334
+    },
+    "vehicleType": "car",
+    "createdAt": "2025-02-01T16:32:58.916Z",
+    "updatedAt": "2026-01-06T07:41:30.510Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc61b",
+    "email": "delivery+hope15@mock.com",
+    "password": "$2a$10$NIVQ/bpZPjT8DirWoAGmNOqWH0s5vBzVdg5lQKKDN9YcGNvd1F2jm",
+    "name": "Hope Windler",
+    "phone": "480.638.6078 x66918",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/10.jpg",
+    "address": "7967 S Broadway, New Laurymouth",
+    "role": "delivery",
+    "deliveryZones": [
+      "Port Alverta",
+      "Dickinsonfield"
+    ],
+    "isActive": true,
+    "ratings": {
+      "asDelivery": 1.7780813914409732
+    },
+    "vehicleType": "bike",
+    "createdAt": "2025-02-22T16:42:40.852Z",
+    "updatedAt": "2026-01-05T20:27:19.469Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc61c",
+    "email": "delivery+serenity17@mock.com",
+    "password": "$2a$10$xK7qEuQ16yyIPHJx90E6n.cxc86jCz0M06CYy73s./rOVcB6HgR1a",
+    "name": "Serenity Erdman",
+    "phone": "(818) 237-7451",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/71.jpg",
+    "address": "53670 Allie Islands, Baileychester",
+    "role": "delivery",
+    "deliveryZones": [
+      "Lompoc",
+      "Kuphalfort"
+    ],
+    "isActive": true,
+    "ratings": {
+      "asDelivery": 4.495298304319123
+    },
+    "vehicleType": "bike",
+    "createdAt": "2025-12-12T10:41:28.066Z",
+    "updatedAt": "2026-01-06T00:56:34.829Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc61d",
+    "email": "delivery+dameon21@mock.com",
+    "password": "$2a$10$kjNDMU0WCThorjPEuoukdeJ6jAs6n4eoWV6uVlvQcvE4XgURwmWqa",
+    "name": "Dameon Rohan",
+    "phone": "1-615-613-2286 x9877",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/65.jpg",
+    "address": "4752 Breitenberg Wall, New Hipolitoport",
+    "role": "delivery",
+    "deliveryZones": [
+      "Brucemouth",
+      "South Brady"
+    ],
+    "isActive": false,
+    "ratings": {
+      "asDelivery": 4.5288566893039786
+    },
+    "vehicleType": "car",
+    "createdAt": "2025-07-31T00:19:40.942Z",
+    "updatedAt": "2026-01-06T06:24:29.894Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc61e",
+    "email": "delivery+brooke23@mock.com",
+    "password": "$2a$10$p/mKp8h/JgAnzsbxMpUjru04SByXXn134bq66.IMGcfUz8aCe9CRC",
+    "name": "Brooke Jenkins",
+    "phone": "911.226.6241 x4364",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/74.jpg",
+    "address": "561 Larson Extension, Mayertbury",
+    "role": "delivery",
+    "deliveryZones": [
+      "Wardview",
+      "Fort Lorenaview"
+    ],
+    "isActive": false,
+    "ratings": {
+      "asDelivery": 4.23387328090274
+    },
+    "vehicleType": "bike",
+    "createdAt": "2025-02-05T12:25:58.511Z",
+    "updatedAt": "2026-01-06T06:53:35.924Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc61f",
+    "email": "delivery+deja24@mock.com",
+    "password": "$2a$10$x2tG45Jj2lrBUTqxH0Si1eCr7pMmzI5207Eolq6pBw09rGlVjJA1S",
+    "name": "Deja Grimes",
+    "phone": "544.403.8655 x2392",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/77.jpg",
+    "address": "9643 Frami Meadows, Stephenstead",
+    "role": "delivery",
+    "deliveryZones": [
+      "Mannland",
+      "East Palma"
+    ],
+    "isActive": true,
+    "ratings": {
+      "asDelivery": 4.088489072237599
+    },
+    "vehicleType": "scooter",
+    "createdAt": "2025-06-23T21:26:20.286Z",
+    "updatedAt": "2026-01-05T14:16:50.624Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc620",
+    "email": "delivery+ryan26@mock.com",
+    "password": "$2a$10$4CnuuM2IyvC2tYNn.zlJQeQniuOB9qfhHBCC2sgyaGKOfAiOqH0Im",
+    "name": "Ryan Kessler",
+    "phone": "(675) 365-9951 x01224",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/43.jpg",
+    "address": "447 Kutch Inlet, Tabithaport",
+    "role": "delivery",
+    "deliveryZones": [
+      "South Sonnyworth",
+      "Fairfield"
+    ],
+    "isActive": false,
+    "ratings": {
+      "asDelivery": 2.7577005115761364
+    },
+    "vehicleType": "bike",
+    "createdAt": "2025-12-17T01:33:35.303Z",
+    "updatedAt": "2026-01-06T11:56:18.400Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc621",
+    "email": "delivery+owen27@mock.com",
+    "password": "$2a$10$pLFJA2a7079HzNYVUpu59Od.wfNkVYRHwTpBK8TyYZZKa/Yncrvym",
+    "name": "Owen Kris-Monahan",
+    "phone": "(371) 529-7787 x25880",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/female/512/24.jpg",
+    "address": "72076 Prospect Road, Victorville",
+    "role": "delivery",
+    "deliveryZones": [
+      "Port Tracey",
+      "Fort Shawnaberg"
+    ],
+    "isActive": true,
+    "ratings": {
+      "asDelivery": 1.094935687326084
+    },
+    "vehicleType": "bike",
+    "createdAt": "2025-05-10T14:36:03.123Z",
+    "updatedAt": "2026-01-06T07:47:40.545Z"
+  },
+  {
+    "_id": "695d17e1ed0284bc20edc622",
+    "email": "delivery+floy28@mock.com",
+    "password": "$2a$10$mZSIOeMG8Lr8ygtAdOwphubqeez5tvhs/vM2IvDBiPJWsDab46viW",
+    "name": "Floy Schmidt",
+    "phone": "597-365-2195 x2970",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/72.jpg",
+    "address": "751 Rogelio Shoals, Kundetown",
+    "role": "delivery",
+    "deliveryZones": [
+      "Fort Dallasbury",
+      "Grand Junction"
+    ],
+    "isActive": false,
+    "ratings": {
+      "asDelivery": 2.3835445306485696
+    },
+    "vehicleType": "car",
+    "createdAt": "2025-11-25T20:38:02.442Z",
+    "updatedAt": "2026-01-05T18:29:55.847Z"
+  },
+  {
+    "_id": "67c62fae5a9b19466ee230d7",
+    "email": "demo@customer.com",
+    "password": "$2a$10$.Z5jPLDnta5lsqF2R0TgtOsBGWEnkfVWCCTGqe0MEXBWKyxX4ZZJG",
+    "name": "Demo Customer",
+    "phone": "+33123456789",
+    "image": "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/42.jpg",
+    "address": "456 Demo Street, Paris",
+    "role": "customer",
+    "isActive": true,
+    "favorites": [
+      "695d17d9ed0284bc20edc5b7",
+      "695d17d9ed0284bc20edc5c1",
+      "695d17d9ed0284bc20edc5c0"
+    ],
+    "paymentMethods": [
+      {
+        "type": "card",
+        "details": {
+          "last4": "1234",
+          "brand": "mastercard"
+        }
+      }
+    ],
+    "ratings": {
+      "asCustomer": 4.5
+    },
+    "createdAt": "2026-01-09T12:11:26.856Z",
+    "updatedAt": "2026-01-20T16:54:30.853Z",
+    "__v": 19,
+    "deliveryZones": [],
+    "deviceToken": "",
+    "orders": []
+  }
+]

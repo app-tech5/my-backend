@@ -75,3 +75,4 @@ async function backupPromotions() {
 // Exécuter le script
 backupPromotions();
 
+
