@@ -111,24 +111,49 @@ const genericController = (Model) => {
     },
 
     update: async (req, res) => {
-      // try {
-      //   if (req.body.isDefault) {
-      //     await Model.updateMany(
-      //       { _id: { $ne: req.params.id } },
-      //       { isDefault: false }
-      //     );
-      //   }
-      //   const updatedItem = await Model.findByIdAndUpdate(
-      //     req.params.id,
-      //     req.body,
-      //     { new: true }
-      //   );
-      //   if (!updatedItem) return res.status(404).json({ message: "Not Found" });
-      //   console.log(updatedItem, req.params.id);
-      //   res.json(updatedItem);
-      // } catch (error) {
-      //   res.status(500).json({ error: error.message });
-      // }
+      try {
+        // Validation spéciale pour les commandes - seuls certains statuts peuvent être mis à jour
+        if (Model.modelName === 'Order') {
+          const allowedStatusUpdates = {
+            'pending': ['cancelled'], // Les commandes en attente peuvent être annulées
+            // Autres règles de validation peuvent être ajoutées ici
+          };
+
+          const currentOrder = await Model.findById(req.params.id);
+          if (!currentOrder) {
+            return res.status(404).json({ message: "Order not found" });
+          }
+
+          // Vérifier que seul l'utilisateur propriétaire peut modifier sa commande
+          if (currentOrder.user.toString() !== req.user.id) {
+            return res.status(403).json({ message: "You can only modify your own orders" });
+          }
+
+          // Validation du changement de statut
+          if (req.body.status && req.body.status !== currentOrder.status) {
+            const currentStatus = currentOrder.status;
+            const newStatus = req.body.status;
+
+            if (allowedStatusUpdates[currentStatus] && !allowedStatusUpdates[currentStatus].includes(newStatus)) {
+              return res.status(400).json({
+                message: `Cannot change order status from ${currentStatus} to ${newStatus}`
+              });
+            }
+          }
+        }
+
+        const updatedItem = await Model.findByIdAndUpdate(
+          req.params.id,
+          req.body,
+          { new: true }
+        );
+        if (!updatedItem) return res.status(404).json({ message: "Not Found" });
+        console.log(`✅ ${Model.modelName} updated:`, req.params.id);
+        res.json(updatedItem);
+      } catch (error) {
+        console.error(`❌ ${Model.modelName} update error:`, error);
+        res.status(500).json({ error: error.message });
+      }
     },
 
     delete: async (req, res) => {

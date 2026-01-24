@@ -72,3 +72,4 @@ async function restoreCollections(backupTimestamp) {
 // Récupérer le timestamp depuis les arguments de ligne de commande
 const backupTimestamp = process.argv[2];
 restoreCollections(backupTimestamp);
+

@@ -46,3 +46,4 @@ node scripts/restore-collections.js 2024-01-15T10-30-00
 - La restauration **écrase complètement** les collections existantes
 - Assurez-vous d'avoir une sauvegarde récente avant toute modification importante
 - Testez la restauration sur un environnement de développement d'abord
+
