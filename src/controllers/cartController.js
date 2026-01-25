@@ -22,6 +22,19 @@ const cartController = {
         await cart.save();
       }
 
+      // Corriger les items qui n'ont pas d'id
+      cart.items = cart.items.map(item => {
+        if (!item.id) {
+          item.id = item._id || item.uniqueKey || `item_${Date.now()}_${Math.random()}`;
+        }
+        return item;
+      });
+
+      // Sauvegarder si des corrections ont été faites
+      if (cart.isModified()) {
+        await cart.save();
+      }
+
       res.json({
         _id: cart._id,
         user: cart.user,
@@ -58,15 +71,23 @@ const cartController = {
         });
       }
 
+      // Validation des données requises
+      if (!itemData.name || !itemData.image || !itemData.price) {
+        throw new Error('Item data is incomplete: name, image, and price are required');
+      }
+
       // Préparer l'item avec les champs requis
+      const itemId = itemData.id || itemData._id || itemData.uniqueKey || `item_${Date.now()}_${Math.random()}`;
+
       const preparedItem = {
-        id: itemData.id || itemData._id,
+        id: itemId,
         name: itemData.name,
         image: itemData.image,
         price: itemData.price,
+        currency: itemData.currency || 'EUR',
         quantity: itemData.quantity || 1,
         totalPrice: itemData.totalPrice || itemData.price,
-        uniqueKey: itemData.uniqueKey,
+        uniqueKey: itemData.uniqueKey || itemId,
         restaurantName: itemData.restaurantName,
         restaurantImage: itemData.restaurantImage,
         extras: itemData.extras || [],
@@ -110,14 +131,14 @@ const cartController = {
         return res.status(401).json({ message: "Authentication required" });
       }
 
-      const { uniqueKey } = req.params;
+      const { itemId } = req.params; // Redux envoie l'ID de l'item
 
       const cart = await Cart.findByUser(userId);
       if (!cart) {
         return res.status(404).json({ message: "Cart not found" });
       }
 
-      await cart.removeItem(uniqueKey);
+      await cart.removeItem(itemId);
 
       res.json({
         _id: cart._id,
@@ -141,7 +162,7 @@ const cartController = {
         return res.status(401).json({ message: "Authentication required" });
       }
 
-      const { uniqueKey } = req.params;
+      const { itemId } = req.params; // Redux envoie l'ID de l'item
       const itemData = req.body;
 
       const cart = await Cart.findByUser(userId);
@@ -149,7 +170,7 @@ const cartController = {
         return res.status(404).json({ message: "Cart not found" });
       }
 
-      await cart.updateItem(uniqueKey, itemData);
+      await cart.updateItem(itemId, itemData);
 
       res.json({
         _id: cart._id,
@@ -262,15 +283,24 @@ const cartController = {
             );
             cart.items[existingItemIndex].totalPrice = cart.items[existingItemIndex].quantity * (cart.items[existingItemIndex].price || 0);
           } else {
+            // Validation des données requises
+            if (!localItem.name || !localItem.image || !localItem.price) {
+              console.warn('Skipping invalid item in sync:', localItem);
+              return; // Skip invalid items
+            }
+
             // Préparer l'item pour le backend
+            const itemId = localItem.id || localItem._id || localItem.uniqueKey || `item_${Date.now()}_${Math.random()}`;
+
             const preparedItem = {
-              id: localItem.id || localItem._id,
+              id: itemId,
               name: localItem.name,
               image: localItem.image,
               price: localItem.price,
+              currency: localItem.currency || 'EUR',
               quantity: localItem.quantity || 1,
               totalPrice: localItem.totalPrice || localItem.price,
-              uniqueKey: localItem.uniqueKey,
+              uniqueKey: localItem.uniqueKey || itemId,
               restaurantName: localItem.restaurantName,
               restaurantImage: localItem.restaurantImage,
               extras: localItem.extras || [],

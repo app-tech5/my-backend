@@ -14,7 +14,7 @@ const orderSchema = new mongoose.Schema(
             select: "name phone image address"
         }
      },
-     driver: { type: mongoose.Schema.Types.ObjectId, ref: "Driver", required: true, 
+     driver: { type: mongoose.Schema.Types.ObjectId, ref: "Driver",
     //   autopopulate: {
     //     select: "name phone image address"
     // }

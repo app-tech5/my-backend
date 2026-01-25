@@ -105,32 +105,45 @@ cartSchema.statics.findBySession = function(sessionId) {
   return this.findOne({ sessionId });
 };
 
+// Fonction utilitaire pour corriger les items sans id
+const fixItemsWithoutId = (items) => {
+  return items.map(item => {
+    if (!item.id) {
+      item.id = item._id || item.uniqueKey || `item_${Date.now()}_${Math.random()}`;
+    }
+    return item;
+  });
+};
+
 // Méthodes d'instance
 cartSchema.methods.addItem = function(itemData) {
-  // Vérifier si l'item existe déjà
-  const existingItemIndex = this.items.findIndex(item =>
-    item.uniqueKey === itemData.uniqueKey
-  );
+  // Corriger automatiquement les items existants qui n'ont pas d'id
+  this.items = fixItemsWithoutId(this.items);
 
-  if (existingItemIndex >= 0) {
-    // Si l'item existe, augmenter la quantité
-    this.items[existingItemIndex].quantity += 1;
-    this.items[existingItemIndex].totalPrice += itemData.totalPrice;
-  } else {
-    // Sinon, ajouter le nouvel item
-    this.items.push(itemData);
+  // Redux ajoute chaque item individuellement, même pour les quantités
+  // On ajoute simplement l'item tel quel
+  this.items.push(itemData);
+  return this.save();
+};
+
+cartSchema.methods.removeItem = function(itemId) {
+  // Corriger automatiquement les items existants qui n'ont pas d'id
+  this.items = fixItemsWithoutId(this.items);
+
+  // Redux supprime par ID (le premier item trouvé avec cet ID)
+  const itemIndex = this.items.findIndex(item => item.id === itemId);
+  if (itemIndex >= 0) {
+    this.items.splice(itemIndex, 1);
   }
-
   return this.save();
 };
 
-cartSchema.methods.removeItem = function(uniqueKey) {
-  this.items = this.items.filter(item => item.uniqueKey !== uniqueKey);
-  return this.save();
-};
+cartSchema.methods.updateItem = function(itemId, itemData) {
+  // Corriger automatiquement les items existants qui n'ont pas d'id
+  this.items = fixItemsWithoutId(this.items);
 
-cartSchema.methods.updateItem = function(uniqueKey, itemData) {
-  const itemIndex = this.items.findIndex(item => item.uniqueKey === uniqueKey);
+  // Redux met à jour par ID
+  const itemIndex = this.items.findIndex(item => item.id === itemId);
   if (itemIndex >= 0) {
     this.items[itemIndex] = { ...this.items[itemIndex], ...itemData };
   }
@@ -138,11 +151,16 @@ cartSchema.methods.updateItem = function(uniqueKey, itemData) {
 };
 
 cartSchema.methods.clearRestaurant = function(restaurantName) {
+  // Corriger automatiquement les items existants qui n'ont pas d'id
+  this.items = fixItemsWithoutId(this.items);
+
+  // Redux garde seulement les items qui n'ont pas ce restaurantName
   this.items = this.items.filter(item => item.restaurantName !== restaurantName);
   return this.save();
 };
 
 cartSchema.methods.clear = function() {
+  // Pas besoin de correction ici car on vide le tableau
   this.items = [];
   return this.save();
 };
@@ -152,7 +170,7 @@ cartSchema.methods.getTotal = function() {
 };
 
 cartSchema.methods.getItemCount = function() {
-  return this.items.reduce((count, item) => count + item.quantity, 0);
+  return this.items.length; // Chaque item représente une quantité de 1
 };
 
 module.exports = mongoose.model("Cart", cartSchema);
