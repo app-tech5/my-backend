@@ -58,8 +58,35 @@ const cartController = {
         });
       }
 
+      // Préparer l'item avec les champs requis
+      const preparedItem = {
+        id: itemData.id || itemData._id,
+        name: itemData.name,
+        image: itemData.image,
+        price: itemData.price,
+        quantity: itemData.quantity || 1,
+        totalPrice: itemData.totalPrice || itemData.price,
+        uniqueKey: itemData.uniqueKey,
+        restaurantName: itemData.restaurantName,
+        restaurantImage: itemData.restaurantImage,
+        extras: itemData.extras || [],
+        variants: itemData.variants || [],
+        addedAt: new Date()
+      };
+
+      // Ajouter les références si disponibles
+      if (itemData.restaurant && itemData.restaurant._id) {
+        preparedItem.restaurant = itemData.restaurant._id;
+      }
+
+      // Déterminer le type d'item si possible
+      if (itemData.itemType) {
+        preparedItem.itemType = itemData.itemType;
+        preparedItem.item = itemData.item;
+      }
+
       // Ajouter l'item
-      await cart.addItem(itemData);
+      await cart.addItem(preparedItem);
 
       res.json({
         _id: cart._id,
@@ -233,10 +260,33 @@ const cartController = {
               cart.items[existingItemIndex].quantity,
               localItem.quantity || 1
             );
-            cart.items[existingItemIndex].totalPrice = cart.items[existingItemIndex].quantity * cart.items[existingItemIndex].price;
+            cart.items[existingItemIndex].totalPrice = cart.items[existingItemIndex].quantity * (cart.items[existingItemIndex].price || 0);
           } else {
-            // Sinon, ajouter le nouvel item
-            cart.items.push(localItem);
+            // Préparer l'item pour le backend
+            const preparedItem = {
+              id: localItem.id || localItem._id,
+              name: localItem.name,
+              image: localItem.image,
+              price: localItem.price,
+              quantity: localItem.quantity || 1,
+              totalPrice: localItem.totalPrice || localItem.price,
+              uniqueKey: localItem.uniqueKey,
+              restaurantName: localItem.restaurantName,
+              restaurantImage: localItem.restaurantImage,
+              extras: localItem.extras || [],
+              variants: localItem.variants || []
+            };
+
+            if (localItem.restaurant && localItem.restaurant._id) {
+              preparedItem.restaurant = localItem.restaurant._id;
+            }
+
+            if (localItem.itemType) {
+              preparedItem.itemType = localItem.itemType;
+              preparedItem.item = localItem.item;
+            }
+
+            cart.items.push(preparedItem);
           }
         }
       }

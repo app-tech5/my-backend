@@ -1,15 +1,16 @@
 const mongoose = require("mongoose");
 
 const cartItemSchema = new mongoose.Schema({
-  // Référence à l'item (menu ou produit)
+  // Informations compatibles avec les données du frontend
+  id: { type: String, required: true }, // ID de l'item dans le frontend
+
+  // Référence à l'item (menu ou produit) - optionnel pour compatibilité
   item: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
     refPath: "itemType"
   },
   itemType: {
     type: String,
-    required: true,
     enum: ["Menu", "Product"]
   },
 
@@ -22,18 +23,18 @@ const cartItemSchema = new mongoose.Schema({
   // Quantité
   quantity: { type: Number, required: true, min: 1, default: 1 },
 
-  // Extras et variants
+  // Extras et variants - rendus optionnels pour compatibilité
   extras: [{
     productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
-    name: { type: String, required: true },
-    price: { type: Number, required: true },
-    quantity: { type: Number, required: true, default: 1 }
+    name: { type: String },
+    price: { type: Number },
+    quantity: { type: Number, default: 1 }
   }],
   variants: [{
-    name: { type: String, required: true },
-    price: { type: Number, required: true },
-    extra: { type: Number, required: true },
-    size: { type: String, required: true }
+    name: { type: String },
+    price: { type: Number },
+    extra: { type: Number },
+    size: { type: String }
   }],
 
   // Prix calculé
@@ -45,8 +46,7 @@ const cartItemSchema = new mongoose.Schema({
   // Informations du restaurant
   restaurant: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Restaurant",
-    required: true
+    ref: "Restaurant"
   },
   restaurantName: { type: String, required: true },
   restaurantImage: { type: String },
