@@ -1,11 +1,9 @@
 const express = require("express");
 const cartController = require("../controllers/cartController");
-const authMiddleware = require("../middleware/auth");
 
 const router = express.Router();
 
 // Toutes les routes du panier nécessitent une authentification
-router.use(authMiddleware);
 
 // Routes du panier
 router.get("/", cartController.getCart);
