@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
+const cartRoutes = require('./routes/cartRoutes');
 const languageRoutes = require('./routes/languageRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 const currencyRoutes = require('./routes/currencyRoutes');
@@ -57,6 +58,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api", authMiddleware);
 
 app.use('/api/users', userRoutes);
+app.use('/api/cart', cartRoutes);
 // app.use('/api/languages', languageRoutes);
 // app.use('/api/settings', settingsRoutes);
 // app.use('/api/currencies', currencyRoutes);
