@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const PaymentMethod = require('../models/PaymentMethod');
 const i18n = require('../config/i18n');
 
 const router = express.Router();
@@ -216,6 +217,184 @@ router.get('/favorites', async (req, res) => {
     } catch (error) {
         console.error('Get favorites error:', error);
         res.status(500).json({ message: res.__("server_error") });
+    }
+});
+
+// GESTION DES ADRESSES
+
+// Récupérer les adresses de l'utilisateur
+router.get('/:userId/addresses', async (req, res) => {
+    try {
+        const userId = req.params.userId;
+
+        // Vérifier que l'utilisateur existe
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Pour l'instant, retourner seulement l'adresse principale de l'utilisateur
+        // TODO: Implémenter un modèle Address séparé si nécessaire
+        const addresses = [];
+
+        if (user.address) {
+            addresses.push({
+                id: 'user_default',
+                type: 'home',
+                name: 'My Address',
+                address: user.address,
+                city: '',
+                postalCode: '',
+                country: 'France',
+                isDefault: true,
+                coordinates: user.location ? {
+                    lat: user.location.latitude,
+                    lng: user.location.longitude
+                } : null
+            });
+        }
+
+        res.json(addresses);
+
+    } catch (error) {
+        console.error('Get addresses error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// GESTION DES MÉTHODES DE PAIEMENT
+
+// Récupérer les méthodes de paiement de l'utilisateur
+router.get('/:userId/payment-methods', async (req, res) => {
+    try {
+        const userId = req.params.userId;
+
+        // Vérifier que l'utilisateur existe
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Récupérer les méthodes de paiement de l'utilisateur
+        const paymentMethods = await PaymentMethod.find({ user: userId, isActive: true });
+
+        res.json(paymentMethods);
+
+    } catch (error) {
+        console.error('Get payment methods error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Ajouter une méthode de paiement
+router.post('/:userId/payment-methods', async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const paymentData = req.body;
+
+        // Vérifier que l'utilisateur existe
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Si c'est la méthode par défaut, désactiver les autres
+        if (paymentData.isDefault) {
+            await PaymentMethod.updateMany(
+                { user: userId },
+                { $set: { isDefault: false } }
+            );
+        }
+
+        // Créer la nouvelle méthode de paiement
+        const paymentMethod = new PaymentMethod({
+            ...paymentData,
+            user: userId
+        });
+
+        await paymentMethod.save();
+
+        res.status(201).json({
+            success: true,
+            paymentMethod,
+            message: 'Payment method added successfully'
+        });
+
+    } catch (error) {
+        console.error('Add payment method error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Supprimer une méthode de paiement
+router.delete('/:userId/payment-methods/:paymentMethodId', async (req, res) => {
+    try {
+        const { userId, paymentMethodId } = req.params;
+
+        // Vérifier que l'utilisateur existe
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Supprimer la méthode de paiement
+        const paymentMethod = await PaymentMethod.findOneAndDelete({
+            _id: paymentMethodId,
+            user: userId
+        });
+
+        if (!paymentMethod) {
+            return res.status(404).json({ message: 'Payment method not found' });
+        }
+
+        res.json({
+            success: true,
+            message: 'Payment method deleted successfully'
+        });
+
+    } catch (error) {
+        console.error('Delete payment method error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Définir une méthode de paiement par défaut
+router.put('/:userId/payment-methods/:paymentMethodId/default', async (req, res) => {
+    try {
+        const { userId, paymentMethodId } = req.params;
+
+        // Vérifier que l'utilisateur existe
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Désactiver toutes les méthodes par défaut
+        await PaymentMethod.updateMany(
+            { user: userId },
+            { $set: { isDefault: false } }
+        );
+
+        // Activer la méthode sélectionnée comme défaut
+        const paymentMethod = await PaymentMethod.findOneAndUpdate(
+            { _id: paymentMethodId, user: userId },
+            { $set: { isDefault: true } },
+            { new: true }
+        );
+
+        if (!paymentMethod) {
+            return res.status(404).json({ message: 'Payment method not found' });
+        }
+
+        res.json({
+            success: true,
+            paymentMethod,
+            message: 'Payment method set as default successfully'
+        });
+
+    } catch (error) {
+        console.error('Set default payment method error:', error);
+        res.status(500).json({ message: 'Server error' });
     }
 });
 
