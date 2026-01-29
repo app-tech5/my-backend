@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
+const driverRoutes = require('./routes/driverRoutes');
 const cartRoutes = require('./routes/cartRoutes');
 const languageRoutes = require('./routes/languageRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
@@ -52,11 +53,12 @@ app.use(express.json());
 // app.use(cors({ origin: 'https://good-foods.digitaldienste.fr', credentials: true }));
 app.use(cookieParser());
 
-app.use("/api/auth", authRoutes); 
+app.use("/api/auth", authRoutes);
 
 // Appliquer `authMiddleware` à toutes les routes API
 app.use("/api", authMiddleware);
 
+app.use('/api/drivers', driverRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/cart', cartRoutes);
 // app.use('/api/languages', languageRoutes);
