@@ -12,6 +12,7 @@ const settingsRoutes = require('./routes/settingsRoutes');
 const currencyRoutes = require('./routes/currencyRoutes');
 const uploadRoutes = require("./routes/uploadRoutes");
 const productRoutes = require("./routes/productRoutes");
+const restaurantRoutes = require("./routes/restaurantRoutes");
 const http = require('http');
 const cleanupRouter = require('./routes/cleanup');
 
@@ -65,6 +66,7 @@ app.use('/api/cart', cartRoutes);
 // app.use('/api/settings', settingsRoutes);
 // app.use('/api/currencies', currencyRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/restaurant", restaurantRoutes);
 app.use("/api/resource", genericRoutes);
 app.use("/api/upload", uploadRoutes);
 
