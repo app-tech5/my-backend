@@ -4,6 +4,7 @@ const Restaurant = require('../models/Restaurant');
 const Order = require('../models/Order');
 const Report = require('../models/Report');
 const User = require('../models/User');
+const Menu = require('../models/Menu');
 
 const router = express.Router();
 
@@ -219,7 +220,7 @@ router.get('/orders', async (req, res) => {
     }
 
     const orders = await Order.find(filter)
-      .populate('customer', 'name phone')
+      .populate('user', 'name phone')
       .sort({ createdAt: -1 })
       .limit(50); // Limiter à 50 commandes récentes
 
@@ -399,14 +400,190 @@ router.put('/orders/:orderId/status', async (req, res) => {
 // GET /api/restaurant/menu - Récupérer le menu du restaurant
 router.get('/menu', async (req, res) => {
   try {
-    // Pour l'instant, retourner un menu vide ou simulé
-    // TODO: Implémenter la gestion du menu quand le modèle sera prêt
+    const restaurantId = req.restaurant._id;
+
+    // Récupérer tous les éléments de menu pour ce restaurant
+    const menuItems = await Menu.find({ restaurant: restaurantId })
+      .populate('restaurant', 'name')
+      .sort({ created_at: -1 }); // Plus récent en premier
+
+    console.log(`Récupération du menu pour le restaurant ${req.restaurant.name}: ${menuItems.length} éléments trouvés`);
+
     res.json({
       success: true,
-      data: []
+      data: menuItems
     });
   } catch (error) {
     console.error('Erreur récupération menu restaurant:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur serveur'
+    });
+  }
+});
+
+// POST /api/restaurant/menu - Ajouter un élément au menu
+router.post('/menu', async (req, res) => {
+  try {
+    const restaurantId = req.restaurant._id;
+    const { name, description, price, image, preparation_time, products, discount, availability } = req.body;
+
+    // Validation des champs requis
+    if (!name || !price || !image) {
+      return res.status(400).json({
+        success: false,
+        message: 'Nom, prix et image sont requis'
+      });
+    }
+
+    // Créer le nouvel élément de menu
+    const newMenuItem = new Menu({
+      name,
+      description: description || '',
+      price,
+      image,
+      restaurant: restaurantId,
+      preparation_time: preparation_time || 15,
+      products: products || [],
+      discount: discount || { active: false, percentage: 0 },
+      availability: availability !== undefined ? availability : true
+    });
+
+    await newMenuItem.save();
+
+    // Récupérer l'élément avec les données populées
+    const populatedItem = await Menu.findById(newMenuItem._id).populate('restaurant', 'name');
+
+    console.log(`Nouvel élément ajouté au menu du restaurant ${req.restaurant.name}: ${name}`);
+
+    res.status(201).json({
+      success: true,
+      message: 'Élément ajouté au menu avec succès',
+      data: populatedItem
+    });
+  } catch (error) {
+    console.error('Erreur ajout élément menu:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur serveur'
+    });
+  }
+});
+
+// PUT /api/restaurant/menu/:itemId - Modifier un élément du menu
+router.put('/menu/:itemId', async (req, res) => {
+  try {
+    const restaurantId = req.restaurant._id;
+    const { itemId } = req.params;
+    const updates = req.body;
+
+    // Vérifier que l'élément appartient au restaurant
+    const menuItem = await Menu.findOne({ _id: itemId, restaurant: restaurantId });
+
+    if (!menuItem) {
+      return res.status(404).json({
+        success: false,
+        message: 'Élément de menu non trouvé'
+      });
+    }
+
+    // Mettre à jour l'élément
+    const updatedItem = await Menu.findByIdAndUpdate(
+      itemId,
+      { ...updates, updated_at: new Date() },
+      { new: true }
+    ).populate('restaurant', 'name');
+
+    console.log(`Élément modifié dans le menu du restaurant ${req.restaurant.name}: ${updatedItem.name}`);
+
+    res.json({
+      success: true,
+      message: 'Élément modifié avec succès',
+      data: updatedItem
+    });
+  } catch (error) {
+    console.error('Erreur modification élément menu:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur serveur'
+    });
+  }
+});
+
+// DELETE /api/restaurant/menu/:itemId - Supprimer un élément du menu
+router.delete('/menu/:itemId', async (req, res) => {
+  try {
+    const restaurantId = req.restaurant._id;
+    const { itemId } = req.params;
+
+    // Vérifier que l'élément appartient au restaurant
+    const menuItem = await Menu.findOne({ _id: itemId, restaurant: restaurantId });
+
+    if (!menuItem) {
+      return res.status(404).json({
+        success: false,
+        message: 'Élément de menu non trouvé'
+      });
+    }
+
+    // Supprimer l'élément
+    await Menu.findByIdAndDelete(itemId);
+
+    console.log(`Élément supprimé du menu du restaurant ${req.restaurant.name}: ${menuItem.name}`);
+
+    res.json({
+      success: true,
+      message: 'Élément supprimé avec succès'
+    });
+  } catch (error) {
+    console.error('Erreur suppression élément menu:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur serveur'
+    });
+  }
+});
+
+// PATCH /api/restaurant/menu/:itemId/availability - Changer la disponibilité d'un élément
+router.patch('/menu/:itemId/availability', async (req, res) => {
+  try {
+    const restaurantId = req.restaurant._id;
+    const { itemId } = req.params;
+    const { availability } = req.body;
+
+    if (typeof availability !== 'boolean') {
+      return res.status(400).json({
+        success: false,
+        message: 'La disponibilité doit être un booléen'
+      });
+    }
+
+    // Vérifier que l'élément appartient au restaurant
+    const menuItem = await Menu.findOne({ _id: itemId, restaurant: restaurantId });
+
+    if (!menuItem) {
+      return res.status(404).json({
+        success: false,
+        message: 'Élément de menu non trouvé'
+      });
+    }
+
+    // Mettre à jour la disponibilité
+    const updatedItem = await Menu.findByIdAndUpdate(
+      itemId,
+      { availability, updated_at: new Date() },
+      { new: true }
+    ).populate('restaurant', 'name');
+
+    console.log(`Disponibilité modifiée pour ${updatedItem.name}: ${availability}`);
+
+    res.json({
+      success: true,
+      message: `Élément ${availability ? 'activé' : 'désactivé'} avec succès`,
+      data: updatedItem
+    });
+  } catch (error) {
+    console.error('Erreur changement disponibilité:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur serveur'

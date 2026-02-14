@@ -56,15 +56,19 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 
-// Appliquer `authMiddleware` à toutes les routes API
+// Routes publiques (sans authentification)
+// app.use('/settings', settingsRoutes);
+// app.use('/currencies', currencyRoutes);
+
+// Appliquer `authMiddleware` à toutes les autres routes API
 app.use("/api", authMiddleware);
 
+app.use('/api/settings', settingsRoutes);
+// app.use('/currencies', currencyRoutes);
 app.use('/api/drivers', driverRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/cart', cartRoutes);
-// app.use('/api/languages', languageRoutes);
-// app.use('/api/settings', settingsRoutes);
-// app.use('/api/currencies', currencyRoutes);
+app.use('/api/languages', languageRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/restaurant", restaurantRoutes);
 app.use("/api/resource", genericRoutes);

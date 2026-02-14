@@ -4,10 +4,9 @@ const SettingSchema = new mongoose.Schema({
     _id: { type: String, required: true }, // 👈 ID fixe "app_settings"
     appName: { type: String, required: true },
     currency: {
-      value: { type: String, required: true },
-      label: { type: String, required: true },
-      symbol: { type: String, required: true },
-      code: { type: String, required: true },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Currency',
+      required: true
     },
     language: { // Ajout du champ langue
         code: { type: String, required: true },

@@ -12,27 +12,38 @@ router.get("/", async (req, res) => {
             const defaultSettings = new Settings({
                 _id: "app_settings", // 👈 ID fixé ici
                 appName: "Mon App",
-                defaultCurrency: {
-                    value: "USD",
-                    label: "USD - US Dollar",
-                    symbol: "$",
+                currency: {
+                    value: "EUR",
+                    label: "EUR - Euro",
+                    symbol: "€",
+                    code: "EUR"
                 },
                 language: {
-                    code: "en",
+                    code: "fr",
                     isDefault: true,
-                    name: "English"
+                    name: "Français"
                 },
                 createdAt: new Date(),
             });
 
             await defaultSettings.save();
-            return res.json(defaultSettings);
+            return res.json({
+                success: true,
+                data: defaultSettings
+            });
         }
 
-        res.json(settings);
+        res.json({
+            success: true,
+            data: settings
+        });
     } catch (error) {
         console.error("Erreur serveur :", error);
-        res.status(500).json({ message: "Erreur serveur", error });
+        res.status(500).json({
+            success: false,
+            message: "Erreur serveur",
+            error: error.message
+        });
     }
 });
 
