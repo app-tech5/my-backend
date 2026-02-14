@@ -5,6 +5,7 @@ const Order = require('../models/Order');
 const Report = require('../models/Report');
 const User = require('../models/User');
 const Menu = require('../models/Menu');
+const Product = require('../models/Product');
 
 const router = express.Router();
 
@@ -403,7 +404,7 @@ router.get('/menu', async (req, res) => {
     const restaurantId = req.restaurant._id;
 
     // Récupérer tous les éléments de menu pour ce restaurant
-    const menuItems = await Menu.find({ restaurant: restaurantId })
+    const menuItems = await Product.find({ restaurant: restaurantId })
       .populate('restaurant', 'name')
       .sort({ created_at: -1 }); // Plus récent en premier
 
