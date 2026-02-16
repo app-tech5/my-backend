@@ -72,7 +72,6 @@ app.use('/api/cart', cartRoutes);
 app.use('/api/languages', languageRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/restaurant", restaurantRoutes);
-app.use("/api/restaurant", reviewRoutes);
 app.use("/api/resource", genericRoutes);
 app.use("/api/upload", uploadRoutes);
 

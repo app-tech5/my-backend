@@ -7,6 +7,7 @@ const User = require('../models/User');
 const Menu = require('../models/Menu');
 const Product = require('../models/Product');
 const Review = require('../models/Review');
+const reviewRoutes = require('./reviewRoutes');
 
 const router = express.Router();
 
@@ -593,5 +594,7 @@ router.patch('/menu/:itemId/availability', async (req, res) => {
   }
 });
 
+// Utiliser les routes reviews comme sous-routeur
+router.use('/', reviewRoutes);
 
 module.exports = router;

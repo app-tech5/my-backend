@@ -36,9 +36,7 @@ const requireRestaurant = async (req, res, next) => {
   }
 };
 
-// Appliquer les middlewares
-router.use(authMiddleware);
-router.use(requireRestaurant);
+// Les middlewares sont déjà appliqués par le routeur parent (restaurantRoutes.js)
 
 // Routes pour les avis clients
 router.get('/reviews', async (req, res) => {
