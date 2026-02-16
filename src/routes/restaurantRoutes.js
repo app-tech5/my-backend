@@ -75,6 +75,70 @@ router.get('/profile', async (req, res) => {
   }
 });
 
+// PUT /api/restaurant/profile - Mettre à jour le profil du restaurant
+router.put('/profile', async (req, res) => {
+  try {
+    const restaurantId = req.restaurant._id;
+    const updates = req.body;
+
+    // Champs autorisés pour la mise à jour
+    const allowedFields = ['name', 'email', 'phone', 'address', 'description'];
+    const filteredUpdates = {};
+
+    allowedFields.forEach(field => {
+      if (updates[field] !== undefined) {
+        filteredUpdates[field] = updates[field];
+      }
+    });
+
+    // Validation basique
+    if (filteredUpdates.name && !filteredUpdates.name.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Le nom du restaurant ne peut pas être vide'
+      });
+    }
+
+    if (filteredUpdates.email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(filteredUpdates.email)) {
+        return res.status(400).json({
+          success: false,
+          message: 'L\'email n\'est pas valide'
+        });
+      }
+    }
+
+    // Mettre à jour le restaurant
+    const updatedRestaurant = await Restaurant.findByIdAndUpdate(
+      restaurantId,
+      { ...filteredUpdates, updatedAt: new Date() },
+      { new: true }
+    );
+
+    if (!updatedRestaurant) {
+      return res.status(404).json({
+        success: false,
+        message: 'Restaurant non trouvé'
+      });
+    }
+
+    console.log(`Profil du restaurant mis à jour: ${updatedRestaurant.name}`);
+
+    res.json({
+      success: true,
+      message: 'Profil mis à jour avec succès',
+      data: updatedRestaurant
+    });
+  } catch (error) {
+    console.error('Erreur mise à jour profil restaurant:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur serveur'
+    });
+  }
+});
+
 // === STATISTIQUES ===
 
 // GET /api/restaurant/stats - Statistiques générales du restaurant

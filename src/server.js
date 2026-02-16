@@ -14,6 +14,7 @@ const uploadRoutes = require("./routes/uploadRoutes");
 const productRoutes = require("./routes/productRoutes");
 const restaurantRoutes = require("./routes/restaurantRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
+const userSettingsRoutes = require("./routes/userSettingsRoutes");
 const http = require('http');
 const cleanupRouter = require('./routes/cleanup');
 
@@ -72,6 +73,7 @@ app.use('/api/cart', cartRoutes);
 app.use('/api/languages', languageRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/restaurant", restaurantRoutes);
+app.use("/api/user-settings", userSettingsRoutes);
 app.use("/api/resource", genericRoutes);
 app.use("/api/upload", uploadRoutes);
 
