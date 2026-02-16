@@ -82,7 +82,7 @@ router.put('/profile', async (req, res) => {
     const updates = req.body;
 
     // Champs autorisés pour la mise à jour
-    const allowedFields = ['name', 'email', 'phone', 'address', 'description'];
+    const allowedFields = ['name', 'email', 'phone', 'address', 'description', 'openingTime', 'closingTime', 'is_closed'];
     const filteredUpdates = {};
 
     allowedFields.forEach(field => {
