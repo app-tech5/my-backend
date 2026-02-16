@@ -6,6 +6,7 @@ const Report = require('../models/Report');
 const User = require('../models/User');
 const Menu = require('../models/Menu');
 const Product = require('../models/Product');
+const Review = require('../models/Review');
 
 const router = express.Router();
 
@@ -89,7 +90,7 @@ router.get('/stats', async (req, res) => {
     const completedOrders = orders.filter(order => order.status === 'delivered').length;
     const totalRevenue = orders
       .filter(order => order.status === 'delivered')
-      .reduce((sum, order) => sum + (order.total || 0), 0);
+      .reduce((sum, order) => sum + (order.totalPrice || 0), 0);
 
     const pendingOrders = orders.filter(order =>
       ['pending', 'accepted', 'preparing', 'ready'].includes(order.status)
@@ -160,7 +161,7 @@ router.get('/analytics', async (req, res) => {
     const cancelledOrders = orders.filter(order => order.status === 'cancelled').length;
     const totalRevenue = orders
       .filter(order => order.status === 'delivered')
-      .reduce((sum, order) => sum + (order.total || 0), 0);
+      .reduce((sum, order) => sum + (order.totalPrice || 0), 0);
 
     const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
     const cancellationRate = totalOrders > 0 ? (cancelledOrders / totalOrders) * 100 : 0;
@@ -591,5 +592,6 @@ router.patch('/menu/:itemId/availability', async (req, res) => {
     });
   }
 });
+
 
 module.exports = router;
