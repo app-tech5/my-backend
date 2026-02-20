@@ -6,49 +6,16 @@ const { populateSelectFields } = require("../utils/populateSelectFields");
 
 const router = express.Router();
 
-// Middleware pour récupérer dynamiquement le bon modèle
 router.use("/:model", async (req, res, next) => {
-  // Log spécifique pour restaurants
-  // if (req.params.model === 'restaurants') {
-  //   console.log(`🍽️ RESTAURANTS: Request received for /resource/restaurants`);
-  // }
 
-  // Log spécifique pour deliverysettings
-  // if (req.params.model === 'deliverysettings') {
-  //   console.log(`🔥 DELIVERY SETTINGS BACKEND: Request received for /resource/deliverysettings`);
-  // }
-
-  const modelName = convertToModelName(req.params.model); // Conversion dynamique
-
-  // if (req.params.model === 'restaurants') {
-  //   console.log(`🍽️ RESTAURANTS: Converting 'restaurants' to '${modelName}'`);
-  // }
-
-  // if (req.params.model === 'deliverysettings') {
-  //   console.log(`🔥 DELIVERY SETTINGS BACKEND: Converting 'deliverysettings' to '${modelName}'`);
-  // }
+  const modelName = convertToModelName(req.params.model); 
 
   try {
-    req.Model = require(`../models/${modelName}`); // Importation dynamique du modèle
-
-    // if (req.params.model === 'restaurants') {
-    //   console.log(`✅ RESTAURANTS: Model '${modelName}' loaded successfully`);
-    // }
-
-    // if (req.params.model === 'deliverysettings') {
-    //   console.log(`✅ DELIVERY SETTINGS BACKEND: Model '${modelName}' loaded successfully`);
-    // }
+    req.Model = require(`../models/${modelName}`); 
 
     next();
   } catch (error) {
-    // if (req.params.model === 'restaurants') {
-    //   console.error(`🍽️ RESTAURANTS ERROR: Failed to load model '${modelName}':`, error.message);
-    // }
-
-    // if (req.params.model === 'deliverysettings') {
-    //   console.error(`❌ DELIVERY SETTINGS BACKEND ERROR: Failed to load model '${modelName}':`, error.message);
-    //   console.error(`❌ DELIVERY SETTINGS BACKEND ERROR: Looking for file: ${modelName}.js`);
-    // }
+    
     return res.status(400).json({
       error: `Invalid model name: ${modelName}`,
       details: error.message,

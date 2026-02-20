@@ -1,4 +1,3 @@
-// migrations/XXXXXX-generate-mock-reviews.js
 
 const { faker } = require('@faker-js/faker');
 const mongoose = require('mongoose');
@@ -10,7 +9,7 @@ module.exports = {
     } catch (e) {
       if (e.codeName !== "NamespaceNotFound") throw e;
     }
-    // Récupérer les données existantes nécessaires
+    
     const [users, restaurants, orders] = await Promise.all([
       db.collection('users').find({}).project({ _id: 1 }).toArray(),
       db.collection('restaurants').find({}).project({ _id: 1 }).toArray(),
@@ -20,8 +19,7 @@ module.exports = {
     if (users.length === 0 || restaurants.length === 0) {
       throw new Error('Des collections users et/ou restaurants sont vides');
     }
-
-    // Générer des avis fictifs
+    
     const mockReviews = Array.from({ length: 100 }, (_, i) => {
       const user = faker.helpers.arrayElement(users);
       const restaurant = faker.helpers.arrayElement(restaurants);
@@ -66,7 +64,7 @@ module.exports = {
   },
 
   async down(db) {
-    // Supprimer uniquement les avis générés (identifiés par une date récente)
+    
     await db.collection('reviews').deleteMany({
       createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }
     });

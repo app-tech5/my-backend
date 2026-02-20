@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 module.exports = {
   async up(db) {
-    // Créer la collection carts avec validation
+    
     await db.createCollection('carts', {
       validator: {
         $jsonSchema: {
@@ -79,8 +79,7 @@ module.exports = {
         }
       }
     });
-
-    // Créer les index
+    
     await db.collection('carts').createIndex({ user: 1 }, { unique: true });
     await db.collection('carts').createIndex({ deviceId: 1 });
     await db.collection('carts').createIndex({ sessionId: 1 });
@@ -90,7 +89,7 @@ module.exports = {
   },
 
   async down(db) {
-    // Supprimer la collection
+    
     await db.collection('carts').drop();
     console.log('✅ Cart collection dropped');
   }

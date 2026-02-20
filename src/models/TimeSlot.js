@@ -1,4 +1,4 @@
-// models/TimeSlot.js
+
 const mongoose = require('mongoose');
 const addPopulateMiddleware = require('../utils/addPopulateMiddleware');
 
@@ -13,19 +13,19 @@ const TimeSlotSchema = new mongoose.Schema({
     type: String,
     enum: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
     required: true,
-    default: 'monday' // Valeur par défaut : lundi
+    default: 'monday' 
   },
   start_time: {
-    type: String, // ou "Date" si vous préférez stocker un timestamp
+    type: String, 
     required: true,
-    match: /^([0-1][0-9]|2[0-3]):([0-5][0-9])$/, // Format "HH:MM"
-    default: '09:00' // Valeur par défaut : 09:00
+    match: /^([0-1][0-9]|2[0-3]):([0-5][0-9])$/, 
+    default: '09:00' 
   },
   end_time: {
     type: String,
     required: true,
     match: /^([0-1][0-9]|2[0-3]):([0-5][0-9])$/,
-    default: '17:00' // Valeur par défaut : 17:00
+    default: '17:00' 
   },
   max_orders: { 
     type: Number, 

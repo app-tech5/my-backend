@@ -1,4 +1,3 @@
-// migrations/2025MMDDHHMMSS-add-setting-schema.js
 
 module.exports = {
   up: async (db) => {
@@ -8,16 +7,11 @@ module.exports = {
       if (e.codeName !== "NamespaceNotFound") throw e;
     }
     await db.createCollection('settings');
-
-    // Ajout d'un enregistrement par défaut avec un _id fixe "app_settings"
+    
     await db.collection('settings').insertOne({
       _id: "app_settings",
       appName: "My Application",
-      // defaultCurrency: {
-      //   value: "USD",
-      //   label: "United States Dollar",
-      //   symbol: "$"
-      // },
+      
       currency: { 
         value: '67a64237b782d2379aab2ae7', 
         label: 'Euro',

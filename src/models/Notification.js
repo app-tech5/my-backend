@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const notificationSchema = new Schema({
-  // Destinataire
+  
   user: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -10,7 +10,6 @@ const notificationSchema = new Schema({
     index: true
   },
   
-  // Contenu
   title: {
     type: String,
     required: true,
@@ -34,7 +33,6 @@ const notificationSchema = new Schema({
     }
   },
   
-  // Type et contexte
   type: {
     type: String,
     required: true,
@@ -64,7 +62,6 @@ const notificationSchema = new Schema({
     enum: ['Order', 'Payment', 'Delivery']
   },
   
-  // Comportement
   isRead: {
     type: Boolean,
     default: false,
@@ -87,7 +84,6 @@ const notificationSchema = new Schema({
     }
   },
   
-  // Expiration et priorité
   priority: {
     type: String,
     enum: ['low', 'medium', 'high', 'critical'],
@@ -99,7 +95,6 @@ const notificationSchema = new Schema({
     index: true
   },
   
-  // Métadonnées
   createdAt: {
     type: Date,
     default: Date.now,
@@ -120,29 +115,25 @@ notificationSchema.pre("find", function () {
     this.populate(
       {
         path: "user",
-        select: "name", // On suppose que votre modèle Category a un champ "name"
+        select: "name", 
       });
 })
 
-// Index pour les requêtes fréquentes
 notificationSchema.index({ user: 1, isRead: 1, createdAt: -1 });
 notificationSchema.index({ type: 1, createdAt: -1 });
 
-// Méthode pour marquer comme lue
 notificationSchema.methods.markAsRead = function() {
   this.isRead = true;
   return this.save();
 };
 
-// Middleware pour nettoyer les notifications expirées
 notificationSchema.pre('save', function(next) {
   if (this.expiresAt && this.expiresAt < new Date()) {
-    this.isRead = true; // Marquer comme lue si expirée
+    this.isRead = true; 
   }
   next();
 });
 
-// Statics pour les requêtes courantes
 notificationSchema.statics.findUnreadForUser = function(userId) {
   return this.find({ user: userId, isRead: false })
              .sort({ createdAt: -1 })

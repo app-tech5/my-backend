@@ -7,7 +7,6 @@ const i18n = require('../config/i18n');
 const router = express.Router();
 router.use(i18n.init);
 
-// Inscription
 router.post('/signup', async (req, res) => {
     try {
         console.log("🔵 Requête d'inscription reçue:", req.body);
@@ -41,8 +40,7 @@ router.post('/signup', async (req, res) => {
 
         await newUser.save();
         console.log("✅ Utilisateur enregistré avec succès:", newUser.email);
-
-        // Créer un token pour l'utilisateur nouvellement inscrit
+        
         const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
         return res.json({
@@ -99,6 +97,5 @@ router.post('/login', async (req, res) => {
         res.status(500).json({ message: res.__("server_error") });
     }
 });
-
 
 module.exports = router;

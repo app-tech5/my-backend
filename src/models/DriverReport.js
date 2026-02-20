@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const driverReportSchema = new Schema({
-  // Informations sur le signalement
+  
   reportType: {
     type: String,
     required: true,
@@ -28,8 +28,7 @@ const driverReportSchema = new Schema({
     enum: ['low', 'medium', 'high', 'critical'],
     default: 'medium'
   },
-
-  // Parties concernées
+  
   reporter: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -45,28 +44,26 @@ const driverReportSchema = new Schema({
     ref: 'Order',
     required: false
   },
-
-  // Preuves
+  
   images: [{
-    type: String, // URLs des images
+    type: String, 
     validate: {
       validator: function(v) {
-        return v.length <= 5; // Maximum 5 images
+        return v.length <= 5; 
       },
       message: 'Vous ne pouvez pas ajouter plus de 5 images'
     }
   }],
   videos: [{
-    type: String, // URLs des vidéos
+    type: String, 
     validate: {
       validator: function(v) {
-        return v.length <= 2; // Maximum 2 vidéos
+        return v.length <= 2; 
       },
       message: 'Vous ne pouvez pas ajouter plus de 2 vidéos'
     }
   }],
-
-  // Statut et traitement
+  
   status: {
     type: String,
     enum: ['pending', 'under_review', 'resolved', 'dismissed', 'requires_action'],
@@ -97,8 +94,7 @@ const driverReportSchema = new Schema({
     },
     maxlength: 2000
   },
-
-  // Métadonnées
+  
   createdAt: {
     type: Date,
     default: Date.now
@@ -119,7 +115,6 @@ const driverReportSchema = new Schema({
   toObject: { virtuals: true }
 });
 
-// Index pour les recherches fréquentes
 driverReportSchema.index({ driver: 1, status: 1 });
 driverReportSchema.index({ reporter: 1 });
 driverReportSchema.index({ order: 1 });
@@ -129,17 +124,15 @@ driverReportSchema.pre("find", function () {
     this.populate(
       {
         path: "reporter",
-        select: "name", // Sélectionne les champs du modèle Use
+        select: "name", 
       })
   });
 
-// Middleware pour mettre à jour updatedAt
 driverReportSchema.pre('save', function(next) {
   this.updatedAt = new Date();
   next();
 });
 
-// Méthode pour ajouter une note admin
 driverReportSchema.methods.addAdminNote = function(noteContent, adminId) {
   this.adminNotes.push({
     note: noteContent,
@@ -148,7 +141,6 @@ driverReportSchema.methods.addAdminNote = function(noteContent, adminId) {
   return this.save();
 };
 
-// Méthode pour changer le statut
 driverReportSchema.methods.updateStatus = function(newStatus, resolutionType, resolutionDetails) {
   this.status = newStatus;
   
@@ -161,7 +153,6 @@ driverReportSchema.methods.updateStatus = function(newStatus, resolutionType, re
   return this.save();
 };
 
-// Virtual pour le temps de traitement
 driverReportSchema.virtual('processingTime').get(function() {
   if (this.status === 'resolved' && this.resolvedAt && this.createdAt) {
     return this.resolvedAt - this.createdAt;

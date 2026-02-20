@@ -10,11 +10,11 @@ module.exports = {
     } catch (e) {
       if (e.codeName !== "NamespaceNotFound") throw e;
     }
-    // 1. Ajout de l'utilisateur admin fixe
+    
     const adminUser = {
       _id: new ObjectId('67c62fae5a9b19466ee230d6'),
       email: "admin@example.com",
-      password: "$2a$10$x0Zm/JF2cW/akjwoEpBpvueirfPSdpbyfCVz.UAF6osK9NxN8F1lG", // "admin123"
+      password: "$2a$10$x0Zm/JF2cW/akjwoEpBpvueirfPSdpbyfCVz.UAF6osK9NxN8F1lG", 
       name: "Admin System",
       phone: "+33612345678",
       image: "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/41.jpg",
@@ -31,8 +31,7 @@ module.exports = {
       createdAt: new Date(),
       updatedAt: new Date()
     };
-
-    // 1b. Ajout de l'utilisateur customer de démo fixe
+    
     const demoCustomer = {
       _id: new ObjectId('67c62fae5a9b19466ee230d7'),
       email: "demo@customer.com",
@@ -55,8 +54,7 @@ module.exports = {
       createdAt: new Date(),
       updatedAt: new Date()
     };
-
-    // 2. Algorithme de génération mock
+    
     const generateMockUsers = (count, role) => {
       const users = [];
       const rolesSpecificData = {
@@ -100,23 +98,17 @@ module.exports = {
       }
       return users;
     };
-
-    // 3. Génération des données
+    
     const mockData = [
       ...generateMockUsers(50, 'customer'),
       ...generateMockUsers(20, 'restaurant'), 
       ...generateMockUsers(30, 'delivery')
     ].filter(user => {
-      // Garde UNIQUEMENT les URLs contenant jsdelivr.net
+      
       return user.image.includes('jsdelivr.net');
-
-      // const isInvalidAvatar = 
-      // user.image.includes('githubusercontent.com') ||
-      // user.image.includes('githubassets.com');
-      // return !isInvalidAvatar;
+      
     });
     
-    // 4. Insertion
     await db.collection('users').insertOne(adminUser);
     await db.collection('users').insertOne(demoCustomer);
     await db.collection('users').insertMany(mockData);
@@ -125,7 +117,7 @@ module.exports = {
   },
 
   async down(db) {
-    // Suppression sélective
+    
     const result = await db.collection('users').deleteMany({
       $or: [
         { email: { $regex: /@mock\.com$/ } },
@@ -138,54 +130,3 @@ module.exports = {
   }
 };
 
-
-
-
-// const mongoose = require("mongoose");
-// module.exports = {
-//   async up(db, client) {
-//     const users = [
-//       {
-//         _id: new mongoose.Types.ObjectId('67c62fae5a9b19466ee230d6'),
-//         email: "admin@example.com",
-//         password: "$2a$10$x0Zm/JF2cW/akjwoEpBpvueirfPSdpbyfCVz.UAF6osK9NxN8F1lG", // Pense à hasher le mot de passe avant
-//         name: "User One",
-//         phone: "1234567890",
-//         image: "https://icon-library.com/images/profile-picture-icon/profile-picture-icon-10.jpg",
-//         address: "123 Main Street, New York, NY 10001",
-//         createdAt: new Date(),
-//         updatedAt: new Date()
-//       },
-//       {
-//         _id: new mongoose.Types.ObjectId('67c62fae5a9b19466ee230d7'),
-//         email: "user2@example.com",
-//         password: "hashedpassword2",
-//         name: "User Two",
-//         phone: "0987654321",
-//         image: "https://icon-library.com/images/profile-picture-icon/profile-picture-icon-10.jpg",
-//         address: "123 Main Street, New York, NY 10001",
-//         createdAt: new Date(),
-//         updatedAt: new Date()
-//       },
-//       {
-//         _id: new mongoose.Types.ObjectId('67c62fae5a9b19466ee230d8'),
-//         email: "user3@example.com",
-//         password: "hashedpassword3",
-//         name: "User Three",
-//         phone: "1122334455",
-//         image: "https://icon-library.com/images/profile-picture-icon/profile-picture-icon-10.jpg",
-//         address: "123 Main Street, New York, NY 10001",
-//         createdAt: new Date(),
-//         updatedAt: new Date()
-//       }
-//     ];
-
-//     await db.collection("users").insertMany(users);
-//   },
-
-//   async down(db, client) {
-//     await db.collection("users").deleteMany({
-//       email: { $in: ["user1@example.com", "user2@example.com", "user3@example.com"] }
-//     });
-//   }
-// };

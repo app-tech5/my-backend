@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
 function getDefaultValue(value, key) {
-  // console.log("getDefaultValue", value, key, mongoose.Types.ObjectId.isValid(value));
 
   if(/^([01]\d|2[0-3]):([0-5]\d)$/.test(value))
     return `${new Date().getHours()}:${new Date().getMinutes()}`
@@ -10,7 +9,7 @@ function getDefaultValue(value, key) {
   if (typeof value === "number") return 0;
   if (typeof value === "boolean") return false;
   if (Array.isArray(value)) return [];
-//   if (typeof value === "object" && value !== null) return {};
+
   if (Array.isArray(value)) {
     if (
       value.every(
@@ -19,20 +18,17 @@ function getDefaultValue(value, key) {
     )
       return [{ value: "", label: "" }];
   }
-  // if(key === "userId")
-  //   return new mongoose.Types.ObjectId();
+  
   if (value.hasOwnProperty("value") && value.hasOwnProperty("label")) {
     return { value: "", label: "" };
   }
   if (typeof value === "object" && value !== null) {
     return Object.fromEntries(
-      Object.entries(value).map(([key, _]) => [key, ""]) // Remplace les valeurs par ""
+      Object.entries(value).map(([key, _]) => [key, ""]) 
     );
   }
-  
 
   return null;
 }
-
 
 module.exports = getDefaultValue;

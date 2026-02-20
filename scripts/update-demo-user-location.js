@@ -2,7 +2,7 @@ const { MongoClient } = require('mongodb');
 const { ObjectId } = require('mongodb');
 
 async function updateDemoUserLocation() {
-  // Utiliser directement l'URI MongoDB
+  
   const mongoUri = 'mongodb://127.0.0.1:27017/good-foods';
   const dbName = 'good-foods';
 
@@ -16,16 +16,14 @@ async function updateDemoUserLocation() {
 
     const db = client.db(dbName);
     const usersCollection = db.collection('users');
-
-    // Coordonnées pour Paris centre (utilisateur demo)
+    
     const demoLocation = {
-      latitude: 48.8566,  // Latitude de Paris centre
-      longitude: 2.3522   // Longitude de Paris centre
+      latitude: 48.8566,  
+      longitude: 2.3522   
     };
 
     console.log('📍 Coordonnées de localisation pour l\'utilisateur demo:', demoLocation);
-
-    // Mettre à jour l'utilisateur demo
+    
     const updateResult = await usersCollection.updateOne(
       { email: 'demo@customer.com' },
       {
@@ -37,8 +35,7 @@ async function updateDemoUserLocation() {
     );
 
     console.log(`✅ Utilisateur demo mis à jour: ${updateResult.modifiedCount > 0 ? 'succès' : 'aucune modification'}`);
-
-    // Vérifier la mise à jour
+    
     const updatedUser = await usersCollection.findOne({ email: 'demo@customer.com' });
     if (updatedUser) {
       console.log('🔍 Utilisateur demo après mise à jour:', {

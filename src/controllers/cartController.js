@@ -1,7 +1,7 @@
 const Cart = require("../models/Cart");
 
 const cartController = {
-  // Récupérer le panier de l'utilisateur
+  
   getCart: async (req, res) => {
     try {
       const userId = req.user?.id;
@@ -10,8 +10,7 @@ const cartController = {
       }
 
       let cart = await Cart.findByUser(userId);
-
-      // Si pas de panier, en créer un vide
+      
       if (!cart) {
         cart = new Cart({
           user: userId,
@@ -21,16 +20,14 @@ const cartController = {
         });
         await cart.save();
       }
-
-      // Corriger les items qui n'ont pas d'id
+      
       cart.items = cart.items.map(item => {
         if (!item.id) {
           item.id = item._id || item.uniqueKey || `item_${Date.now()}_${Math.random()}`;
         }
         return item;
       });
-
-      // Sauvegarder si des corrections ont été faites
+      
       if (cart.isModified()) {
         await cart.save();
       }
@@ -48,8 +45,7 @@ const cartController = {
       res.status(500).json({ error: error.message });
     }
   },
-
-  // Ajouter un item au panier
+  
   addItem: async (req, res) => {
     try {
       const userId = req.user?.id;
@@ -60,8 +56,7 @@ const cartController = {
       const itemData = req.body;
 
       let cart = await Cart.findByUser(userId);
-
-      // Créer le panier s'il n'existe pas
+      
       if (!cart) {
         cart = new Cart({
           user: userId,
@@ -70,13 +65,11 @@ const cartController = {
           sessionId: req.headers['x-session-id']
         });
       }
-
-      // Validation des données requises
+      
       if (!itemData.name || !itemData.image || !itemData.price) {
         throw new Error('Item data is incomplete: name, image, and price are required');
       }
-
-      // Préparer l'item avec les champs requis
+      
       const itemId = itemData.id || itemData._id || itemData.uniqueKey || `item_${Date.now()}_${Math.random()}`;
 
       const preparedItem = {
@@ -94,19 +87,16 @@ const cartController = {
         variants: itemData.variants || [],
         addedAt: new Date()
       };
-
-      // Ajouter les références si disponibles
+      
       if (itemData.restaurant && itemData.restaurant._id) {
         preparedItem.restaurant = itemData.restaurant._id;
       }
-
-      // Déterminer le type d'item si possible
+      
       if (itemData.itemType) {
         preparedItem.itemType = itemData.itemType;
         preparedItem.item = itemData.item;
       }
-
-      // Ajouter l'item
+      
       await cart.addItem(preparedItem);
 
       res.json({
@@ -122,8 +112,7 @@ const cartController = {
       res.status(500).json({ error: error.message });
     }
   },
-
-  // Supprimer un item du panier
+  
   removeItem: async (req, res) => {
     try {
       const userId = req.user?.id;
@@ -131,7 +120,7 @@ const cartController = {
         return res.status(401).json({ message: "Authentication required" });
       }
 
-      const { itemId } = req.params; // Redux envoie l'ID de l'item
+      const { itemId } = req.params; 
 
       const cart = await Cart.findByUser(userId);
       if (!cart) {
@@ -153,8 +142,7 @@ const cartController = {
       res.status(500).json({ error: error.message });
     }
   },
-
-  // Mettre à jour un item du panier
+  
   updateItem: async (req, res) => {
     try {
       const userId = req.user?.id;
@@ -162,7 +150,7 @@ const cartController = {
         return res.status(401).json({ message: "Authentication required" });
       }
 
-      const { itemId } = req.params; // Redux envoie l'ID de l'item
+      const { itemId } = req.params; 
       const itemData = req.body;
 
       const cart = await Cart.findByUser(userId);
@@ -185,8 +173,7 @@ const cartController = {
       res.status(500).json({ error: error.message });
     }
   },
-
-  // Vider le panier pour un restaurant spécifique
+  
   clearRestaurant: async (req, res) => {
     try {
       const userId = req.user?.id;
@@ -216,8 +203,7 @@ const cartController = {
       res.status(500).json({ error: error.message });
     }
   },
-
-  // Vider complètement le panier
+  
   clearCart: async (req, res) => {
     try {
       const userId = req.user?.id;
@@ -245,8 +231,7 @@ const cartController = {
       res.status(500).json({ error: error.message });
     }
   },
-
-  // Synchroniser le panier (pour fusionner avec le panier local)
+  
   syncCart: async (req, res) => {
     try {
       const userId = req.user?.id;
@@ -254,11 +239,10 @@ const cartController = {
         return res.status(401).json({ message: "Authentication required" });
       }
 
-      const { localItems } = req.body; // Items du panier local à fusionner
+      const { localItems } = req.body; 
 
       let cart = await Cart.findByUser(userId);
-
-      // Créer le panier s'il n'existe pas
+      
       if (!cart) {
         cart = new Cart({
           user: userId,
@@ -267,8 +251,7 @@ const cartController = {
           sessionId: req.headers['x-session-id']
         });
       }
-
-      // Fusionner les items locaux avec le panier serveur
+      
       if (localItems && Array.isArray(localItems)) {
         for (const localItem of localItems) {
           const existingItemIndex = cart.items.findIndex(item =>
@@ -276,20 +259,19 @@ const cartController = {
           );
 
           if (existingItemIndex >= 0) {
-            // Si l'item existe, prendre la quantité maximale
+            
             cart.items[existingItemIndex].quantity = Math.max(
               cart.items[existingItemIndex].quantity,
               localItem.quantity || 1
             );
             cart.items[existingItemIndex].totalPrice = cart.items[existingItemIndex].quantity * (cart.items[existingItemIndex].price || 0);
           } else {
-            // Validation des données requises
+            
             if (!localItem.name || !localItem.image || !localItem.price) {
               console.warn('Skipping invalid item in sync:', localItem);
-              return; // Skip invalid items
+              return; 
             }
-
-            // Préparer l'item pour le backend
+            
             const itemId = localItem.id || localItem._id || localItem.uniqueKey || `item_${Date.now()}_${Math.random()}`;
 
             const preparedItem = {

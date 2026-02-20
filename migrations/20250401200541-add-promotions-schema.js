@@ -1,20 +1,13 @@
-// migrations/XXXXXX-generate-mock-promotions.js
 
 const { faker } = require('@faker-js/faker');
 const mongoose = require('mongoose');
 
-// Petit tableau d'images de nourriture réelles
 const FOOD_IMAGES = [
   'https://images.unsplash.com/photo-1512621776951-a57141f2eefd',
   'https://images.unsplash.com/photo-1467003909585-2f8a72700288',
   'https://images.unsplash.com/photo-1546069901-ba9599a7e63c',
   'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38',
-  // 'https://images.unsplash.com/photo-1565958011703-44f9829ba187',
-  // 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543',
-  // 'https://images.unsplash.com/photo-1484723091739-30a097e8f929',
-  // 'https://images.unsplash.com/photo-1504674900247-0877df9cc836',
-  // 'https://images.unsplash.com/photo-1544025162-d76694265947',
-  // 'https://images.unsplash.com/photo-1559847844-5315695dadae'
+  
 ];
 
 module.exports = {
@@ -24,7 +17,7 @@ module.exports = {
     } catch (e) {
       if (e.codeName !== "NamespaceNotFound") throw e;
     }
-    // Récupérer les données existantes nécessaires
+    
     const [restaurants, menuItems, users] = await Promise.all([
       db.collection('restaurants').find({}).project({ _id: 1 }).toArray(),
       db.collection('menus').find({}).project({ _id: 1, price: 1 }).toArray(),
@@ -34,8 +27,7 @@ module.exports = {
     if (!restaurants.length || !menuItems.length || !users.length) {
       throw new Error('Données requises manquantes (restaurants, menus ou users)');
     }
-
-    // Types de promotions possibles
+    
     const promotionTypes = [
       'percentage_discount', 
       'fixed_discount', 
@@ -45,18 +37,15 @@ module.exports = {
       'flash_sale',
       'happy_hour'
     ];
-
-    // Catégories possibles
+    
     const categories = ['pizza', 'burger', 'sushi', 'dessert', 'boisson', 'asiatique', 'italien'];
-
-    // Générer 20 promotions fictives
+    
     const mockPromotions = Array.from({ length: 20 }, (_, i) => {
       const promotionType = faker.helpers.arrayElement(promotionTypes);
       const scope = faker.helpers.arrayElement(['restaurant', 'category', 'platform', 'item']);
       const startDate = faker.date.soon({ days: 1 });
       const endDate = faker.date.soon({ days: 30, refDate: startDate });
-
-      // Configuration spécifique au type de promotion
+      
       const promotionConfig = {};
       if (['percentage_discount', 'fixed_discount'].includes(promotionType)) {
         promotionConfig.discountValue = promotionType === 'percentage_discount' 
@@ -85,8 +74,7 @@ module.exports = {
           days: faker.helpers.arrayElements([0,1,2,3,4,5,6], { min: 2, max: 5 })
         }];
       }
-
-      // Configuration de la portée
+      
       const scopeConfig = {};
       if (scope === 'restaurant') {
         scopeConfig.applicableRestaurants = faker.helpers.arrayElements(restaurants, { min: 1, max: 3 })
@@ -131,7 +119,7 @@ module.exports = {
   },
 
   async down(db) {
-    // Supprimer uniquement les promotions générées par cette migration
+    
     await db.collection('promotions').deleteMany({
       createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }
     });

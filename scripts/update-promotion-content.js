@@ -3,14 +3,13 @@ const Promotion = require('../src/models/Promotion');
 
 async function updatePromotionContent() {
   try {
-    // Connexion à la DB
+    
     await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/good-foods');
 
     console.log('🍽️ Début de la mise à jour du contenu des promotions...');
-
-    // Contenu adapté pour une delivery app de nourriture
+    
     const promotionContent = {
-      // Remises en pourcentage
+      
       percentage_discount: [
         { name: '15% Off Your Order', description: 'Get 15% discount on your entire order from any restaurant. Minimum order $20.' },
         { name: '20% Student Discount', description: 'Show your student ID and get 20% off on orders over $15.' },
@@ -19,8 +18,7 @@ async function updatePromotionContent() {
         { name: '30% Lunch Special', description: '30% off on all lunch orders between 11 AM and 3 PM.' },
         { name: '18% Family Discount', description: '18% off on orders over $40 for families.' }
       ],
-
-      // Remises fixes
+      
       fixed_discount: [
         { name: '$5 Off Orders Over $30', description: 'Save $5 when you order for $30 or more from participating restaurants.' },
         { name: '$3 Delivery Fee Waiver', description: 'Get $3 off your delivery fee on orders over $25.' },
@@ -28,8 +26,7 @@ async function updatePromotionContent() {
         { name: '$7 Off Dinner Orders', description: 'Save $7 on dinner orders over $35 from 5 PM to 10 PM.' },
         { name: '$4 Off Breakfast', description: 'Start your day right with $4 off breakfast orders.' }
       ],
-
-      // Livraison gratuite
+      
       free_delivery: [
         { name: 'Free Delivery Today', description: 'No delivery fees on all orders today. Order from your favorite restaurants.' },
         { name: 'Free Delivery Over $25', description: 'Orders over $25 qualify for free delivery from all restaurants.' },
@@ -37,8 +34,7 @@ async function updatePromotionContent() {
         { name: 'Free Delivery Wednesdays', description: 'Midweek special: Free delivery every Wednesday.' },
         { name: 'Free Delivery for New Users', description: 'New customers get free delivery on their first order.' }
       ],
-
-      // Buy X Get Y
+      
       buy_x_get_y: [
         { name: 'Buy 1 Get 1 Free Pizza', description: 'Order one pizza and get the second one free. Valid at Italian restaurants.' },
         { name: 'Buy 2 Burgers Get 1 Free', description: 'Purchase 2 burgers and receive the third one absolutely free.' },
@@ -47,8 +43,7 @@ async function updatePromotionContent() {
         { name: 'Buy 2 Pastas Get 1 Free', description: 'Pasta lovers: Buy 2 pastas and get the third one free.' },
         { name: 'Buy 1 Get 1 Free Dessert', description: 'Sweet deal: Buy one dessert, get the second one free.' }
       ],
-
-      // Combo deals
+      
       combo_deal: [
         { name: 'Burger + Fries + Drink', description: 'Complete meal deal: Burger, fries and drink for only $12.99.' },
         { name: 'Pizza + Salad + Dessert', description: 'Family combo: Large pizza, garden salad and chocolate cake.' },
@@ -56,8 +51,7 @@ async function updatePromotionContent() {
         { name: 'Chicken Meal Deal', description: 'Fried chicken, coleslaw, and biscuit for $15.99.' },
         { name: 'Mexican Fiesta Combo', description: 'Burrito, taco, and chips with salsa for $18.99.' }
       ],
-
-      // Flash sales
+      
       flash_sale: [
         { name: 'Flash Sale: 30% Off', description: 'Limited time offer: 30% off on all items. Only for the next hour!' },
         { name: 'Midnight Snack Special', description: 'Late night cravings? Get 25% off all orders between 11 PM and 2 AM.' },
@@ -65,8 +59,7 @@ async function updatePromotionContent() {
         { name: 'Evening Flash Sale', description: 'Last minute dinner? 35% off orders placed after 8 PM.' },
         { name: 'Morning Flash Deal', description: 'Early bird special: 25% off breakfast orders before 10 AM.' }
       ],
-
-      // Happy hour
+      
       happy_hour: [
         { name: 'Happy Hour Special', description: '50% off all drinks and appetizers from 5 PM to 7 PM daily.' },
         { name: 'Evening Happy Hour', description: 'Special pricing on cocktails and small plates from 6 PM to 8 PM.' },
@@ -74,15 +67,13 @@ async function updatePromotionContent() {
         { name: 'Afternoon Happy Hour', description: 'Early happy hour: 30% off drinks from 3 PM to 5 PM.' }
       ]
     };
-
-    // Récupérer toutes les promotions
+    
     const promotions = await Promotion.find({});
     console.log(`📊 ${promotions.length} promotions trouvées dans la DB good-foods`);
 
     let updatedCount = 0;
     let skippedCount = 0;
-
-    // Pour chaque promotion, mettre à jour le contenu
+    
     for (let i = 0; i < promotions.length; i++) {
       const promotion = promotions[i];
       const promotionType = promotion.promotionType;
@@ -90,12 +81,11 @@ async function updatePromotionContent() {
       console.log(`🔄 Promotion ${i + 1}/${promotions.length}: ${promotionType} - "${promotion.name}"`);
 
       if (promotionContent[promotionType] && promotionContent[promotionType].length > 0) {
-        // Sélectionner un contenu adapté pour ce type de promotion
+        
         const randomContent = promotionContent[promotionType][
           Math.floor(Math.random() * promotionContent[promotionType].length)
         ];
-
-        // Mettre à jour UNIQUEMENT name et description
+        
         await Promotion.updateOne(
           { _id: promotion._id },
           {
@@ -117,8 +107,7 @@ async function updatePromotionContent() {
     console.log(`\n🎉 MISE À JOUR TERMINÉE:`);
     console.log(`   - ${updatedCount} promotions mises à jour`);
     console.log(`   - ${skippedCount} promotions non modifiées (type non supporté)`);
-
-    // Vérification finale
+    
     console.log(`\n🔍 VÉRIFICATION FINALE - Échantillon:`);
     const samplePromotions = await Promotion.find({}, 'name description promotionType').limit(8);
     samplePromotions.forEach((promo, index) => {
@@ -134,5 +123,4 @@ async function updatePromotionContent() {
   }
 }
 
-// Exécuter le script
 updatePromotionContent();

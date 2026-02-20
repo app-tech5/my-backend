@@ -1,8 +1,8 @@
 module.exports = {
   async up(db) {
-    // Mettre à jour le champ 'currency' dans la collection 'settings'
+    
     await db.collection('settings').updateOne(
-      { _id: 'app_settings' }, // Filtre pour trouver le document spécifique
+      { _id: 'app_settings' }, 
       { 
         $set: { 
           currency: { 
@@ -10,14 +10,14 @@ module.exports = {
             value: '67a3a718a1ae62e91e3df989' 
           } 
         } 
-      } // Mise à jour pour définir la nouvelle structure de 'currency'
+      } 
     );
   },
 
   async down(db) {
-    // Revenir à la structure précédente de 'currency' (optionnel)
+    
     await db.collection('settings').updateOne(
-      { _id: 'app_settings' }, // Filtre pour trouver le document spécifique
+      { _id: 'app_settings' }, 
       { 
         $set: { 
           currency: { 
@@ -26,7 +26,7 @@ module.exports = {
             symbol: '$' 
           } 
         } 
-      } // Mise à jour pour rétablir l'ancienne structure de 'currency'
+      } 
     );
   }
 };

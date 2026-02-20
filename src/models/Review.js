@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const reviewSchema = new Schema({
-  // Références
+  
   user: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -16,10 +16,9 @@ const reviewSchema = new Schema({
   order: {
     type: Schema.Types.ObjectId,
     ref: 'Order',
-    required: false // Optionnel mais recommandé
+    required: false 
   },
-
-  // Contenu de l'avis
+  
   rating: {
     type: Number,
     required: true,
@@ -37,16 +36,15 @@ const reviewSchema = new Schema({
     trim: true
   },
   photos: [{
-    type: String, // URLs des images
+    type: String, 
     validate: {
       validator: function(array) {
-        return array.length <= 5; // Limite à 5 photos par avis
+        return array.length <= 5; 
       },
       message: 'Maximum 5 photos par avis'
     }
   }],
-
-  // Détails sur l'expérience
+  
   foodQuality: {
     type: Number,
     min: 1,
@@ -71,8 +69,7 @@ const reviewSchema = new Schema({
     max: 5,
     required: false
   },
-
-  // Métadonnées
+  
   date: {
     type: Date,
     default: Date.now
@@ -91,7 +88,7 @@ const reviewSchema = new Schema({
     },
     by: {
       type: Schema.Types.ObjectId,
-      ref: 'User' // Généralement le propriétaire du restaurant
+      ref: 'User' 
     }
   },
   status: {
@@ -115,20 +112,18 @@ reviewSchema.pre("find", function () {
     this.populate([
       {
         path: "user",
-        select: "name", // On ne récupère que le nom du restaurant
+        select: "name", 
       },
       {
         path: "restaurant",
-        select: "name", // On suppose que votre modèle Category a un champ "name"
+        select: "name", 
       },
     ]);
   });
 
-// Index pour les recherches fréquentes
 reviewSchema.index({ restaurant: 1, status: 1 });
-reviewSchema.index({ user: 1, restaurant: 1 }, { unique: true }); // Un avis par utilisateur par restaurant
+reviewSchema.index({ user: 1, restaurant: 1 }, { unique: true }); 
 
-// Middleware pour valider qu'un utilisateur ne peut pas noter un restaurant sans y avoir commandé
 reviewSchema.pre('save', async function(next) {
   if (this.isNew) {
     const Order = mongoose.model('Order');
@@ -145,13 +140,12 @@ reviewSchema.pre('save', async function(next) {
   next();
 });
 
-// Méthode pour calculer la note moyenne d'un restaurant (statique)
 reviewSchema.statics.calculateAverageRating = async function(restaurantId) {
   const result = await this.aggregate([
     {
       $match: { 
         restaurant: restaurantId,
-        status: 'approved' // Seulement les avis approuvés
+        status: 'approved' 
       }
     },
     {
@@ -182,7 +176,6 @@ reviewSchema.statics.calculateAverageRating = async function(restaurantId) {
   }
 };
 
-// Middleware pour mettre à jour les notes moyennes après chaque avis
 reviewSchema.post('save', function() {
   this.constructor.calculateAverageRating(this.restaurant);
 });

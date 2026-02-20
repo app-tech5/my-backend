@@ -14,15 +14,13 @@ async function backupCollections(db) {
 
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
   const backupFileName = `backup-${timestamp}`;
-
-  // Sauvegarde users
+  
   const users = await db.collection('users').find({}).toArray();
   fs.writeFileSync(
     path.join(backupDir, `${backupFileName}-users.json`),
     JSON.stringify(users, null, 2)
   );
-
-  // Sauvegarde restaurants
+  
   const restaurants = await db.collection('restaurants').find({}).toArray();
   fs.writeFileSync(
     path.join(backupDir, `${backupFileName}-restaurants.json`),
@@ -47,18 +45,16 @@ async function setupNearMeFunctionality() {
     console.log('✅ Connecté à MongoDB');
 
     const db = client.db(dbName);
-
-    // Créer une sauvegarde automatique
+    
     const backupName = await backupCollections(db);
 
     const usersCollection = db.collection('users');
     const restaurantsCollection = db.collection('restaurants');
-
-    // 1. Mettre à jour l'utilisateur demo avec la localisation
+    
     console.log('\n📍 1. Mise à jour de l\'utilisateur demo...');
     const demoLocation = {
-      latitude: 48.8566,  // Latitude de Paris centre
-      longitude: 2.3522   // Longitude de Paris centre
+      latitude: 48.8566,  
+      longitude: 2.3522   
     };
 
     const userUpdate = await usersCollection.updateOne(
@@ -72,8 +68,7 @@ async function setupNearMeFunctionality() {
     );
 
     console.log(`✅ Utilisateur demo: ${userUpdate.modifiedCount > 0 ? 'mis à jour' : 'déjà à jour'}`);
-
-    // 2. Ajouter le champ location aux autres utilisateurs
+    
     console.log('\n👥 2. Migration des utilisateurs existants...');
     const userMigration = await usersCollection.updateMany(
       { location: { $exists: false } },
@@ -89,8 +84,7 @@ async function setupNearMeFunctionality() {
     );
 
     console.log(`✅ ${userMigration.modifiedCount} utilisateurs migrés`);
-
-    // 3. Mettre à jour les restaurants avec des coordonnées à Paris
+    
     console.log('\n🏪 3. Mise à jour des restaurants avec coordonnées Paris...');
 
     const baseLatitude = 48.8566;
@@ -128,8 +122,7 @@ async function setupNearMeFunctionality() {
     }
 
     console.log(`✅ ${restaurantsToUpdate} restaurants mis à jour`);
-
-    // 4. Vérification finale
+    
     console.log('\n🔍 Vérification finale:');
 
     const demoUser = await usersCollection.findOne({ email: 'demo@customer.com' });

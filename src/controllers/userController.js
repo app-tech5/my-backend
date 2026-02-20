@@ -1,7 +1,6 @@
 class UserController extends BaseController {
     constructor() {
-      super(User); // User est le modèle spécifique
+      super(User); 
     }
-  
-    // Vous pouvez ajouter des méthodes spécifiques à User ici...
+    
   }

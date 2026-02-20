@@ -5,10 +5,9 @@ const User = require('../models/User');
 
 const router = express.Router();
 
-// Middleware pour vérifier le token JWT
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+  const token = authHeader && authHeader.split(' ')[1]; 
 
   if (!token) {
     return res.status(401).json({ message: 'Token manquant' });
@@ -23,7 +22,6 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-// Récupérer le profil driver de l'utilisateur connecté
 router.get('/profile', authenticateToken, async (req, res) => {
   try {
     console.log('🔵 Récupération du profil driver pour l\'utilisateur:', req.user.id);
@@ -48,12 +46,10 @@ router.get('/profile', authenticateToken, async (req, res) => {
   }
 });
 
-// Créer un profil driver
 router.post('/', authenticateToken, async (req, res) => {
   try {
     console.log('🔵 Création du profil driver pour l\'utilisateur:', req.user.id);
-
-    // Vérifier si l'utilisateur a déjà un profil driver
+    
     const existingDriver = await Driver.findOne({ userId: req.user.id });
     if (existingDriver) {
       console.log('🟠 Profil driver déjà existant pour l\'utilisateur:', req.user.id);
@@ -79,13 +75,12 @@ router.post('/', authenticateToken, async (req, res) => {
       status: 'offline',
       location: {
         type: 'Point',
-        coordinates: [0, 0] // Position par défaut
+        coordinates: [0, 0] 
       }
     });
 
     await newDriver.save();
-
-    // Populate pour retourner les données complètes
+    
     await newDriver.populate('userId', 'name email phone');
 
     console.log('✅ Profil driver créé:', newDriver._id);
@@ -97,13 +92,12 @@ router.post('/', authenticateToken, async (req, res) => {
   }
 });
 
-// Mettre à jour le profil driver
 router.put('/profile', authenticateToken, async (req, res) => {
   try {
     console.log('🔵 Mise à jour du profil driver pour l\'utilisateur:', req.user.id);
 
     const updates = req.body;
-    // Ne pas permettre la mise à jour de userId
+    
     delete updates.userId;
 
     const driver = await Driver.findOneAndUpdate(
@@ -126,7 +120,6 @@ router.put('/profile', authenticateToken, async (req, res) => {
   }
 });
 
-// Mettre à jour le statut du driver
 router.put('/status', authenticateToken, async (req, res) => {
   try {
     console.log('🔵 Mise à jour du statut driver pour l\'utilisateur:', req.user.id);

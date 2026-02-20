@@ -5,15 +5,15 @@ const transactionSchema = new mongoose.Schema({
   transaction_type: {
     type: String,
     enum: [
-      'customer_payment',    // Customer pays for order
-      'restaurant_payout',   // Restaurant receives payment
-      'driver_payout',       // Driver receives earnings
-      'platform_commission', // Platform takes commission
-      'service_fee',         // Additional service fees
-      'delivery_fee',        // Delivery charges
-      'tip',                // Customer tip
-      'refund',             // Refund to customer
-      'adjustment'          // Manual adjustments
+      'customer_payment',    
+      'restaurant_payout',   
+      'driver_payout',       
+      'platform_commission', 
+      'service_fee',         
+      'delivery_fee',        
+      'tip',                
+      'refund',             
+      'adjustment'          
     ],
     required: true
   },
@@ -24,7 +24,7 @@ const transactionSchema = new mongoose.Schema({
   },
   currency: { 
     type: String, 
-    // default: 'USD',
+    
     enum: ['USD'],
     required: true,
     select: false
@@ -105,7 +105,7 @@ const transactionSchema = new mongoose.Schema({
 
 addPopulateMiddleware(transactionSchema, [
     { path: "user", select: "name image" },
-    // { path: "related_order", select: "name" },
+    
 ])
 const Transaction = mongoose.model('Transaction', transactionSchema);
 

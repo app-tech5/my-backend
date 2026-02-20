@@ -4,7 +4,6 @@ const Setting = require('../models/Setting');
 
 const router = express.Router();
 
-// Récupérer toutes les langues
 router.get('/', async (req, res) => {
     try {
         const languages = await Language.find();
@@ -14,21 +13,17 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Ajouter une nouvelle langue
 router.post("/", async (req, res) => {
   try {
     const { code, name, isDefault } = req.body;
-
-    // Si la nouvelle langue est par défaut, désactiver l'ancienne langue par défaut
+    
     if (isDefault) {
       await Language.updateMany({ isDefault: true }, { $set: { isDefault: false } });
     }
-
-    // Ajouter la nouvelle langue
+    
     const newLanguage = new Language({ code, name, isDefault });
     await newLanguage.save();
-
-    // Si la nouvelle langue est par défaut, mettre à jour la collection settings
+    
     if (isDefault) {
       await Setting.findOneAndUpdate({}, { language: { code, name, isDefault } }, { upsert: true, new: true });
     }
@@ -42,7 +37,6 @@ router.post("/", async (req, res) => {
 
 module.exports = router;
 
-// Récupérer une langue par son id
 router.get('/:id', async (req, res) => {
     try {
         const language = await Language.findById(req.params.id);
@@ -54,8 +48,6 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-
-// Mettre à jour une langue
 router.put('/:id', async (req, res) => {
     try {
         const updatedLanguage = await Language.findByIdAndUpdate(
@@ -65,16 +57,14 @@ router.put('/:id', async (req, res) => {
         );
 
         if (!updatedLanguage) return res.status(404).json({ error: 'Langue non trouvée' });
-
-        // Si la mise à jour définit cette langue comme langue par défaut
+        
         if (req.body.isDefault) {
-            // Désactiver l'ancienne langue par défaut
+            
             await Language.updateMany(
                 { _id: { $ne: req.params.id }, isDefault: true }, 
                 { $set: { isDefault: false } }
             );
-
-            // Mettre à jour settings avec la nouvelle langue par défaut
+            
             await Setting.findOneAndUpdate({}, { language: updatedLanguage }, { upsert: true, new: true });
         }
 
@@ -84,7 +74,6 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// Supprimer une langue
 router.delete('/:id', async (req, res) => {
     try {
         const deletedLanguage = await Language.findByIdAndDelete(req.params.id);
@@ -96,6 +85,5 @@ router.delete('/:id', async (req, res) => {
         res.status(500).json({ error: 'Erreur lors de la suppression de la langue' });
     }
 });
-
 
 module.exports = router;

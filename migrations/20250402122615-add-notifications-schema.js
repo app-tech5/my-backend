@@ -1,4 +1,3 @@
-// migrations/XXXXXX-generate-mock-notifications.js
 
 const { faker } = require('@faker-js/faker');
 const mongoose = require('mongoose');
@@ -11,7 +10,7 @@ module.exports = {
     } catch (e) {
       if (e.codeName !== "NamespaceNotFound") throw e;
     }
-    // Récupérer les utilisateurs existants
+    
     const existingUsers = await db.collection('users')
       .find({})
       .project({ _id: 1 })
@@ -20,8 +19,7 @@ module.exports = {
     if (existingUsers.length === 0) {
       throw new Error('Aucun utilisateur trouvé dans la base de données');
     }
-
-    // Types de notifications possibles
+    
     const notificationTypes = [
       'order_status', 
       'promotion', 
@@ -31,11 +29,9 @@ module.exports = {
       'payment',
       'account'
     ];
-
-    // Entités liées possibles
+    
     const entityModels = ['Order', 'Payment', 'Delivery'];
-
-    // Générer des notifications fictives
+    
     const mockNotifications = Array.from({ length: 100 }, (_, i) => {
       const user = faker.helpers.arrayElement(existingUsers);
       const type = faker.helpers.arrayElement(notificationTypes);
@@ -57,8 +53,7 @@ module.exports = {
         createdAt: faker.date.past({ years: 1 }),
         updatedAt: faker.date.recent({ days: 30 })
       };
-
-      // Ajouter les champs conditionnels
+      
       if (requiresEntity) {
         notification.relatedEntity = new ObjectId();
         notification.relatedEntityModel = faker.helpers.arrayElement(entityModels);
@@ -74,13 +69,12 @@ module.exports = {
 
       return notification;
     });
-
-    // Insérer les notifications dans la base de données
+    
     await db.collection('notifications').insertMany(mockNotifications);
   },
 
   async down(db) {
-    // Supprimer uniquement les notifications générées (identifier par created_at récent)
+    
     await db.collection('notifications').deleteMany({
       createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }
     });

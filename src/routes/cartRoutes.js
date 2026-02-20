@@ -3,9 +3,6 @@ const cartController = require("../controllers/cartController");
 
 const router = express.Router();
 
-// Toutes les routes du panier nécessitent une authentification
-
-// Routes du panier
 router.get("/", cartController.getCart);
 router.post("/items", cartController.addItem);
 router.delete("/items/:itemId", cartController.removeItem);

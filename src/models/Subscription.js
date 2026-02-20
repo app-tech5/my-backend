@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const SubscriptionSchema = new Schema({
-  // Identité
+  
   name: {
     type: String,
     required: [true, 'Le nom est obligatoire'],
@@ -10,16 +10,14 @@ const SubscriptionSchema = new Schema({
     trim: true,
     maxlength: 50
   },
-
-  // Ciblage
+  
   target: {
     type: String,
     required: true,
     enum: ['customer', 'restaurant', 'driver'],
     default: 'customer'
   },
-
-  // Tarification
+  
   price: {
     type: Number,
     required: true,
@@ -37,14 +35,12 @@ const SubscriptionSchema = new Schema({
     enum: ['daily', 'weekly', 'monthly', 'yearly'],
     default: 'monthly'
   },
-
-  // Avantages
-  benefits: {  // Tableau simple de strings
+  
+  benefits: {  
     type: [String],
     default: []
   },
-
-  // Activation
+  
   is_active: {
     type: Boolean,
     default: true
@@ -53,10 +49,9 @@ const SubscriptionSchema = new Schema({
     type: Date,
     default: Date.now
   },
-  end_date: Date,  // Optionnel
-
-  // Restrictions
-  max_usage: {  // Nombre max d'utilisations (null = illimité)
+  end_date: Date,  
+  
+  max_usage: {  
     type: Number,
     default: null
   },
@@ -76,9 +71,8 @@ const SubscriptionSchema = new Schema({
       default: ""
     }
   }],
-
-  // Métadonnées
-  stripe_id: String,  // ID Stripe pour les paiements récurrents
+  
+  stripe_id: String,  
   created_by: {
     type: Schema.Types.ObjectId,
     ref: 'User'

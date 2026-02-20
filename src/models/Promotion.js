@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const promotionSchema = new Schema({
-  // Informations de base
+  
   name: {
     type: String,
     required: true,
@@ -19,7 +19,6 @@ const promotionSchema = new Schema({
     required: false
   },
   
-  // Type de promotion
   promotionType: {
     type: String,
     required: true,
@@ -35,7 +34,6 @@ const promotionSchema = new Schema({
     default: 'percentage_discount'
   },
   
-  // Valeurs de la promotion
   discountValue: {
     type: Number,
     required: function() {
@@ -70,7 +68,6 @@ const promotionSchema = new Schema({
     }
   }],
   
-  // Portée de la promotion
   scope: {
     type: String,
     required: true,
@@ -90,7 +87,6 @@ const promotionSchema = new Schema({
     ref: 'MenuItem'
   }],
   
-  // Validité
   startDate: {
     type: Date,
     required: true,
@@ -122,7 +118,6 @@ const promotionSchema = new Schema({
     }]
   }],
   
-  // Conditions
   minOrderAmount: {
     type: Number,
     required: false,
@@ -139,7 +134,6 @@ const promotionSchema = new Schema({
     default: 'all'
   },
   
-  // Limitations
   maxUsage: {
     type: Number,
     required: false,
@@ -151,7 +145,6 @@ const promotionSchema = new Schema({
     min: 0
   },
   
-  // Métadonnées
   createdBy: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -173,12 +166,10 @@ const promotionSchema = new Schema({
   toObject: { virtuals: true }
 });
 
-// Index pour les recherches fréquentes
 promotionSchema.index({ promotionType: 1, isActive: 1 });
 promotionSchema.index({ scope: 1, isActive: 1 });
 promotionSchema.index({ endDate: 1, isActive: 1 });
 
-// Méthode pour vérifier si la promotion est active
 promotionSchema.methods.isActiveNow = function() {
   const now = new Date();
   const isWithinDateRange = now >= this.startDate && now <= this.endDate;
@@ -196,7 +187,7 @@ promotionSchema.methods.isActiveNow = function() {
       const isTimeMatch = (
         (currentHour > startH || (currentHour === startH && currentMinutes >= startM)) &&
         (currentHour < endH || (currentHour === endH && currentMinutes <= endM))
-      );  // <-- La parenthèse se ferme ici, après toute l'expression
+      );  
       
       return isDayMatch && isTimeMatch;
     });
@@ -207,7 +198,6 @@ promotionSchema.methods.isActiveNow = function() {
   return this.isActive && isWithinDateRange;
 };
 
-// Méthode pour appliquer la promotion
 promotionSchema.methods.applyPromotion = function(item, quantity = 1, totalAmount = 0) {
   if (!this.isActiveNow()) {
     throw new Error('Promotion non active');
@@ -230,14 +220,13 @@ promotionSchema.methods.applyPromotion = function(item, quantity = 1, totalAmoun
       return comboItem ? (item.price - comboItem.discountedPrice) : 0;
       
     case 'free_delivery':
-      return 0; // Les frais de livraison seront gérés séparément
+      return 0; 
       
     default:
       return 0;
   }
 };
 
-// Middleware pour valider la cohérence des données
 promotionSchema.pre('save', function(next) {
   if (this.promotionType === 'combo_deal' && this.comboItems.length < 2) {
     throw new Error('Un combo deal doit inclure au moins 2 items');

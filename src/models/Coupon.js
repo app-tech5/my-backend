@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const couponSchema = new Schema({
-  // Informations de base
+  
   code: {
     type: String,
     required: true,
@@ -18,7 +18,6 @@ const couponSchema = new Schema({
     maxlength: 200
   },
   
-  // Type de réduction
   discountType: {
     type: String,
     required: true,
@@ -33,7 +32,6 @@ const couponSchema = new Schema({
     min: 0
   },
   
-  // Conditions d'application
   minOrderAmount: {
     type: Number,
     required: false,
@@ -48,7 +46,6 @@ const couponSchema = new Schema({
     enum: ['pizza', 'burger', 'sushi', 'dessert', 'boisson', 'asiatique', 'italien']
   }],
   
-  // Validité
   startDate: {
     type: Date,
     required: true,
@@ -65,7 +62,6 @@ const couponSchema = new Schema({
     }
   },
   
-  // Limitations d'utilisation
   maxUses: {
     type: Number,
     required: false,
@@ -83,7 +79,6 @@ const couponSchema = new Schema({
     default: 1
   },
   
-  // Public cible
   isPublic: {
     type: Boolean,
     default: true
@@ -97,7 +92,6 @@ const couponSchema = new Schema({
     default: false
   },
   
-  // Métadonnées
   createdBy: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -117,11 +111,9 @@ const couponSchema = new Schema({
   toObject: { virtuals: true }
 });
 
-// Index pour les recherches fréquentes
 couponSchema.index({ code: 1, isActive: 1 });
 couponSchema.index({ endDate: 1, isActive: 1 });
 
-// Méthode pour vérifier si le coupon est valide
 couponSchema.methods.isValid = function() {
   const now = new Date();
   return (
@@ -132,7 +124,6 @@ couponSchema.methods.isValid = function() {
   );
 };
 
-// Méthode pour appliquer le coupon
 couponSchema.methods.applyDiscount = function(totalAmount) {
   if (!this.isValid()) {
     throw new Error('Coupon non valide');
@@ -148,7 +139,7 @@ couponSchema.methods.applyDiscount = function(totalAmount) {
     case 'fixed':
       return Math.max(0, totalAmount - this.discountValue);
     case 'free_delivery':
-      return totalAmount; // La réduction sur les frais de livraison serait appliquée ailleurs
+      return totalAmount; 
     default:
       return totalAmount;
   }

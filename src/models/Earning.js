@@ -23,7 +23,7 @@ const EarningsSchema = new mongoose.Schema(
           type: mongoose.Schema.Types.ObjectId,
           ref: "Restaurant",
           required: true,
-          // default: new mongoose.Types.ObjectId()
+          
         },
         amount: { type: Number, required: true },
         commission: { type: Number, required: true },
@@ -41,12 +41,12 @@ const EarningsSchema = new mongoose.Schema(
         recipient: {
           type: mongoose.Schema.Types.ObjectId,
           required: true,
-          refPath: "payouts.recipientType", // Référence dynamique
+          refPath: "payouts.recipientType", 
         },
         recipientType: {
           type: String,
           required: true,
-          enum: ["Restaurant", "Driver"], // Doit être soit "Restaurant" soit "Driver"
+          enum: ["Restaurant", "Driver"], 
         },
         amount: { type: Number, required: true },
         status: {
@@ -60,37 +60,23 @@ const EarningsSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// EarningsSchema.pre("findOne", function () {
-//   this.populate({
-//     path: "transactions.restaurant",
-//     select: "name"
-//   }).populate({
-//     path: "payouts.recipient",
-//     select: "name userId",
-//   }).populate({
-//       model: "User",
-//       select: "name"
-//   })
-// });
-
 EarningsSchema.pre("findOne", function (next) {
   this.populate({
     path: "transactions.restaurant",
     select: "name",
   });
-
-  // Continuer l'exécution du hook `pre`
+  
   next();
 });
 
 EarningsSchema.post("findOne", async function (doc) {
-  console.log("Document trouvé :", doc); // Log du document trouvé
+  console.log("Document trouvé :", doc); 
 
   if (doc && doc.payouts && doc.payouts.length) {
-    console.log("Payouts existants :", doc.payouts); // Log des payouts
+    console.log("Payouts existants :", doc.payouts); 
 
     for (let payout of doc.payouts) {
-      console.log("Vérification du recipient :", payout.recipient); // Log du recipient
+      console.log("Vérification du recipient :", payout.recipient); 
 
       if (payout.recipientType !== "Restaurant") {
         console.log("Recipient n'est pas un Restaurant, peuplage avec User");
@@ -101,11 +87,11 @@ EarningsSchema.post("findOne", async function (doc) {
           );
 
           const recipient = recipientDoc.toObject();
-          console.log("Recipient trouvé :", recipient); // Log du recipient trouvé
-          const { userId } = recipient; // Extraire `userId` de l'objet
-          console.log("userId extrait :", userId); // Log de userId extrait
+          console.log("Recipient trouvé :", recipient); 
+          const { userId } = recipient; 
+          console.log("userId extrait :", userId); 
           const { name } = userId;
-          console.log("name extrait :", name); // Log de name extrait
+          console.log("name extrait :", name); 
           payout.recipient = { name };
         } catch (error) {
           console.log("Erreur lors de la recherche du recipient :", error);
@@ -118,35 +104,5 @@ EarningsSchema.post("findOne", async function (doc) {
     console.log("Aucun payout trouvé dans le document.");
   }
 });
-
-// EarningsSchema.pre("findOne", function () {
-//   this.populate({
-//       path: "items.item",
-//       select: "name image price"
-//   }).populate({
-//     path: "driver",
-//     select: "userId vehicle", // Sélectionne les champs du modèle Driver
-//     populate: {
-//         path: "userId",
-//         model: "User",
-//         select: "name phone image" // Sélectionne les champs du modèle User
-//     }
-// });
-// });
-
-// EarningsSchema.pre("findOne", function () {
-//   this.populate(
-//     // [
-//     {
-//       path: "transactions.restaurant",
-//       select: "name", // On ne récupère que le nom du restaurant
-//     },
-//   //   {
-//   //     path: "category",
-//   //     select: "name", // On suppose que votre modèle Category a un champ "name"
-//   //   },
-//   // ]
-// );
-// });
 
 module.exports = mongoose.model("Earning", EarningsSchema);

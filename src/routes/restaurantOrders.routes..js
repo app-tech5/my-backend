@@ -4,7 +4,6 @@ const Order = require('../models/Order');
 
 const router = express.Router();
 
-// Middleware pour vérifier que l'utilisateur est un restaurant
 const requireRestaurant = async (req, res, next) => {
   try {
     if (!req.user || req.user.type !== 'restaurant') {
@@ -13,8 +12,7 @@ const requireRestaurant = async (req, res, next) => {
         message: 'Accès réservé aux restaurants'
       });
     }
-
-    // Récupérer le restaurant complet
+    
     const User = require('../models/User');
     const Restaurant = require('../models/Restaurant');
 
@@ -39,12 +37,8 @@ const requireRestaurant = async (req, res, next) => {
   }
 };
 
-// Appliquer les middlewares d'authentification
 router.use(authMiddleware);
 
-// === COMMANDES POUR RESTAURANT ===
-
-// GET /api/orders/restaurant - Liste des commandes du restaurant
 router.get('/restaurant', requireRestaurant, async (req, res) => {
   try {
     const { status } = req.query;
@@ -58,7 +52,7 @@ router.get('/restaurant', requireRestaurant, async (req, res) => {
     const orders = await Order.find(filter)
       .populate('user', 'name phone')
       .sort({ createdAt: -1 })
-      .limit(50); // Limiter à 50 commandes récentes
+      .limit(50); 
 
     console.log(`Récupération des commandes pour le restaurant ${req.restaurant.name} avec filtre:`, filter, `Nombre de commandes trouvées: ${orders.length}`);
 
@@ -75,7 +69,6 @@ router.get('/restaurant', requireRestaurant, async (req, res) => {
   }
 });
 
-// POST /api/orders/restaurant/:orderId/accept - Accepter une commande
 router.post('/restaurant/:orderId/accept', requireRestaurant, async (req, res) => {
   try {
     const { orderId } = req.params;
@@ -112,7 +105,6 @@ router.post('/restaurant/:orderId/accept', requireRestaurant, async (req, res) =
   }
 });
 
-// POST /api/orders/restaurant/:orderId/prepare - Démarrer la préparation
 router.post('/restaurant/:orderId/prepare', requireRestaurant, async (req, res) => {
   try {
     const { orderId } = req.params;
@@ -149,7 +141,6 @@ router.post('/restaurant/:orderId/prepare', requireRestaurant, async (req, res) 
   }
 });
 
-// POST /api/orders/restaurant/:orderId/ready - Commande prête
 router.post('/restaurant/:orderId/ready', requireRestaurant, async (req, res) => {
   try {
     const { orderId } = req.params;
@@ -186,7 +177,6 @@ router.post('/restaurant/:orderId/ready', requireRestaurant, async (req, res) =>
   }
 });
 
-// PUT /api/orders/restaurant/:orderId/status - Changer le statut d'une commande
 router.put('/restaurant/:orderId/status', requireRestaurant, async (req, res) => {
   try {
     const { orderId } = req.params;
@@ -230,11 +220,5 @@ router.put('/restaurant/:orderId/status', requireRestaurant, async (req, res) =>
     });
   }
 });
-
-// === COMMANDES POUR CLIENT ===
-// TODO: Ajouter les routes spécifiques aux clients
-
-// === COMMANDES POUR LIVREUR ===
-// TODO: Ajouter les routes spécifiques aux livreurs
 
 module.exports = router;

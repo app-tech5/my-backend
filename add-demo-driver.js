@@ -3,7 +3,6 @@ const bcrypt = require('bcryptjs');
 const User = require('./src/models/User');
 const Driver = require('./src/models/Driver');
 
-// Connexion à MongoDB
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect('mongodb://localhost:27017/good-foods', {
@@ -17,7 +16,6 @@ const connectDB = async () => {
   }
 };
 
-// Fonction principale
 const addDemoDriver = async () => {
   try {
     await connectDB();
@@ -26,14 +24,12 @@ const addDemoDriver = async () => {
     const demoPassword = 'driver123';
 
     console.log('🔍 Vérification de l\'existence de l\'utilisateur driver...');
-
-    // Vérifier si l'utilisateur existe déjà
+    
     let user = await User.findOne({ email: demoEmail });
 
     if (!user) {
       console.log('👤 Création de l\'utilisateur driver...');
-
-      // Créer l'utilisateur
+      
       const hashedPassword = await bcrypt.hash(demoPassword, 10);
 
       user = new User({
@@ -44,7 +40,7 @@ const addDemoDriver = async () => {
         address: '15 Rue de la Livraison, Paris',
         lat: 48.8600,
         lng: 2.3500,
-        role: 'customer', // Les drivers sont aussi des customers
+        role: 'customer', 
         isActive: true,
       });
 
@@ -53,8 +49,7 @@ const addDemoDriver = async () => {
     } else {
       console.log('ℹ️ Utilisateur existe déjà:', user._id);
     }
-
-    // Vérifier si le profil driver existe déjà
+    
     const existingDriver = await Driver.findOne({ userId: user._id });
 
     if (!existingDriver) {
@@ -70,7 +65,7 @@ const addDemoDriver = async () => {
         },
         location: {
           type: 'Point',
-          coordinates: [2.3500, 48.8600] // [longitude, latitude]
+          coordinates: [2.3500, 48.8600] 
         },
         status: 'available',
         rating: 4.8,
@@ -107,5 +102,4 @@ const addDemoDriver = async () => {
   }
 };
 
-// Exécuter le script
 addDemoDriver();

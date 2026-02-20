@@ -7,129 +7,57 @@ const genericController = (Model) => {
   return {
     getAll: async (req, res) => {
       try {
-        console.log(`📋 ${Model.modelName}: getAll called - User:`, req.user?.id || 'No user');
-
         let query = {};
 
-        // Filtrage spécial pour les commandes - uniquement les commandes de l'utilisateur connecté
         if (Model.modelName === 'Order') {
           if (!req.user || !req.user.id) {
-            console.log('❌ ORDERS: No authenticated user found');
             return res.status(401).json({ message: 'Authentication required' });
           }
           query.user = req.user.id;
-          console.log(`🔒 ORDERS: Filtering by user ${req.user.id}`);
         }
 
         const items = await Model.find(query).setOptions({ queryParams: req.query });
 
-        // Log spécifique pour restaurants
-        // if (Model.collection?.name === 'restaurants') {
-        //   console.log(`🍽️ RESTAURANTS: Found ${items.length} restaurants`);
-        //   if (items.length > 0) {
-        //     console.log(`🍽️ RESTAURANTS: Sample restaurant:`, {
-        //       id: items[0]._id,
-        //       name: items[0].name,
-        //       categoriesCount: items[0].categories?.length || 0,
-        //       categories: items[0].categories?.slice(0, 2) || [], // Premières 2 catégories
-        //       hasCategories: !!items[0].categories && items[0].categories.length > 0
-        //     });
-        //   }
-        // }
-
-        // if (Model.collection?.name === 'deliverysettings') {
-        //   console.log(`✅ DELIVERY SETTINGS BACKEND: Found ${items.length} delivery settings`);
-        //   if (items.length > 0) {
-        //     console.log(`✅ DELIVERY SETTINGS BACKEND: Complete data:`, JSON.stringify(items[0], null, 2));
-        //     console.log(`✅ DELIVERY SETTINGS BACKEND: Key fields:`, {
-        //       deliveryFeeType: items[0].deliveryFeeType,
-        //       fixedDeliveryFee: items[0].fixedDeliveryFee,
-        //       dynamicDeliveryFee: items[0].dynamicDeliveryFee,
-        //       freeDeliveryThreshold: items[0].freeDeliveryThreshold
-        //     });
-        //   } else {
-        //     console.log(`❌ DELIVERY SETTINGS BACKEND: No data found in collection!`);
-        //   }
-        // }
-
-        // Log détaillé pour menus
-        // if (Model.collection?.name === 'menus') {
-        //   console.log(`🍽️ MENUS BACKEND: Found ${items.length} menus`);
-        //   if (items.length > 0) {
-        //     console.log(`🍽️ MENUS BACKEND: Sample menu:`, {
-        //       id: items[0]._id,
-        //       name: items[0].name,
-        //       restaurant: items[0].restaurant,
-        //       price: items[0].price
-        //     });
-        //     console.log(`🍽️ MENUS BACKEND: Sample menu full data:`, JSON.stringify(items[0], null, 2));
-        //   } else {
-        //     console.log(`❌ MENUS BACKEND: No menus found in collection!`);
-        //   }
-        // }
-
         res.json(items);
       } catch (error) {
-        // if (Model.collection?.name === 'deliverysettings') {
-        //   console.error(`❌ DELIVERY SETTINGS BACKEND ERROR: Database query failed:`, error.message);
-        //   console.error(`❌ DELIVERY SETTINGS BACKEND ERROR: Model:`, Model.modelName);
-        //   console.error(`❌ DELIVERY SETTINGS BACKEND ERROR: Collection:`, Model.collection?.name);
-        // }
-        // if (Model.collection?.name === 'restaurants') {
-        //   console.error(`🍽️ RESTAURANTS ERROR: Database query failed:`, error.message);
-        // }
+        
         res.status(500).json({ error: error.message });
       }
     },
 
     getById: async (req, res) => {
-      // console.log("populateFields(Model)", populateFields(Model))
+      
       try {
         const item = await Model.findById(req.params.id);
-        // .populate(populateFields(Model))
-        // console.log(item);
-        // if (!item) return res.status(404).json({ message: "Not Found" });
+        
         res.json(item);
       } catch (error) {
-        console.log(error);
         res.status(500).json({ error: error.message });
       }
     },
 
     create: async (req, res) => {
-      // try {
-      //   if (req.body.isDefault) {
-      //     await Model.updateMany({}, { isDefault: false });
-      //   }
-      //   const newItem = new Model(req.body);
-      //   await newItem.save();
-      //   res.status(201).json(newItem);
-      // } catch (error) {
-      //   console.log(error);
-      //   res.status(400).json({ error: error.message });
-      // }
+      
     },
 
     update: async (req, res) => {
       try {
-        // Validation spéciale pour les commandes - seuls certains statuts peuvent être mis à jour
+        
         if (Model.modelName === 'Order') {
           const allowedStatusUpdates = {
-            'pending': ['cancelled'], // Les commandes en attente peuvent être annulées
-            // Autres règles de validation peuvent être ajoutées ici
+            'pending': ['cancelled'], 
+            
           };
 
           const currentOrder = await Model.findById(req.params.id);
           if (!currentOrder) {
             return res.status(404).json({ message: "Order not found" });
           }
-
-          // Vérifier que seul l'utilisateur propriétaire peut modifier sa commande
+          
           if (currentOrder.user.toString() !== req.user.id) {
             return res.status(403).json({ message: "You can only modify your own orders" });
           }
-
-          // Validation du changement de statut
+          
           if (req.body.status && req.body.status !== currentOrder.status) {
             const currentStatus = currentOrder.status;
             const newStatus = req.body.status;
@@ -148,7 +76,6 @@ const genericController = (Model) => {
           { new: true }
         );
         if (!updatedItem) return res.status(404).json({ message: "Not Found" });
-        console.log(`✅ ${Model.modelName} updated:`, req.params.id);
         res.json(updatedItem);
       } catch (error) {
         console.error(`❌ ${Model.modelName} update error:`, error);
@@ -157,13 +84,7 @@ const genericController = (Model) => {
     },
 
     delete: async (req, res) => {
-      // try {
-      //   const deletedItem = await Model.findByIdAndDelete(req.params.id);
-      //   if (!deletedItem) return res.status(404).json({ message: "Not Found" });
-      //   res.json({ message: "Deleted successfully" });
-      // } catch (error) {
-      //   res.status(500).json({ error: error.message });
-      // }
+      
     },
 
     getDefaultFields: async (req, res) => {
@@ -172,8 +93,6 @@ const genericController = (Model) => {
           {},
           { _id: 0, createdAt: 0, updatedAt: 0, __v: 0 }
         );
-
-        // console.log(doc);
 
         if (!doc) return res.json({});
 
@@ -198,8 +117,7 @@ const genericController = (Model) => {
       
           Object.entries(schema.paths).forEach(([path, schemaType]) => {
             if (["_id", "__v", "createdAt", "updatedAt"].includes(path)) return;
-      
-            // Vérifier si c'est un tableau d'objets
+            
             if (schemaType.schema) {
               const subSchema = {};
               Object.entries(schemaType.schema.paths).forEach(([subPath, subType]) => {

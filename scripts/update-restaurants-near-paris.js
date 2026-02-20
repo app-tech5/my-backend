@@ -2,7 +2,7 @@ const { MongoClient } = require('mongodb');
 const { ObjectId } = require('mongodb');
 
 async function updateRestaurantsNearParis() {
-  // Utiliser directement l'URI MongoDB
+  
   const mongoUri = 'mongodb://127.0.0.1:27017/good-foods';
   const dbName = 'good-foods';
 
@@ -16,12 +16,10 @@ async function updateRestaurantsNearParis() {
 
     const db = client.db(dbName);
     const restaurantsCollection = db.collection('restaurants');
-
-    // Coordonnées de base (Paris centre)
+    
     const baseLatitude = 48.8566;
     const baseLongitude = 2.3522;
-
-    // Générer des coordonnées proches pour simuler des restaurants dans Paris
+    
     const parisRestaurants = [
       {
         name: "Le Petit Bistrot",
@@ -74,12 +72,10 @@ async function updateRestaurantsNearParis() {
     ];
 
     console.log('📍 Coordonnées de base pour Paris centre:', { baseLatitude, baseLongitude });
-
-    // Récupérer tous les restaurants existants
+    
     const allRestaurants = await restaurantsCollection.find({}).toArray();
     console.log(`📊 ${allRestaurants.length} restaurants trouvés dans la base de données`);
-
-    // Mettre à jour les premiers restaurants avec les coordonnées de Paris
+    
     const restaurantsToUpdate = Math.min(parisRestaurants.length, allRestaurants.length);
 
     console.log(`🎯 Mise à jour de ${restaurantsToUpdate} restaurants avec des coordonnées à Paris`);
@@ -103,8 +99,7 @@ async function updateRestaurantsNearParis() {
 
       console.log(`✅ ${parisData.name}: ${parisData.latitude}, ${parisData.longitude} (${updateResult.modifiedCount > 0 ? 'mis à jour' : 'déjà à jour'})`);
     }
-
-    // Vérifier les mises à jour
+    
     console.log('\n🔍 Vérification des restaurants mis à jour:');
     const updatedRestaurants = await restaurantsCollection.find({
       latitude: { $exists: true },

@@ -36,7 +36,7 @@ const MenuSchema = new mongoose.Schema(
       default: true,
     },
     preparation_time: {
-      type: Number, // Temps en minutes
+      type: Number, 
       required: true,
       default: 0
     },
@@ -85,31 +85,7 @@ MenuSchema.pre("find", function () {
       select: "name"
     });
   });
-  
-
-// function transformRestaurantsField(doc) {
-//     console.log('Document initial:', doc);
-//   doc.restaurant = doc.restaurants.value;
-//   doc.restaurants = {
-//     value: doc.restaurants.value,
-//     label: doc.restaurants.label,
-//   };
-//   doc.updatedAt = Date.now();
-// }
-// MenuSchema.pre("save", function (next) {
-//     transformRestaurantsField(this);
-//   next();
-// });
-
-// MenuSchema.pre("findOneAndUpdate", function (next) {
-//     const update = this.getUpdate();
-//     console.log(update)
-//     transformRestaurantsField(update);
-//     // this.setUpdate(update);
-//     next();
-//   });
 
 applyTransformHooks(MenuSchema, ["restaurants", "products"]);
-
 
 module.exports = mongoose.model("Menu", MenuSchema);

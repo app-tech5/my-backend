@@ -4,8 +4,7 @@ const convertToModelName = (collectionName) => {
   if (!collectionName || typeof collectionName !== "string") {
     throw new Error("Invalid collection name");
   }
-
-  // Exception spéciale pour deliverysettings -> DeliverySetting
+  
   if (collectionName === 'deliverysettings') {
     return 'DeliverySetting';
   }
@@ -16,23 +15,5 @@ const convertToModelName = (collectionName) => {
   );
 };
 
-// console.log(convertToModelName("currencies")); // Currency
-// console.log(convertToModelName("users")); // User
-// console.log(convertToModelName("children")); // Child
-// console.log(convertToModelName("people")); // Person
-
-// console.log(convertToModelName("taxes"));
-
-// const convertToModelName = (collectionName) => {
-//     let modelName = collectionName;
-//     if (collectionName.endsWith("ies")) {
-//       modelName = collectionName.slice(0, -3) + "y"; // currencies -> Currency
-//     }else if (collectionName.endsWith("s")) {
-//       modelName = collectionName.slice(0, -1); // users -> User
-//     }
-//     return modelName.charAt(0).toUpperCase() + modelName.slice(1); // Première lettre en majuscule
-//   };
-
 module.exports = convertToModelName;
 
-// console.log(convertToModelName("settings"));

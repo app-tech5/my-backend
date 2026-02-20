@@ -3,14 +3,13 @@ const { Schema } = mongoose;
 
 const restaurantReportSchema = new Schema(
   {
-    // Restaurant concerné
+    
     restaurant: {
       type: Schema.Types.ObjectId,
       ref: "Restaurant",
       required: true,
     },
-
-    // Utilisateur qui fait le signalement (peut être anonyme)
+    
     reportedBy: {
       type: Schema.Types.ObjectId,
       ref: "User",
@@ -20,8 +19,7 @@ const restaurantReportSchema = new Schema(
       type: Boolean,
       default: false,
     },
-
-    // Type de signalement
+    
     reportType: {
       type: String,
       required: true,
@@ -43,8 +41,7 @@ const restaurantReportSchema = new Schema(
       },
       maxlength: 500,
     },
-
-    // Détails du signalement
+    
     description: {
       type: String,
       required: true,
@@ -57,7 +54,7 @@ const restaurantReportSchema = new Schema(
     },
     evidencePhotos: [
       {
-        type: String, // URLs des images
+        type: String, 
         validate: {
           validator: function (arr) {
             return arr.length <= 5;
@@ -66,8 +63,7 @@ const restaurantReportSchema = new Schema(
         },
       },
     ],
-
-    // Statut et traitement
+    
     status: {
       type: String,
       enum: ["pending", "under_review", "resolved", "rejected"],
@@ -100,15 +96,13 @@ const restaurantReportSchema = new Schema(
       type: String,
       maxlength: 1000,
     },
-
-    // Gravité
+    
     severity: {
       type: String,
       enum: ["low", "medium", "high", "critical"],
       default: "medium",
     },
-
-    // Métadonnées
+    
     createdAt: {
       type: Date,
       default: Date.now,
@@ -125,7 +119,6 @@ const restaurantReportSchema = new Schema(
   }
 );
 
-// Index pour les recherches
 restaurantReportSchema.index({ restaurant: 1, status: 1 });
 restaurantReportSchema.index({ reportedBy: 1, createdAt: -1 });
 restaurantReportSchema.index({ reportType: 1, status: 1 });
@@ -134,7 +127,7 @@ restaurantReportSchema.pre("find", function () {
   this.populate([
     {
       path: "restaurant",
-      select: "name", // Sélectionne les champs du modèle Use
+      select: "name", 
     },
     {
       path: "resolvedBy",
@@ -144,13 +137,11 @@ restaurantReportSchema.pre("find", function () {
   ]);
 });
 
-// Middleware pour mettre à jour updatedAt
 restaurantReportSchema.pre("save", function (next) {
   this.updatedAt = new Date();
   next();
 });
 
-// Méthode pour ajouter une note admin
 restaurantReportSchema.methods.addAdminNote = function (noteContent, adminId) {
   this.adminNotes.push({
     note: noteContent,
@@ -159,7 +150,6 @@ restaurantReportSchema.methods.addAdminNote = function (noteContent, adminId) {
   return this.save();
 };
 
-// Méthode pour changer le statut
 restaurantReportSchema.methods.updateStatus = function (
   newStatus,
   resolvedById,
@@ -176,7 +166,6 @@ restaurantReportSchema.methods.updateStatus = function (
   return this.save();
 };
 
-// Virtual pour le nombre de jours en attente
 restaurantReportSchema.virtual("daysPending").get(function () {
   if (this.status !== "pending") return 0;
   const diff = new Date() - this.createdAt;

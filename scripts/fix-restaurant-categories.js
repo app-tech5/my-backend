@@ -4,30 +4,26 @@ const Category = require('../src/models/Category');
 
 async function fixRestaurantCategories() {
   try {
-    // Connexion à la DB
+    
     await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/good-foods');
 
     console.log('🔧 Début de la réparation des catégories des restaurants...');
-
-    // 1. Récupérer toutes les catégories avec leurs noms
+    
     const categories = await Category.find({}, 'name _id');
     console.log(`📂 ${categories.length} catégories trouvées:`);
     categories.forEach(cat => console.log(`  - ${cat.name}: ${cat._id}`));
-
-    // 2. Créer un mapping nom -> ObjectId
+    
     const categoryMap = new Map();
     categories.forEach(cat => {
       categoryMap.set(cat.name.toLowerCase().trim(), cat._id.toString());
     });
-
-    // 3. Récupérer tous les restaurants (sans populate pour éviter l'erreur User)
+    
     const restaurants = await mongoose.connection.db.collection('restaurants').find({}).toArray();
     console.log(`\n🏪 ${restaurants.length} restaurants à traiter`);
 
     let totalUpdated = 0;
     let totalCategoriesUpdated = 0;
-
-    // 4. Pour chaque restaurant
+    
     for (let i = 0; i < restaurants.length; i++) {
       const restaurant = restaurants[i];
 
@@ -40,18 +36,15 @@ async function fixRestaurantCategories() {
 
       let categoriesUpdated = false;
       const originalCategories = [...restaurant.categories];
-
-      // 5. Mettre à jour chaque catégorie
+      
       restaurant.categories = restaurant.categories.map((cat, index) => {
         console.log(`  📋 Catégorie ${index + 1}: "${cat.title}"`);
-
-        // Chercher la correspondance par nom
+        
         const categoryId = categoryMap.get(cat.title.toLowerCase().trim());
 
         if (categoryId) {
           console.log(`    ✅ Trouvé ID: ${categoryId}`);
-
-          // Ajouter juste l'id
+          
           cat.id = mongoose.Types.ObjectId(categoryId);
 
           categoriesUpdated = true;
@@ -62,8 +55,7 @@ async function fixRestaurantCategories() {
           return cat;
         }
       });
-
-      // 6. Sauvegarder si des changements ont été faits
+      
       if (categoriesUpdated) {
         await mongoose.connection.db.collection('restaurants').updateOne(
           { _id: restaurant._id },
@@ -79,8 +71,7 @@ async function fixRestaurantCategories() {
     console.log(`\n🎉 RÉSUMÉ:`);
     console.log(`   - ${totalUpdated} restaurants mis à jour`);
     console.log(`   - ${totalCategoriesUpdated} catégories liées`);
-
-    // 7. Test final - vérifier qu'un restaurant a bien les IDs
+    
     console.log(`\n🧪 TEST FINAL:`);
     const testRestaurant = await Restaurant.findOne({}, 'name categories').populate('categories.id', 'name');
     if (testRestaurant) {
@@ -99,5 +90,4 @@ async function fixRestaurantCategories() {
   }
 }
 
-// Exécuter
 fixRestaurantCategories();

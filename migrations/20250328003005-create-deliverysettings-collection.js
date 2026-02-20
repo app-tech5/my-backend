@@ -1,4 +1,3 @@
-// migrations/XXXXXX-create-delivery-settings.js (remplacez XXXXXX par un timestamp)
 
 module.exports = {
   async up(db, client) {

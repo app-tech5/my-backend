@@ -25,23 +25,14 @@ const { handleSettingsChange } = require('./controllers/settingsController');
 const authMiddleware = require('./middleware/authMiddleware');
 const genericRoutes = require("./routes/genericRoutes");
 
-// SSL
 const fs = require('fs');
 const https = require('https');
-
-
-
 
 dotenv.config();
 connectDB();
 
 const app = express();
 app.use(i18n.init);
-
-// app.use((req, res, next) => {
-//     console.log("Langue active :", req.getLocale());
-//     next();
-// });
 
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
@@ -50,23 +41,16 @@ app.use(cors({
   credentials: true
 }));
 
-// handleSettingsChange(io);
-
 app.use(express.json());
-// app.use(cors({ origin: 'https://good-foods.digitaldienste.fr', credentials: true }));
+
 app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 
-// Routes publiques (sans authentification)
-// app.use('/settings', settingsRoutes);
-// app.use('/currencies', currencyRoutes);
-
-// Appliquer `authMiddleware` à toutes les autres routes API
 app.use("/api", authMiddleware);
 
 app.use('/api/settings', settingsRoutes);
-// app.use('/currencies', currencyRoutes);
+
 app.use('/api/drivers', driverRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/cart', cartRoutes);
@@ -77,22 +61,9 @@ app.use("/api/user-settings", userSettingsRoutes);
 app.use("/api/resource", genericRoutes);
 app.use("/api/upload", uploadRoutes);
 
-// 📌 Servir les images stockées
 app.use("/api/uploads", express.static("uploads"));
 
 app.use('/api', cleanupRouter);
 
-
-// const options = {
-//     key: fs.readFileSync('/etc/letsencrypt/live/good-foods.digitaldienste.fr/privkey.pem'),
-//     cert: fs.readFileSync('/etc/letsencrypt/live/good-foods.digitaldienste.fr/fullchain.pem')
-//   };
-  
-// const PORT = process.env.PORT || 443;
-// https.createServer(options, app).listen(PORT, () => {
-// console.log(`Serveur démarré sur le port ${PORT}`);
-// });
-
-
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Serveur démarré sur le port ${PORT}`));
+app.listen(PORT, () => {});

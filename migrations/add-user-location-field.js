@@ -1,7 +1,7 @@
 const { MongoClient } = require('mongodb');
 
 async function addUserLocationField() {
-  // Utiliser directement l'URI MongoDB
+  
   const mongoUri = 'mongodb://127.0.0.1:27017/good-foods';
   const dbName = 'good-foods';
 
@@ -16,8 +16,7 @@ async function addUserLocationField() {
 
     const db = client.db(dbName);
     const usersCollection = db.collection('users');
-
-    // Ajouter le champ location par défaut à tous les utilisateurs qui ne l'ont pas
+    
     const updateResult = await usersCollection.updateMany(
       { location: { $exists: false } },
       {
@@ -32,8 +31,7 @@ async function addUserLocationField() {
     );
 
     console.log(`✅ Migration terminée: ${updateResult.modifiedCount} utilisateurs mis à jour`);
-
-    // Vérifier quelques utilisateurs
+    
     const users = await usersCollection.find({}).limit(3).toArray();
     users.forEach(user => {
       console.log(`👤 ${user.name} (${user.email}): location =`, user.location);

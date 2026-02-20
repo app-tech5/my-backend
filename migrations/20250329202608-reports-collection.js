@@ -2,18 +2,16 @@ const mongoose = require('mongoose');
 const { faker } = require('@faker-js/faker');
 const { ObjectId } = require('mongodb');
 
-// Ajout de la constante pour contrôler le nombre de rapports
-const NUMBER_OF_REPORTS = 15; // Modifier ce nombre selon le besoin
+const NUMBER_OF_REPORTS = 15; 
 
 function generateMockReports(generatedBy) {
   const reportTypes = ["sales", "driver_performance", "customer_behavior"];
   const reports = [];
   const currentDate = new Date();
-
-  // Modification pour générer le nombre souhaité de rapports
+  
   for (let i = 0; i < NUMBER_OF_REPORTS; i++) {
-    const reportType = reportTypes[i % reportTypes.length]; // Alternance des types
-    const monthsToSubtract = Math.floor(i / reportTypes.length); // Pour varier les dates
+    const reportType = reportTypes[i % reportTypes.length]; 
+    const monthsToSubtract = Math.floor(i / reportTypes.length); 
     
     const baseDate = new Date(currentDate);
     baseDate.setMonth(currentDate.getMonth() - monthsToSubtract);
@@ -29,8 +27,7 @@ function generateMockReports(generatedBy) {
       createdAt: new Date(),
       updatedAt: new Date()
     };
-
-    // Ajout de propriétés spécifiques pour certains types de rapports
+    
     if (reportType === "customer_behavior") {
       report.isRecurring = faker.datatype.boolean();
       if (report.isRecurring) {
@@ -44,8 +41,6 @@ function generateMockReports(generatedBy) {
   return reports;
 }
 
-// Helper functions
-// Modification mineure de getReportTitle pour éviter les doublons
 function getReportTitle(reportType, date, index) {
   const typeTitles = {
     sales: `Sales Report - ${date.toLocaleDateString('en-US', { month: 'long' })} ${date.getFullYear()}${index > 0 ? ` (${index})` : ''}`,
@@ -55,7 +50,6 @@ function getReportTitle(reportType, date, index) {
   return typeTitles[reportType];
 }
 
-// Les fonctions suivantes restent strictement identiques à votre version originale
 function generateDateRange(reportType, baseDate) {
   const start = new Date(baseDate);
   start.setDate(1);
@@ -140,7 +134,6 @@ function generateMetrics(reportType) {
   return metrics;
 }
 
-// La partie module.exports reste strictement identique à votre version originale
 module.exports = {
   async up(db, client) {
     try {
@@ -164,103 +157,4 @@ module.exports = {
     await db.collection('reports').dropIndex("filters.restaurantIds_1");
   }
 };
-// const mongoose = require('mongoose');
 
-// module.exports = {
-//   async up(db, client) {
-//     // Insert sample reports data
-//     await db.collection('reports').insertMany([
-//       {
-//         _id: new ObjectId('67cc29e162de2f9a5b4f439a'),
-//         title: "Sales Report - January 2024",
-//         reportType: "sales",
-//         dateRange: {
-//           start: new Date('2024-01-01T00:00:00Z'),
-//           end: new Date('2024-01-31T23:59:59Z')
-//         },
-//         filters: {
-//           restaurantIds: [
-//             new ObjectId('5f8d0d55b54764421b7156c1'),
-//             new ObjectId('5f8d0d55b54764421b7156c2')
-//           ],
-//           orderStatuses: ["completed"]
-//         },
-//         metrics: {
-//           totalOrders: 1245,
-//           completedOrders: 1200,
-//           cancellationRate: 3.6,
-//           grossRevenue: 45280.50,
-//           netProfit: 15848.18,
-//           averageOrderValue: 37.73,
-//           averageDeliveryTime: 32.5
-//         },
-//         generatedBy: new ObjectId('67c62fae5a9b19466ee230d6'),
-//         createdAt: new Date(),
-//         updatedAt: new Date()
-//       },
-//       {
-//         _id: new ObjectId('67cc29e162de2f9a5b4f439b'),
-//         title: "Driver Performance - Week 05",
-//         reportType: "driver_performance",
-//         dateRange: {
-//           start: new Date('2024-01-29T00:00:00Z'),
-//           end: new Date('2024-02-04T23:59:59Z')
-//         },
-//         filters: {
-//           driverIds: [
-//             new ObjectId('5f8d0d55b54764421b7156d1'),
-//             new ObjectId('5f8d0d55b54764421b7156d2')
-//           ]
-//         },
-//         metrics: {
-//           totalDeliveries: 342,
-//           onTimeRate: 89.2,
-//           averageRating: 4.7,
-//           totalEarnings: 2565.00
-//         },
-//         generatedBy: new ObjectId('67c62fae5a9b19466ee230d6'),
-//         createdAt: new Date(),
-//         updatedAt: new Date()
-//       },
-//       {
-//         _id: new ObjectId('67cc29e162de2f9a5b4f439c'),
-//         title: "Premium Customer Analysis",
-//         reportType: "customer_behavior",
-//         dateRange: {
-//           start: new Date('2023-12-01T00:00:00Z'),
-//           end: new Date('2024-01-31T23:59:59Z')
-//         },
-//         metrics: {
-//           activeCustomers: 845,
-//           repeatOrderRate: 42.3,
-//           averageOrdersPerCustomer: 3.2,
-//           favoriteCategories: ["Burgers", "Pizzas", "Asian"]
-//         },
-//         generatedBy: new ObjectId('67c62fae5a9b19466ee230d6'),
-//         isRecurring: true,
-//         recurrencePattern: "monthly",
-//         createdAt: new Date(),
-//         updatedAt: new Date()
-//       }
-//     ]);
-
-//   },
-
-//   async down(db, client) {
-//     // Rollback: Remove inserted data
-//     await db.collection('reports').deleteMany({
-//       _id: {
-//         $in: [
-//           new ObjectId('67cc29e162de2f9a5b4f439a'),
-//           new ObjectId('67cc29e162de2f9a5b4f439b'),
-//           new ObjectId('67cc29e162de2f9a5b4f439c')
-//         ]
-//       }
-//     });
-    
-//     // Drop indexes
-//     await db.collection('reports').dropIndex("reportType_1");
-//     await db.collection('reports').dropIndex("dateRange.start_-1");
-//     await db.collection('reports').dropIndex("filters.restaurantIds_1");
-//   }
-// };

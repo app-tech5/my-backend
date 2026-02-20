@@ -2,15 +2,14 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const CustomerSupportSchema = new Schema({
-  // Informations de base
+  
   type: {
     type: String,
     required: true,
     enum: ['ticket', 'live_chat', 'faq'],
     default: 'ticket'
   },
-
-  // Commun à tous les types
+  
   user: { 
     type: Schema.Types.ObjectId, 
     ref: 'User', 
@@ -30,8 +29,7 @@ const CustomerSupportSchema = new Schema({
       return this.type !== 'faq'; 
     } 
   },
-
-  // Pour les tickets
+  
   status: {
     type: String,
     enum: ['open', 'in_progress', 'resolved', 'closed'],
@@ -52,8 +50,7 @@ const CustomerSupportSchema = new Schema({
     type: Schema.Types.ObjectId, 
     ref: 'Order' 
   },
-
-  // Pour le chat en direct
+  
   chat_messages: [{
     sender: {
       type: String,
@@ -81,8 +78,7 @@ const CustomerSupportSchema = new Schema({
       return this.type === 'live_chat'; 
     }
   },
-
-  // Pour les FAQ
+  
   question: { 
     type: String, 
     required: function() { 
@@ -103,8 +99,7 @@ const CustomerSupportSchema = new Schema({
       return this.type === 'faq'; 
     }
   },
-
-  // Métadonnées
+  
   assigned_to: { 
     type: Schema.Types.ObjectId, 
     ref: 'User' 
@@ -125,16 +120,15 @@ CustomerSupportSchema.pre("find", function () {
   this.populate([
     {
       path: "user",
-      select: "name", // On ne récupère que le nom du restaurant
+      select: "name", 
     },
     {
       path: "assigned_to",
-      select: "name", // On suppose que votre modèle Category a un champ "name"
+      select: "name", 
     },
   ]);
 });
 
-// Index pour les requêtes fréquentes
 CustomerSupportSchema.index({ type: 1, status: 1 });
 CustomerSupportSchema.index({ user: 1 });
 CustomerSupportSchema.index({ assigned_to: 1 });

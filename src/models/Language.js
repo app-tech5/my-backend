@@ -16,5 +16,4 @@ LanguageSchema.post('findOneAndUpdate', async function(doc) {
     }
 });
 
-
 module.exports = mongoose.model('Language', LanguageSchema);

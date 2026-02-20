@@ -3,23 +3,14 @@ const mongoose = require('mongoose');
 const restaurantSchema = new mongoose.Schema({
   distance: { type: Number, required: true, default: 0 },
   rating: { type: Number, required: true, default: 0 },
-  // coordinates: {
-  //   latitude: { type: Number, required: true, default: 0 },
-  //   longitude: { type: Number, required: true, default: 0 },
-  // },
+  
   review_count: { type: Number, required: true, default: 0 },
   serviceModes: { 
     type: String, 
     enum: ["delivery", "pickup"], 
     default: "pending" 
   },
-  // serviceModes: [
-  //   {
-  //     //value: { type: String, default: "" },
-  //     value: { type: mongoose.Schema.Types.ObjectId, ref: "ServiceMode", required: true},
-  //     label: { type: String, default: "" },
-  //   },
-  // ],
+  
   url: { type: String, required: true, default: "" },
   display_phone: { type: String, required: true, default: "" },
   phone: { type: String, required: true, default: "" },
@@ -32,7 +23,7 @@ const restaurantSchema = new mongoose.Schema({
       alias: { type: String, required: true, default: "" },
       title: { type: String, required: true, default: "" },
       image: { type: String, default: "" },
-      // value: { type: String, default: "" },
+      
       value: { type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true, default: null },
       label: { type: String, default: "" },
     },
@@ -57,20 +48,7 @@ const restaurantSchema = new mongoose.Schema({
   openingTime: { type: String, default: "09:00" },
   closingTime: { type: String, default: "21:00" },
   createdAt: { type: Date, default: Date.now },
-  // deliveryOptions: {
-  //   deliveryType: { type: String, default: "standard" },
-  //   isDeliveryAvailable: { type: Boolean, default: true },
-  //   isOrderAmountBasedFee: { type: Boolean, default: false },
-  //   fixedFee: { type: Number, default: 2.5 },
-  //   distanceFee: {
-  //     base: { type: String, default: "1.00" },
-  //     perKm: { type: String, default: "0.50" },
-  //   },
-  //   isFreeDelivery: {
-  //     enabled: { type: Boolean, default: false },
-  //   },
-  //   orderAmountThreshold: { type: Number, default: 20 },
-  // },
+  
   tax: {
     type: Object,
     default:{
@@ -79,7 +57,7 @@ const restaurantSchema = new mongoose.Schema({
       location:"",
       rate:"0.00",
       name:"TVA",
-      // value:"",
+      
       value: { type: mongoose.Schema.Types.ObjectId, ref: "Tax", required: true},
       label:"",
 

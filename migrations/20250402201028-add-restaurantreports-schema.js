@@ -1,4 +1,3 @@
-// migrations/XXXXXX-generate-mock-restaurant-reports.js
 
 const { faker } = require('@faker-js/faker');
 const mongoose = require('mongoose');
@@ -10,7 +9,7 @@ module.exports = {
     } catch (e) {
       if (e.codeName !== "NamespaceNotFound") throw e;
     }
-    // Récupérer les données existantes nécessaires
+    
     const [restaurants, users, orders] = await Promise.all([
       db.collection('restaurants').find({}).project({ _id: 1 }).toArray(),
       db.collection('users').find({}).project({ _id: 1 }).toArray(),
@@ -27,8 +26,7 @@ module.exports = {
     ];
     const statuses = ['pending', 'under_review', 'resolved', 'rejected'];
     const severities = ['low', 'medium', 'high', 'critical'];
-
-    // Générer les signalements fictifs
+    
     const mockReports = Array.from({ length: 50 }, (_, i) => {
       const reportType = faker.helpers.arrayElement(reportTypes);
       const isAnonymous = faker.datatype.boolean({ probability: 0.3 });
@@ -75,7 +73,7 @@ module.exports = {
   },
 
   async down(db) {
-    // Supprimer uniquement les signalements récemment créés
+    
     await db.collection('restaurantreports').deleteMany({
       createdAt: { $gte: new Date(Date.now() - 48 * 60 * 60 * 1000) }
     });

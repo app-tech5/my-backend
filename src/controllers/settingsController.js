@@ -1,6 +1,5 @@
 const Settings = require('../models/Setting');
 
-// WebSocket Management
 const handleSettingsChange = (io) => {
     const changeStream = Settings.watch();
 

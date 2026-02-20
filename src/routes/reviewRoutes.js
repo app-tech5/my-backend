@@ -4,7 +4,6 @@ const Review = require('../models/Review');
 
 const router = express.Router();
 
-// Middleware pour vérifier que l'utilisateur est un restaurant
 const requireRestaurant = async (req, res, next) => {
   try {
     if (!req.user || req.user.type !== 'restaurant') {
@@ -13,8 +12,7 @@ const requireRestaurant = async (req, res, next) => {
         message: 'Accès réservé aux restaurants'
       });
     }
-
-    // Récupérer le restaurant complet
+    
     const user = await require('../models/User').findById(req.user.id).select("restaurant");
     const restaurant = await require('../models/Restaurant').findById(user.restaurant);
 
@@ -36,30 +34,24 @@ const requireRestaurant = async (req, res, next) => {
   }
 };
 
-// Les middlewares sont déjà appliqués par le routeur parent (restaurantRoutes.js)
-
-// Routes pour les avis clients
 router.get('/reviews', async (req, res) => {
   try {
     const restaurantId = req.restaurant._id;
-
-    // Récupérer tous les avis approuvés pour ce restaurant
+    
     const reviews = await Review.find({
       restaurant: restaurantId,
       status: 'approved'
     })
-    .populate('user', 'name') // Récupérer le nom de l'utilisateur
-    .populate('order', 'orderNumber') // Récupérer le numéro de commande si disponible
-    .sort({ createdAt: -1 }) // Plus récent en premier
+    .populate('user', 'name') 
+    .populate('order', 'orderNumber') 
+    .sort({ createdAt: -1 }) 
     .lean();
-
-    // Calculer les statistiques
+    
     const totalReviews = reviews.length;
     const averageRating = totalReviews > 0
       ? (reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews).toFixed(1)
       : 0;
-
-    // Compter les avis par note
+    
     const ratingCounts = reviews.reduce((counts, review) => {
       counts[review.rating] = (counts[review.rating] || 0) + 1;
       return counts;
@@ -87,7 +79,6 @@ router.get('/reviews', async (req, res) => {
   }
 });
 
-// Répondre à un avis
 router.post('/reviews/:reviewId/reply', async (req, res) => {
   try {
     const restaurantId = req.restaurant._id;
@@ -100,8 +91,7 @@ router.post('/reviews/:reviewId/reply', async (req, res) => {
         message: 'Le texte de la réponse est requis'
       });
     }
-
-    // Vérifier que l'avis appartient au restaurant
+    
     const review = await Review.findOne({
       _id: reviewId,
       restaurant: restaurantId
@@ -113,8 +103,7 @@ router.post('/reviews/:reviewId/reply', async (req, res) => {
         message: 'Avis non trouvé'
       });
     }
-
-    // Ajouter la réponse
+    
     review.reply = {
       text: text.trim(),
       date: new Date(),

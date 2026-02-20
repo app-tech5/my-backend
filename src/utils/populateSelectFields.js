@@ -15,7 +15,7 @@ async function populateSelectFields(data) {
         const foundDoc = await model.findById(data[key].value);
         if (foundDoc) {
           console.log(`Document found for key: ${key}`, foundDoc);
-          data[key] = foundDoc; // Remplacer l'objet par le document trouvé
+          data[key] = foundDoc; 
         } else {
           console.error(`Invalid ID for key: ${key}`);
           throw new Error(`Invalid ID for ${key}`);

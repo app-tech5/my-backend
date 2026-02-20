@@ -9,8 +9,7 @@ async function restoreCollections(backupTimestamp) {
     console.log('Exemple: node restore-collections.js 2024-01-15T10-30-00');
     process.exit(1);
   }
-
-  // Utiliser directement l'URI MongoDB
+  
   const mongoUri = 'mongodb://127.0.0.1:27017/good-foods';
   const dbName = 'good-foods';
 
@@ -25,12 +24,10 @@ async function restoreCollections(backupTimestamp) {
 
     const db = client.db(dbName);
     const backupDir = path.join(__dirname, '..', 'backups');
-
-    // Chemins des fichiers de sauvegarde
+    
     const usersBackupPath = path.join(backupDir, `backup-${backupTimestamp}-users.json`);
     const restaurantsBackupPath = path.join(backupDir, `backup-${backupTimestamp}-restaurants.json`);
-
-    // Vérifier si les fichiers existent
+    
     if (!fs.existsSync(usersBackupPath)) {
       console.error(`❌ Fichier de sauvegarde users introuvable: ${usersBackupPath}`);
       return;
@@ -39,23 +36,20 @@ async function restoreCollections(backupTimestamp) {
       console.error(`❌ Fichier de sauvegarde restaurants introuvable: ${restaurantsBackupPath}`);
       return;
     }
-
-    // Charger les données depuis les fichiers JSON
+    
     console.log('📂 Chargement des fichiers de sauvegarde...');
     const usersData = JSON.parse(fs.readFileSync(usersBackupPath, 'utf8'));
     const restaurantsData = JSON.parse(fs.readFileSync(restaurantsBackupPath, 'utf8'));
-
-    // Restaurer la collection users
+    
     console.log('👥 Restauration de la collection users...');
     const usersCollection = db.collection('users');
-    await usersCollection.deleteMany({}); // Vider la collection
+    await usersCollection.deleteMany({}); 
     await usersCollection.insertMany(usersData);
     console.log(`✅ ${usersData.length} utilisateurs restaurés`);
-
-    // Restaurer la collection restaurants
+    
     console.log('🏪 Restauration de la collection restaurants...');
     const restaurantsCollection = db.collection('restaurants');
-    await restaurantsCollection.deleteMany({}); // Vider la collection
+    await restaurantsCollection.deleteMany({}); 
     await restaurantsCollection.insertMany(restaurantsData);
     console.log(`✅ ${restaurantsData.length} restaurants restaurés`);
 
@@ -69,7 +63,6 @@ async function restoreCollections(backupTimestamp) {
   }
 }
 
-// Récupérer le timestamp depuis les arguments de ligne de commande
 const backupTimestamp = process.argv[2];
 restoreCollections(backupTimestamp);
 

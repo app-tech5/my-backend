@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 async function backupCollections() {
-  // Utiliser directement l'URI MongoDB
+  
   const mongoUri = 'mongodb://127.0.0.1:27017/good-foods';
   const dbName = 'good-foods';
 
@@ -17,8 +17,7 @@ async function backupCollections() {
     console.log('✅ Connecté à MongoDB');
 
     const db = client.db(dbName);
-
-    // Créer le dossier de sauvegarde
+    
     const backupDir = path.join(__dirname, '..', 'backups');
     if (!fs.existsSync(backupDir)) {
       fs.mkdirSync(backupDir, { recursive: true });
@@ -26,8 +25,7 @@ async function backupCollections() {
 
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
     const backupFileName = `backup-${timestamp}`;
-
-    // Sauvegarder la collection users
+    
     console.log('📤 Sauvegarde de la collection users...');
     const usersCollection = db.collection('users');
     const users = await usersCollection.find({}).toArray();
@@ -36,8 +34,7 @@ async function backupCollections() {
     fs.writeFileSync(usersBackupPath, JSON.stringify(users, null, 2));
     console.log(`✅ Collection users sauvegardée: ${users.length} documents`);
     console.log(`📁 Fichier: ${usersBackupPath}`);
-
-    // Sauvegarder la collection restaurants
+    
     console.log('🏪 Sauvegarde de la collection restaurants...');
     const restaurantsCollection = db.collection('restaurants');
     const restaurants = await restaurantsCollection.find({}).toArray();
@@ -46,8 +43,7 @@ async function backupCollections() {
     fs.writeFileSync(restaurantsBackupPath, JSON.stringify(restaurants, null, 2));
     console.log(`✅ Collection restaurants sauvegardée: ${restaurants.length} documents`);
     console.log(`📁 Fichier: ${restaurantsBackupPath}`);
-
-    // Afficher un résumé
+    
     console.log('\n📊 RÉSUMÉ DE LA SAUVEGARDE:');
     console.log(`📅 Timestamp: ${timestamp}`);
     console.log(`👥 Utilisateurs: ${users.length}`);

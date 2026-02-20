@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-// Connexion à MongoDB
 async function connectDB() {
   try {
     await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/good-foods');
@@ -12,7 +11,6 @@ async function connectDB() {
   }
 }
 
-// Schéma pour les catégories (basé sur la structure existante)
 const categorySchema = new mongoose.Schema({
   name: { type: String, required: true },
   image: { type: String, default: '' },
@@ -22,7 +20,6 @@ const categorySchema = new mongoose.Schema({
 
 const Category = mongoose.model('Category', categorySchema);
 
-// Données des catégories à mettre à jour/créer
 const restaurantCategoriesData = [
   { count: 8, categoryId: null, categoryName: 'Italian' },
   { count: 7, categoryId: null, categoryName: 'American' },
@@ -34,7 +31,6 @@ const restaurantCategoriesData = [
   { count: 1, categoryId: null, categoryName: 'Pizza' }
 ];
 
-// Images par défaut pour chaque catégorie
 const categoryImages = {
   'Italian': 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&h=400&fit=crop',
   'American': 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=400&fit=crop',
@@ -49,21 +45,18 @@ const categoryImages = {
 async function updateCategories() {
   try {
     console.log('🚀 Démarrage de la mise à jour des catégories...');
-
-    // Supprimer toutes les catégories existantes
+    
     console.log('🗑️ Suppression de toutes les catégories existantes...');
     const deleteResult = await Category.deleteMany({});
     console.log(`✅ ${deleteResult.deletedCount} catégories supprimées`);
-
-    // Créer les nouvelles catégories basées sur les restaurants
+    
     console.log('\n🏗️ Création des nouvelles catégories...');
 
     for (const categoryData of restaurantCategoriesData) {
       const { categoryName, count } = categoryData;
 
       console.log(`📝 Création de la catégorie: ${categoryName} (${count} restaurants)`);
-
-      // Créer la nouvelle catégorie
+      
       const newCategory = new Category({
         name: categoryName,
         image: categoryImages[categoryName] || 'https://via.placeholder.com/400x300?text=' + encodeURIComponent(categoryName)
@@ -74,8 +67,7 @@ async function updateCategories() {
     }
 
     console.log('\n🎉 Mise à jour des catégories terminée avec succès !');
-
-    // Afficher un résumé des catégories
+    
     const allCategories = await Category.find({}).sort({ name: 1 });
     console.log('\n📋 Résumé des catégories dans la base de données:');
     allCategories.forEach(cat => {
@@ -87,18 +79,15 @@ async function updateCategories() {
   }
 }
 
-// Fonction principale
 async function main() {
   await connectDB();
   await updateCategories();
-
-  // Fermer la connexion
+  
   await mongoose.connection.close();
   console.log('🔌 Connexion MongoDB fermée');
   process.exit(0);
 }
 
-// Gestion des erreurs non capturées
 process.on('unhandledRejection', (error) => {
   console.error('❌ Erreur non gérée:', error);
   process.exit(1);
@@ -110,7 +99,6 @@ process.on('SIGINT', async () => {
   process.exit(0);
 });
 
-// Lancer le script
 if (require.main === module) {
   main();
 }

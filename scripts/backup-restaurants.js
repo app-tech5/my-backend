@@ -4,7 +4,6 @@ const fs = require('fs');
 const path = require('path');
 const loadModels = require('../src/utils/loadModels');
 
-// Connexion à la base de données
 const connectDB = async () => {
   try {
     console.log('🔍 VÉRIFICATION VARIABLE ENV MONGO_URI:');
@@ -19,11 +18,9 @@ const connectDB = async () => {
 
     await mongoose.connect(mongoUri);
     console.log('✅ Connecté à MongoDB');
-
-    // Charger tous les modèles
+    
     loadModels();
-
-    // Vérifier la base de données connectée
+    
     console.log('📊 Base de données connectée:', mongoose.connection.db.databaseName);
     console.log('📊 État de la connexion:', mongoose.connection.readyState);
 
@@ -36,20 +33,17 @@ const connectDB = async () => {
 const backupRestaurants = async () => {
   try {
     console.log('🔄 Création du backup de la collection restaurants...');
-
-    // Créer le dossier backups s'il n'existe pas
+    
     const backupDir = path.join(__dirname, '..', 'backups');
     if (!fs.existsSync(backupDir)) {
       fs.mkdirSync(backupDir);
       console.log('📁 Dossier backups créé');
     }
-
-    // Vérifier la connexion DB
+    
     console.log('🔍 Vérification de la connexion DB...');
     const dbState = mongoose.connection.readyState;
     console.log(`📊 État de la DB: ${dbState} (0=disconnected, 1=connected, 2=connecting, 3=disconnecting)`);
-
-    // Utiliser le modèle Mongoose pour récupérer les restaurants avec populate
+    
     console.log('📋 Chargement du modèle Restaurant...');
     const Restaurant = require('../src/models/Restaurant');
     console.log('✅ Modèle Restaurant chargé');
@@ -66,8 +60,7 @@ const backupRestaurants = async () => {
     } else {
       console.log('❌ Aucun restaurant trouvé avec Mongoose');
     }
-
-    // Essayer aussi avec la collection native pour comparer
+    
     console.log('🔍 Test avec collection native...');
     const nativeRestaurants = await mongoose.connection.db.collection('restaurants').find({}).toArray();
     console.log(`📊 Collection native: ${nativeRestaurants.length} restaurants`);
@@ -83,8 +76,7 @@ const backupRestaurants = async () => {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const filename = `restaurants-backup-${timestamp}.json`;
     const filepath = path.join(backupDir, filename);
-
-    // Écrire le fichier JSON
+    
     fs.writeFileSync(filepath, JSON.stringify(restaurants, null, 2));
 
     console.log(`✅ Backup créé: ${filename}`);
@@ -105,7 +97,6 @@ const backupRestaurants = async () => {
   }
 };
 
-// Exécuter le script
 const runScript = async () => {
   await connectDB();
   await backupRestaurants();

@@ -11,7 +11,7 @@ const serviceModeSchema = new mongoose.Schema({
   },
   restaurantId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Restaurant' // Assurez-vous que 'Restaurant' correspond au nom de votre modèle de restaurant
+    ref: 'Restaurant' 
   }
 });
 

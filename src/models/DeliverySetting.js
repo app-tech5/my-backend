@@ -2,26 +2,25 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const deliverySettingsSchema = new Schema({
-  // Paramètres de base
+  
   isDeliveryEnabled: {
     type: Boolean,
     default: true,
     required: true
   },
-  deliveryPreparationTime: { // Temps moyen de préparation en minutes
+  deliveryPreparationTime: { 
     type: Number,
     default: 30,
     min: 5,
     max: 180
   },
-  maxDeliveryDistance: { // Distance maximale en km
+  maxDeliveryDistance: { 
     type: Number,
     default: 15,
     min: 1,
     max: 50
   },
-
-  // Frais de livraison
+  
   deliveryFeeType: {
     type: String,
     enum: ['FIXED', 'DYNAMIC', 'FREE', 'RESTAURANT_DEFINED'],
@@ -41,50 +40,46 @@ const deliverySettingsSchema = new Schema({
       maxFee: 10
     }
   },
-  freeDeliveryThreshold: { // Montant minimum pour livraison gratuite
+  freeDeliveryThreshold: { 
     type: Number,
     default: 25
   },
-
-  // Zones et horaires
+  
   deliveryZones: [{
     name: String,
-    polygonCoordinates: [[Number]], // [ [lat, lng], [lat, lng], ... ]
+    polygonCoordinates: [[Number]], 
     fee: Number
   }],
   deliveryHours: {
     type: Object,
-    // start: { type: String }, // Format HH:mm
-    // end: { type: String },
+    
     default: {
       start : '08:00',
       end: '23:00'
     }
   },
-  blackoutDays: [Date], // Jours sans livraison (fêtes, etc.)
-
-  // Options de livraison
+  blackoutDays: [Date], 
+  
   allowScheduledDelivery: {
     type: Boolean,
     default: true
   },
-  schedulingLeadTime: { // Délai minimum pour réservation en heures
+  schedulingLeadTime: { 
     type: Number,
     default: 2
   },
-  timeSlotDuration: { // Durée des créneaux en minutes
+  timeSlotDuration: { 
     type: Number,
     default: 30,
     enum: [15, 30, 45, 60]
   },
-
-  // Paramètres avancés
+  
   driverAssignmentMethod: {
     type: String,
     enum: ['AUTO', 'MANUAL', 'HYBRID'],
     default: 'AUTO'
   },
-  autoAssignmentRadius: { // Rayon pour assignation auto (km)
+  autoAssignmentRadius: { 
     type: Number,
     default: 5
   },
@@ -92,8 +87,7 @@ const deliverySettingsSchema = new Schema({
     type: Boolean,
     default: true
   },
-
-  // Métadonnées
+  
   lastUpdated: {
     type: Date,
     default: Date.now
@@ -103,9 +97,6 @@ const deliverySettingsSchema = new Schema({
     ref: 'User'
   }
 }, { timestamps: true });
-
-// Index pour les recherches géospatiales
-// deliverySettingsSchema.index({ 'deliveryZones.polygonCoordinates': '2dsphere' });
 
 const DeliverySettings = mongoose.model('DeliverySetting', deliverySettingsSchema);
 

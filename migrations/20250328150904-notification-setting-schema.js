@@ -1,7 +1,6 @@
 module.exports = {
   async up(db) {
-    // 1. Créer la collection 'notification_setting' (sera automatique avec insertOne)
-    // 2. Insérer les configurations de notification par défaut pour différents acteurs
+    
     await db.collection('notificationsettings').insertMany([
       {
         userType: "admin",
@@ -108,12 +107,11 @@ module.exports = {
         updatedAt: new Date()
       }
     ]);
-
    
   },
 
   async down(db) {
-    // Rollback : supprimer la collection et ses index
+    
     await db.collection('notificationsettings').drop();
   }
 };

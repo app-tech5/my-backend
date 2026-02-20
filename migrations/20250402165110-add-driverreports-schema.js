@@ -1,4 +1,3 @@
-// migrations/XXXXXX-generate-mock-driver-reports.js
 
 const { faker } = require('@faker-js/faker');
 const mongoose = require('mongoose');
@@ -10,21 +9,17 @@ module.exports = {
     } catch (e) {
       if (e.codeName !== "NamespaceNotFound") throw e;
     }
-    // Récupérer les entités existantes
+    
     const [users, drivers, orders] = await Promise.all([
       db.collection('users').find({}).project({ _id: 1 }).toArray(),
       db.collection('drivers').find({}).project({ _id: 1 }).toArray(),
       db.collection('orders').find({}).project({ _id: 1 }).toArray()
     ]);
-
-    // if (users.length === 0 || drivers.length === 0) {
-    //   throw new Error('Users et Drivers doivent exister dans la base de données');
-    // }
+    
     if (users.length === 0 || drivers.length === 0 || orders.length === 0){
       return
     }
-
-    // Types de signalements disponibles
+    
     const reportTypes = [
       'late_delivery',
       'rude_behavior',
@@ -34,17 +29,13 @@ module.exports = {
       'driving_issues',
       'other'
     ];
-
-    // Niveaux de sévérité
+    
     const severities = ['low', 'medium', 'high', 'critical'];
-
-    // Statuts possibles
+    
     const statuses = ['pending', 'under_review', 'resolved', 'dismissed', 'requires_action'];
-
-    // Résolutions possibles
+    
     const resolutions = ['warning_issued', 'driver_suspended', 'driver_terminated', 'compensation_issued', 'no_action'];
-
-    // Générer des signalements fictifs
+    
     const mockReports = Array.from({ length: 50 }, (_, i) => {
       const reportType = faker.helpers.arrayElement(reportTypes);
       const status = faker.helpers.arrayElement(statuses);
@@ -77,13 +68,12 @@ module.exports = {
         resolvedAt: isResolved ? faker.date.recent() : null
       };
     });
-
-    // Insérer les signalements
+    
     await db.collection('driverreports').insertMany(mockReports);
   },
 
   async down(db) {
-    // Supprimer uniquement les signalements récemment créés
+    
     await db.collection('driverreports').deleteMany({
       createdAt: { $gte: new Date(Date.now() - 48 * 60 * 60 * 1000) }
     });

@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-// Connexion à la base de données
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/goodfood', {
@@ -15,15 +14,13 @@ const connectDB = async () => {
   }
 };
 
-// Modèles
 const Product = require('../src/models/Product');
 const Variant = require('../src/models/Variant');
 
 const fixVariantIntegrity = async () => {
   try {
     console.log('🔧 Correction de l\'intégrité des variants...\n');
-
-    // 1. Récupérer tous les produits qui ont des variants
+    
     const productsWithVariants = await Product.find({
       'variants.0': { $exists: true }
     });
@@ -32,27 +29,25 @@ const fixVariantIntegrity = async () => {
 
     let fixedCount = 0;
     let removedCount = 0;
-
-    // 2. Pour chaque produit, vérifier et corriger les variants
+    
     for (const product of productsWithVariants) {
       const originalVariants = product.variants;
       const validVariants = [];
 
       for (const variantRef of originalVariants) {
-        // Vérifier si le variant existe
+        
         const variantExists = await Variant.findById(variantRef.value);
 
         if (variantExists) {
-          // Variant existe, le garder
+          
           validVariants.push(variantRef);
         } else {
-          // Variant n'existe pas, le signaler
+          
           console.log(`❌ Variant manquant supprimé: "${variantRef.label}" (${variantRef.value}) dans "${product.name}"`);
           removedCount++;
         }
       }
-
-      // Mettre à jour le produit si nécessaire
+      
       if (validVariants.length !== originalVariants.length) {
         await Product.findByIdAndUpdate(product._id, {
           variants: validVariants,
@@ -80,12 +75,10 @@ const fixVariantIntegrity = async () => {
   }
 };
 
-// Script pour créer des variants manquants (si on a des données de référence)
 const createMissingVariants = async () => {
   try {
     console.log('🆕 Création de variants manquants...\n');
-
-    // Exemple de variants courants à créer si manquants
+    
     const commonVariants = [
       { name: 'Jalapeños', extra: 2.50, available: true },
       { name: 'Champignons', extra: 1.50, available: true },
@@ -100,7 +93,7 @@ const createMissingVariants = async () => {
     let createdCount = 0;
 
     for (const variantData of commonVariants) {
-      // Vérifier si le variant existe déjà
+      
       const existingVariant = await Variant.findOne({ name: variantData.name });
 
       if (!existingVariant) {
@@ -118,7 +111,6 @@ const createMissingVariants = async () => {
   }
 };
 
-// Exécution du script
 const runScript = async (action = 'fix') => {
   await connectDB();
 
@@ -136,13 +128,11 @@ const runScript = async (action = 'fix') => {
   console.log('\n🔚 Script terminé');
 };
 
-// Permettre l'exécution en ligne de commande
 if (require.main === module) {
-  const action = process.argv[2] || 'fix'; // 'fix', 'create', ou 'both'
+  const action = process.argv[2] || 'fix'; 
   console.log(`🚀 Exécution du script avec action: ${action}`);
   runScript(action);
 }
 
 module.exports = { fixVariantIntegrity, createMissingVariants };
-
 

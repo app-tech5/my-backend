@@ -4,19 +4,16 @@ const UserSettings = require('../models/UserSettings');
 
 const router = express.Router();
 
-// Middleware pour vérifier que l'utilisateur est authentifié
 router.use(authMiddleware);
 
-// GET /api/user-settings - Récupérer les paramètres utilisateur
 router.get('/', async (req, res) => {
   try {
     const userId = req.user.id;
-
-    // Trouver les paramètres utilisateur ou les créer par défaut
+    
     let userSettings = await UserSettings.findOne({ userId });
 
     if (!userSettings) {
-      // Créer les paramètres par défaut si ils n'existent pas
+      
       const user = await require('../models/User').findById(userId);
       if (!user || !user.restaurant) {
         return res.status(400).json({
@@ -56,13 +53,11 @@ router.get('/', async (req, res) => {
   }
 });
 
-// PUT /api/user-settings - Mettre à jour les paramètres utilisateur
 router.put('/', async (req, res) => {
   try {
     const userId = req.user.id;
     const updates = req.body;
-
-    // Validation basique
+    
     if (updates.notifications) {
       const allowedNotifKeys = ['newOrders', 'orderUpdates', 'lowStock', 'marketing'];
       for (const key in updates.notifications) {
@@ -79,8 +74,7 @@ router.put('/', async (req, res) => {
           delete updates.restaurantSettings[key];
         }
       }
-
-      // Validation du temps de préparation
+      
       if (updates.restaurantSettings.preparationTime !== undefined) {
         const prepTime = parseInt(updates.restaurantSettings.preparationTime);
         if (isNaN(prepTime) || prepTime < 1 || prepTime > 120) {
@@ -92,8 +86,7 @@ router.put('/', async (req, res) => {
         updates.restaurantSettings.preparationTime = prepTime;
       }
     }
-
-    // Mettre à jour ou créer les paramètres
+    
     const userSettings = await UserSettings.findOneAndUpdate(
       { userId },
       { $set: updates },
@@ -116,7 +109,6 @@ router.put('/', async (req, res) => {
   }
 });
 
-// PATCH /api/user-settings/notifications - Mettre à jour seulement les notifications
 router.patch('/notifications', async (req, res) => {
   try {
     const userId = req.user.id;
@@ -149,7 +141,6 @@ router.patch('/notifications', async (req, res) => {
   }
 });
 
-// PATCH /api/user-settings/restaurant - Mettre à jour seulement les paramètres restaurant
 router.patch('/restaurant', async (req, res) => {
   try {
     const userId = req.user.id;

@@ -14,7 +14,9 @@
     "migrate:status": "migrate-mongo status",
     "migrate:up": "migrate-mongo up",
     "migrate:down": "migrate-mongo down",
-    "migrate:create": "migrate-mongo create"
+    "migrate:create": "migrate-mongo create",
+    "lint": "eslint .",
+    "lint-fix": "eslint . --fix"
   },
   "keywords": [],
   "author": "",
@@ -26,6 +28,8 @@
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
+    "eslint": "^9.39.3",
+    "eslint-plugin-no-comments": "^1.1.10",
     "express": "^4.21.2",
     "firebase-admin": "^13.0.2",
     "i18n": "^0.15.1",

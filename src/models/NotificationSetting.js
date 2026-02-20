@@ -1,4 +1,4 @@
-// models/NotificationSetting.js
+
 const mongoose = require('mongoose');
 
 const notificationSettingSchema = new mongoose.Schema({

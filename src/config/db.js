@@ -4,9 +4,8 @@ require('dotenv').config();
 const connectDB = async () => {
     try {
         await mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/good-foods', {
-            // Options supprimées car dépréciées dans Mongoose 6+
+
         });
-        console.log('MongoDB connecté');
     } catch (error) {
         console.error('Erreur de connexion MongoDB:', error);
         process.exit(1);

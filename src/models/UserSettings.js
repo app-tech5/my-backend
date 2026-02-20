@@ -12,14 +12,14 @@ const UserSettingsSchema = new mongoose.Schema({
     ref: 'Restaurant',
     required: true
   },
-  // Notifications
+  
   notifications: {
     newOrders: { type: Boolean, default: true },
     orderUpdates: { type: Boolean, default: true },
     lowStock: { type: Boolean, default: false },
     marketing: { type: Boolean, default: false },
   },
-  // Paramètres restaurant
+  
   restaurantSettings: {
     autoAcceptOrders: { type: Boolean, default: false },
     preparationTime: { type: Number, default: 15 },

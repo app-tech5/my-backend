@@ -42,7 +42,6 @@ class BaseController {
             }
             const updatedItem = await Model.findByIdAndUpdate(req.params.id, req.body, { new: true });
             if (!updatedItem) return res.status(404).json({ message: "Not Found" });
-            console.log(updatedItem, req.params.id)
             res.json(updatedItem);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -58,13 +57,6 @@ class BaseController {
             res.status(500).json({ error: error.message });
         }
     }
-  
-    // Implémentez les autres méthodes CRUD ici...
+    
   }
   
-  
-  
-//   const userController = new UserController();
-  
-//   router.get("/users", (req, res) => userController.getAll(req, res));
-  // Ajoutez les autres routes spécifiques à User ici...

@@ -2,15 +2,14 @@ const express = require('express');
 const router = express.Router();
 const Settings = require('../models/Setting');
 
-// Exemple : Récupérer tous les settings
 router.get("/", async (req, res) => {
     try {
         const settings = await Settings.findById("app_settings");
 
         if (!settings) {
-            // 🔥 Si le document n'existe pas, on l'initialise
+            
             const defaultSettings = new Settings({
-                _id: "app_settings", // 👈 ID fixé ici
+                _id: "app_settings", 
                 appName: "Mon App",
                 currency: {
                     value: "EUR",
@@ -47,8 +46,6 @@ router.get("/", async (req, res) => {
     }
 });
 
-
-// Exemple : Mettre à jour un setting
 router.put('/', async (req, res) => {
     try {
         const updatedSetting = await Settings.findByIdAndUpdate({}, req.body, { new: true });

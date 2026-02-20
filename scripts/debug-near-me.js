@@ -13,8 +13,7 @@ async function debugNearMe() {
     console.log('✅ Connecté à MongoDB');
 
     const db = client.db(dbName);
-
-    // Vérifier l'utilisateur demo
+    
     console.log('\n👤 Vérification de l\'utilisateur demo:');
     const demoUser = await db.collection('users').findOne({ email: 'demo@customer.com' });
     if (demoUser) {
@@ -23,8 +22,7 @@ async function debugNearMe() {
     } else {
       console.log('❌ Utilisateur demo non trouvé');
     }
-
-    // Vérifier les restaurants avec coordonnées
+    
     console.log('\n🏪 Vérification des restaurants:');
     const restaurantsWithCoords = await db.collection('restaurants')
       .find({
@@ -39,8 +37,7 @@ async function debugNearMe() {
     restaurantsWithCoords.forEach((restaurant, index) => {
       console.log(`  ${index + 1}. ${restaurant.name}: ${restaurant.latitude}, ${restaurant.longitude}`);
     });
-
-    // Calculer les distances depuis Paris centre
+    
     if (demoUser?.location && restaurantsWithCoords.length > 0) {
       console.log('\n📏 Distances depuis la position utilisateur:');
       const userLat = demoUser.location.latitude;
@@ -54,8 +51,7 @@ async function debugNearMe() {
         console.log(`  ${index + 1}. ${restaurant.name}: ${distance.toFixed(2)} km`);
       });
     }
-
-    // Vérifier les restaurants dans un rayon de 10km
+    
     if (demoUser?.location) {
       console.log('\n🎯 Restaurants dans un rayon de 10km:');
       const userLat = demoUser.location.latitude;
@@ -88,7 +84,7 @@ async function debugNearMe() {
 }
 
 function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-  const R = 6371; // Radius of the earth in km
+  const R = 6371; 
   const dLat = deg2rad(lat2 - lat1);
   const dLon = deg2rad(lon2 - lon1);
   const a =
@@ -96,7 +92,7 @@ function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
     Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
     Math.sin(dLon / 2) * Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const d = R * c; // Distance in km
+  const d = R * c; 
   return d;
 }
 

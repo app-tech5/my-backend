@@ -1,4 +1,3 @@
-// migrations/2025MMDDHHMMSS-add-currency-schema.js
 
 module.exports = {
   up: async (db) => {
@@ -9,8 +8,7 @@ module.exports = {
       }
     await db.createCollection('currencies');
     await db.collection('currencies').createIndex({ code: 1 }, { unique: true });
-
-    // Si vous souhaitez ajouter des données initiales, décommentez l'exemple ci-dessous :
+    
     await db.collection('currencies').insertOne({
       code: 'USD',
       exchangeRate: 1,

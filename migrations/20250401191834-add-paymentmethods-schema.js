@@ -1,4 +1,3 @@
-// migrations/XXXXXX-generate-mock-payment-methods.js
 
 const { faker } = require('@faker-js/faker');
 const mongoose = require('mongoose');
@@ -10,7 +9,7 @@ module.exports = {
     } catch (e) {
       if (e.codeName !== "NamespaceNotFound") throw e;
     }
-    // Récupérer les utilisateurs existants
+    
     const existingUsers = await db.collection('users')
       .find({})
       .project({ _id: 1 })
@@ -19,8 +18,7 @@ module.exports = {
     if (existingUsers.length === 0) {
       throw new Error('Aucun utilisateur trouvé dans la base de données');
     }
-
-    // Types de méthodes de paiement disponibles
+    
     const methodTypes = [
       'credit_card', 
       'debit_card', 
@@ -30,13 +28,11 @@ module.exports = {
       'bank_transfer', 
       'cash_on_delivery'
     ];
-
-    // Générer des méthodes de paiement fictives
+    
     const mockPaymentMethods = existingUsers.flatMap(user => {
       const methodsForUser = [];
       const methodsCount = faker.number.int({ min: 1, max: 3 });
       
-      // S'assurer qu'il y a exactement une méthode par défaut par utilisateur
       let hasDefault = false;
 
       for (let i = 0; i < methodsCount; i++) {
@@ -56,8 +52,7 @@ module.exports = {
             ? faker.date.recent({ days: 30 }) 
             : null
         };
-
-        // Ajouter les détails spécifiques au type de méthode
+        
         switch (methodType) {
           case 'credit_card':
           case 'debit_card':
@@ -97,7 +92,7 @@ module.exports = {
 
           case 'cash_on_delivery':
           case 'bank_transfer':
-            // Pas de détails supplémentaires nécessaires
+            
             break;
         }
 
@@ -106,13 +101,12 @@ module.exports = {
 
       return methodsForUser;
     });
-
-    // Insérer les méthodes de paiement
+    
     await db.collection('paymentmethods').insertMany(mockPaymentMethods);
   },
 
   async down(db) {
-    // Supprimer uniquement les méthodes de paiement générées (identifier par created_at récent)
+    
     await db.collection('paymentmethods').deleteMany({
       createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }
     });

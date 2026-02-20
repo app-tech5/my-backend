@@ -10,8 +10,7 @@ async function findUserId() {
 
     const db = client.db('good-foods');
     const usersCollection = db.collection('users');
-
-    // Chercher l'utilisateur demo@customer.com
+    
     const user = await usersCollection.findOne({ email: 'demo@customer.com' });
 
     if (user) {
@@ -33,10 +32,4 @@ async function findUserId() {
 }
 
 findUserId();
-
-
-
-
-
-
 
