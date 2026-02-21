@@ -1,6 +1,4 @@
-
 const mongoose = require('mongoose');
-
 const notificationSettingSchema = new mongoose.Schema({
   userType: { 
     type: String, 

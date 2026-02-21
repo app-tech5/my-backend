@@ -1,6 +1,5 @@
 module.exports = {
   async up(db) {
-    
     await db.collection('notificationsettings').insertMany([
       {
         userType: "admin",
@@ -107,11 +106,8 @@ module.exports = {
         updatedAt: new Date()
       }
     ]);
-   
   },
-
   async down(db) {
-    
     await db.collection('notificationsettings').drop();
   }
 };

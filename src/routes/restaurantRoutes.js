@@ -8,9 +8,7 @@ const Menu = require('../models/Menu');
 const Product = require('../models/Product');
 const Review = require('../models/Review');
 const reviewRoutes = require('./reviewRoutes');
-
 const router = express.Router();
-
 const requireRestaurant = async (req, res, next) => {
   try {
     if (!req.user || req.user.type !== 'restaurant') {
@@ -19,18 +17,14 @@ const requireRestaurant = async (req, res, next) => {
         message: 'Accès réservé aux restaurants'
       });
     }
-
     const user = await User.findById(req.user.id).select("restaurant");
-
     const restaurant = await Restaurant.findById(user.restaurant);
-    
     if (!restaurant) {
       return res.status(404).json({
         success: false,
         message: 'Restaurant non trouvé'
       });
     }
-
     req.restaurant = restaurant;
     next();
   } catch (error) {
@@ -41,10 +35,8 @@ const requireRestaurant = async (req, res, next) => {
     });
   }
 };
-
 router.use(authMiddleware);
 router.use(requireRestaurant);
-
 router.get('/profile', async (req, res) => {
   try {
     res.json({
@@ -59,28 +51,23 @@ router.get('/profile', async (req, res) => {
     });
   }
 });
-
 router.put('/profile', async (req, res) => {
   try {
     const restaurantId = req.restaurant._id;
     const updates = req.body;
-    
     const allowedFields = ['name', 'email', 'phone', 'address', 'description', 'openingTime', 'closingTime', 'is_closed', 'commission_rate', 'collectTime'];
     const filteredUpdates = {};
-
     allowedFields.forEach(field => {
       if (updates[field] !== undefined) {
         filteredUpdates[field] = updates[field];
       }
     });
-    
     if (filteredUpdates.name && !filteredUpdates.name.trim()) {
       return res.status(400).json({
         success: false,
         message: 'Le nom du restaurant ne peut pas être vide'
       });
     }
-
     if (filteredUpdates.email) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(filteredUpdates.email)) {
@@ -90,22 +77,18 @@ router.put('/profile', async (req, res) => {
         });
       }
     }
-    
     const updatedRestaurant = await Restaurant.findByIdAndUpdate(
       restaurantId,
       { ...filteredUpdates, updatedAt: new Date() },
       { new: true }
     );
-
     if (!updatedRestaurant) {
       return res.status(404).json({
         success: false,
         message: 'Restaurant non trouvé'
       });
     }
-
     console.log(`Profil du restaurant mis à jour: ${updatedRestaurant.name}`);
-
     res.json({
       success: true,
       message: 'Profil mis à jour avec succès',
@@ -119,28 +102,21 @@ router.put('/profile', async (req, res) => {
     });
   }
 });
-
 router.get('/stats', async (req, res) => {
   try {
     console.log('Récupération des statistiques pour le restaurant:', req.restaurant.name);
     const restaurantId = req.restaurant._id;
-    
     const orders = await Order.find({ restaurant: restaurantId });
-    
     const totalOrders = orders.length;
     const completedOrders = orders.filter(order => order.status === 'delivered').length;
     const totalRevenue = orders
       .filter(order => order.status === 'delivered')
       .reduce((sum, order) => sum + (order.totalPrice || 0), 0);
-
     const pendingOrders = orders.filter(order =>
       ['pending', 'accepted', 'preparing', 'ready'].includes(order.status)
     ).length;
-    
     const averageRating = 4.2;
-    
     const activeMenuItems = 24;
-
     res.json({
       success: true,
       data: {
@@ -160,15 +136,12 @@ router.get('/stats', async (req, res) => {
     });
   }
 });
-
 router.get('/analytics', async (req, res) => {
   try {
     const { period = 'today' } = req.query;
     const restaurantId = req.restaurant._id;
-    
     const now = new Date();
     let startDate, endDate = now;
-
     switch (period) {
       case 'today':
         startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -183,35 +156,29 @@ router.get('/analytics', async (req, res) => {
         startDate = new Date(now.getFullYear(), now.getMonth(), 1);
         break;
     }
-    
     const orders = await Order.find({
       restaurant: restaurantId,
       createdAt: { $gte: startDate, $lte: endDate }
     });
-    
     const totalOrders = orders.length;
     const completedOrders = orders.filter(order => order.status === 'delivered').length;
     const cancelledOrders = orders.filter(order => order.status === 'cancelled').length;
     const totalRevenue = orders
       .filter(order => order.status === 'delivered')
       .reduce((sum, order) => sum + (order.totalPrice || 0), 0);
-
     const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
     const cancellationRate = totalOrders > 0 ? (cancelledOrders / totalOrders) * 100 : 0;
-    
     const averageRating = 4.2;
     const averagePreparationTime = 18;
     const activeCustomers = Math.floor(totalOrders * 0.8); 
     const onTimeDeliveryRate = 91.7;
     const totalDeliveries = completedOrders;
-    
     const trends = {
       revenue: 12.5,
       orders: 8.2,
       customers: -2.1,
       rating: 0.3
     };
-
     res.json({
       success: true,
       data: {
@@ -238,24 +205,19 @@ router.get('/analytics', async (req, res) => {
     });
   }
 });
-
 router.get('/orders', async (req, res) => {
   try {
     const { status } = req.query;
     const restaurantId = req.restaurant._id;
-
     let filter = { restaurant: restaurantId };
     if (status) {
       filter.status = status;
     }
-
     const orders = await Order.find(filter)
       .populate('user', 'name phone')
       .sort({ createdAt: -1 })
       .limit(50); 
-
       console.log(`Récupération des commandes pour le restaurant ${req.restaurant.name} avec filtre:`, filter, `Nombre de commandes trouvées: ${orders.length}`);
-
     res.json({
       success: true,
       data: orders
@@ -268,29 +230,24 @@ router.get('/orders', async (req, res) => {
     });
   }
 });
-
 router.post('/orders/:orderId/accept', async (req, res) => {
   try {
     const { orderId } = req.params;
     const restaurantId = req.restaurant._id;
-
     const order = await Order.findOne({
       _id: orderId,
       restaurant: restaurantId,
       status: 'pending'
     });
-
     if (!order) {
       return res.status(404).json({
         success: false,
         message: 'Commande non trouvée ou déjà traitée'
       });
     }
-
     order.status = 'accepted';
     order.acceptedAt = new Date();
     await order.save();
-
     res.json({
       success: true,
       message: 'Commande acceptée avec succès',
@@ -304,29 +261,24 @@ router.post('/orders/:orderId/accept', async (req, res) => {
     });
   }
 });
-
 router.post('/orders/:orderId/prepare', async (req, res) => {
   try {
     const { orderId } = req.params;
     const restaurantId = req.restaurant._id;
-
     const order = await Order.findOne({
       _id: orderId,
       restaurant: restaurantId,
       status: 'accepted'
     });
-
     if (!order) {
       return res.status(404).json({
         success: false,
         message: 'Commande non trouvée ou statut incorrect'
       });
     }
-
     order.status = 'preparing';
     order.preparationStartedAt = new Date();
     await order.save();
-
     res.json({
       success: true,
       message: 'Préparation démarrée',
@@ -340,29 +292,24 @@ router.post('/orders/:orderId/prepare', async (req, res) => {
     });
   }
 });
-
 router.post('/orders/:orderId/ready', async (req, res) => {
   try {
     const { orderId } = req.params;
     const restaurantId = req.restaurant._id;
-
     const order = await Order.findOne({
       _id: orderId,
       restaurant: restaurantId,
       status: 'preparing'
     });
-
     if (!order) {
       return res.status(404).json({
         success: false,
         message: 'Commande non trouvée ou statut incorrect'
       });
     }
-
     order.status = 'ready';
     order.readyAt = new Date();
     await order.save();
-
     res.json({
       success: true,
       message: 'Commande prête pour le retrait',
@@ -376,37 +323,30 @@ router.post('/orders/:orderId/ready', async (req, res) => {
     });
   }
 });
-
 router.put('/orders/:orderId/status', async (req, res) => {
   try {
     const { orderId } = req.params;
     const { status } = req.body;
     const restaurantId = req.restaurant._id;
-
     const validStatuses = ['pending', 'accepted', 'preparing', 'ready', 'delivered', 'cancelled'];
-
     if (!validStatuses.includes(status)) {
       return res.status(400).json({
         success: false,
         message: 'Statut invalide'
       });
     }
-
     const order = await Order.findOne({
       _id: orderId,
       restaurant: restaurantId
     });
-
     if (!order) {
       return res.status(404).json({
         success: false,
         message: 'Commande non trouvée'
       });
     }
-
     order.status = status;
     await order.save();
-
     res.json({
       success: true,
       message: `Statut changé à ${status}`,
@@ -420,17 +360,13 @@ router.put('/orders/:orderId/status', async (req, res) => {
     });
   }
 });
-
 router.get('/menu', async (req, res) => {
   try {
     const restaurantId = req.restaurant._id;
-    
     const menuItems = await Product.find({ restaurant: restaurantId })
       .populate('restaurant', 'name')
       .sort({ created_at: -1 }); 
-
     console.log(`Récupération du menu pour le restaurant ${req.restaurant.name}: ${menuItems.length} éléments trouvés`);
-
     res.json({
       success: true,
       data: menuItems
@@ -443,19 +379,16 @@ router.get('/menu', async (req, res) => {
     });
   }
 });
-
 router.post('/menu', async (req, res) => {
   try {
     const restaurantId = req.restaurant._id;
     const { name, description, price, image, preparation_time, products, discount, availability } = req.body;
-    
     if (!name || !price || !image) {
       return res.status(400).json({
         success: false,
         message: 'Nom, prix et image sont requis'
       });
     }
-    
     const newMenuItem = new Menu({
       name,
       description: description || '',
@@ -467,13 +400,9 @@ router.post('/menu', async (req, res) => {
       discount: discount || { active: false, percentage: 0 },
       availability: availability !== undefined ? availability : true
     });
-
     await newMenuItem.save();
-    
     const populatedItem = await Menu.findById(newMenuItem._id).populate('restaurant', 'name');
-
     console.log(`Nouvel élément ajouté au menu du restaurant ${req.restaurant.name}: ${name}`);
-
     res.status(201).json({
       success: true,
       message: 'Élément ajouté au menu avec succès',
@@ -487,30 +416,24 @@ router.post('/menu', async (req, res) => {
     });
   }
 });
-
 router.put('/menu/:itemId', async (req, res) => {
   try {
     const restaurantId = req.restaurant._id;
     const { itemId } = req.params;
     const updates = req.body;
-    
     const menuItem = await Menu.findOne({ _id: itemId, restaurant: restaurantId });
-
     if (!menuItem) {
       return res.status(404).json({
         success: false,
         message: 'Élément de menu non trouvé'
       });
     }
-    
     const updatedItem = await Menu.findByIdAndUpdate(
       itemId,
       { ...updates, updated_at: new Date() },
       { new: true }
     ).populate('restaurant', 'name');
-
     console.log(`Élément modifié dans le menu du restaurant ${req.restaurant.name}: ${updatedItem.name}`);
-
     res.json({
       success: true,
       message: 'Élément modifié avec succès',
@@ -524,25 +447,19 @@ router.put('/menu/:itemId', async (req, res) => {
     });
   }
 });
-
 router.delete('/menu/:itemId', async (req, res) => {
   try {
     const restaurantId = req.restaurant._id;
     const { itemId } = req.params;
-    
     const menuItem = await Menu.findOne({ _id: itemId, restaurant: restaurantId });
-
     if (!menuItem) {
       return res.status(404).json({
         success: false,
         message: 'Élément de menu non trouvé'
       });
     }
-    
     await Menu.findByIdAndDelete(itemId);
-
     console.log(`Élément supprimé du menu du restaurant ${req.restaurant.name}: ${menuItem.name}`);
-
     res.json({
       success: true,
       message: 'Élément supprimé avec succès'
@@ -555,37 +472,30 @@ router.delete('/menu/:itemId', async (req, res) => {
     });
   }
 });
-
 router.patch('/menu/:itemId/availability', async (req, res) => {
   try {
     const restaurantId = req.restaurant._id;
     const { itemId } = req.params;
     const { availability } = req.body;
-
     if (typeof availability !== 'boolean') {
       return res.status(400).json({
         success: false,
         message: 'La disponibilité doit être un booléen'
       });
     }
-    
     const menuItem = await Menu.findOne({ _id: itemId, restaurant: restaurantId });
-
     if (!menuItem) {
       return res.status(404).json({
         success: false,
         message: 'Élément de menu non trouvé'
       });
     }
-    
     const updatedItem = await Menu.findByIdAndUpdate(
       itemId,
       { availability, updated_at: new Date() },
       { new: true }
     ).populate('restaurant', 'name');
-
     console.log(`Disponibilité modifiée pour ${updatedItem.name}: ${availability}`);
-
     res.json({
       success: true,
       message: `Élément ${availability ? 'activé' : 'désactivé'} avec succès`,
@@ -599,7 +509,5 @@ router.patch('/menu/:itemId/availability', async (req, res) => {
     });
   }
 });
-
 router.use('/', reviewRoutes);
-
 module.exports = router;

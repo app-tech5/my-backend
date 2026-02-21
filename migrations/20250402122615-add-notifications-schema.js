@@ -1,8 +1,6 @@
-
 const { faker } = require('@faker-js/faker');
 const mongoose = require('mongoose');
 const { ObjectId } = require('mongodb');
-
 module.exports = {
   async up(db) {
     try {
@@ -10,16 +8,13 @@ module.exports = {
     } catch (e) {
       if (e.codeName !== "NamespaceNotFound") throw e;
     }
-    
     const existingUsers = await db.collection('users')
       .find({})
       .project({ _id: 1 })
       .toArray();
-
     if (existingUsers.length === 0) {
       throw new Error('Aucun utilisateur trouvé dans la base de données');
     }
-    
     const notificationTypes = [
       'order_status', 
       'promotion', 
@@ -29,15 +24,12 @@ module.exports = {
       'payment',
       'account'
     ];
-    
     const entityModels = ['Order', 'Payment', 'Delivery'];
-    
     const mockNotifications = Array.from({ length: 100 }, (_, i) => {
       const user = faker.helpers.arrayElement(existingUsers);
       const type = faker.helpers.arrayElement(notificationTypes);
       const requiresEntity = ['order_status', 'delivery_update', 'payment'].includes(type);
       const isActionRequired = faker.datatype.boolean({ probability: 0.2 });
-      
       const notification = {
         user: user._id,
         title: faker.lorem.words(faker.number.int({ min: 3, max: 7 })),
@@ -53,28 +45,21 @@ module.exports = {
         createdAt: faker.date.past({ years: 1 }),
         updatedAt: faker.date.recent({ days: 30 })
       };
-      
       if (requiresEntity) {
         notification.relatedEntity = new ObjectId();
         notification.relatedEntityModel = faker.helpers.arrayElement(entityModels);
       }
-
       if (isActionRequired) {
         notification.actionUrl = faker.internet.url();
       }
-
       if (faker.datatype.boolean({ probability: 0.4 })) {
         notification.expiresAt = faker.date.future({ years: 1 });
       }
-
       return notification;
     });
-    
     await db.collection('notifications').insertMany(mockNotifications);
   },
-
   async down(db) {
-    
     await db.collection('notifications').deleteMany({
       createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }
     });

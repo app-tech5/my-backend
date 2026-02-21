@@ -1,15 +1,12 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-
 const CustomerSupportSchema = new Schema({
-  
   type: {
     type: String,
     required: true,
     enum: ['ticket', 'live_chat', 'faq'],
     default: 'ticket'
   },
-  
   user: { 
     type: Schema.Types.ObjectId, 
     ref: 'User', 
@@ -29,7 +26,6 @@ const CustomerSupportSchema = new Schema({
       return this.type !== 'faq'; 
     } 
   },
-  
   status: {
     type: String,
     enum: ['open', 'in_progress', 'resolved', 'closed'],
@@ -50,7 +46,6 @@ const CustomerSupportSchema = new Schema({
     type: Schema.Types.ObjectId, 
     ref: 'Order' 
   },
-  
   chat_messages: [{
     sender: {
       type: String,
@@ -78,7 +73,6 @@ const CustomerSupportSchema = new Schema({
       return this.type === 'live_chat'; 
     }
   },
-  
   question: { 
     type: String, 
     required: function() { 
@@ -99,7 +93,6 @@ const CustomerSupportSchema = new Schema({
       return this.type === 'faq'; 
     }
   },
-  
   assigned_to: { 
     type: Schema.Types.ObjectId, 
     ref: 'User' 
@@ -115,7 +108,6 @@ const CustomerSupportSchema = new Schema({
     type: Date 
   }
 }, { timestamps: true });
-
 CustomerSupportSchema.pre("find", function () {
   this.populate([
     {
@@ -128,10 +120,8 @@ CustomerSupportSchema.pre("find", function () {
     },
   ]);
 });
-
 CustomerSupportSchema.index({ type: 1, status: 1 });
 CustomerSupportSchema.index({ user: 1 });
 CustomerSupportSchema.index({ assigned_to: 1 });
-
 const CustomerSupport = mongoose.model('CustomerSupport', CustomerSupportSchema);
 module.exports = CustomerSupport;

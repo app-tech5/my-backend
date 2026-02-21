@@ -1,7 +1,5 @@
-
 const { faker } = require('@faker-js/faker');
 const mongoose = require('mongoose');
-
 const PREMIUM_FOOD_IMAGES = [
   'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&auto=format',  
   'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&auto=format',  
@@ -10,11 +8,9 @@ const PREMIUM_FOOD_IMAGES = [
   'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=800&auto=format',  
   'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&auto=format'   
 ];
-
 function getPremiumFoodImage() {
   return PREMIUM_FOOD_IMAGES[Math.floor(Math.random() * PREMIUM_FOOD_IMAGES.length)];
 }
-
 module.exports = {
   async up(db) {
     try {
@@ -22,32 +18,24 @@ module.exports = {
     } catch (e) {
       if (e.codeName !== "NamespaceNotFound") throw e;
     }
-    
     const existingCategories = await db.collection('categories')
       .find({})
       .project({ _id: 1, name: 1 })
       .toArray();
-
     if (existingCategories.length === 0) {
-      
       return
     }
-    
     const existingRestaurants = await db.collection('restaurants')
       .find({})
       .project({ _id: 1, name: 1 })
       .toArray();
-
     if (existingRestaurants.length === 0) {
-      
       return
     }
-    
     const existingVariants = await db.collection('variants')
       .find({})
       .project({ _id: 1, name: 1 })
       .toArray();
-    
     const mockProducts = Array.from({ length: 150 }, (_, i) => {
       const category = faker.helpers.arrayElement(existingCategories);
       const restaurant = faker.helpers.arrayElement(existingRestaurants);
@@ -55,12 +43,9 @@ module.exports = {
         ? faker.helpers.arrayElements(existingVariants, faker.number.int({ min: 0, max: 3 }))
             .map(variant => ({ value: variant._id, label: variant.name }))
         : [];
-
       const hasDiscount = faker.datatype.boolean({ probability: 0.25 });
       const ratingAverage = faker.number.float({ min: 1, max: 5, precision: 0.1 });
-      
       return {
-        
         name: faker.food.dish(),
         description: faker.commerce.productDescription(),
         price: parseFloat(faker.commerce.price({ min: 2, max: 30 })),
@@ -100,14 +85,11 @@ module.exports = {
         updated_at: faker.date.recent({ days: 30 }),
       };
     });
-
     await db.collection('products').insertMany(mockProducts);
   },
-
   async down(db) {
     await db.collection('products').deleteMany({
       created_at: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }
     });
   }
 };
-

@@ -1,7 +1,5 @@
-
 const { faker } = require('@faker-js/faker');
 const mongoose = require('mongoose');
-
 module.exports = {
   async up(db) {
     try {
@@ -9,24 +7,20 @@ module.exports = {
     } catch (e) {
       if (e.codeName !== "NamespaceNotFound") throw e;
     }
-    
     const [restaurants, users, orders] = await Promise.all([
       db.collection('restaurants').find({}).project({ _id: 1 }).toArray(),
       db.collection('users').find({}).project({ _id: 1 }).toArray(),
       db.collection('orders').find({}).project({ _id: 1 }).toArray()
     ]);
-
     if (restaurants.length === 0) {
       throw new Error('Aucun restaurant trouvé dans la base de données');
     }
-
     const reportTypes = [
       'hygiene', 'food_quality', 'service_quality', 'fake_menu',
       'price_issue', 'delivery_issue', 'false_advertising', 'other'
     ];
     const statuses = ['pending', 'under_review', 'resolved', 'rejected'];
     const severities = ['low', 'medium', 'high', 'critical'];
-    
     const mockReports = Array.from({ length: 50 }, (_, i) => {
       const reportType = faker.helpers.arrayElement(reportTypes);
       const isAnonymous = faker.datatype.boolean({ probability: 0.3 });
@@ -36,7 +30,6 @@ module.exports = {
       const status = isResolved 
         ? faker.helpers.arrayElement(['resolved', 'rejected']) 
         : faker.helpers.arrayElement(['pending', 'under_review']);
-
       return {
         restaurant: faker.helpers.arrayElement(restaurants)._id,
         reportedBy: isAnonymous ? null : faker.helpers.arrayElement(users)._id,
@@ -68,12 +61,9 @@ module.exports = {
         updatedAt: faker.date.recent()
       };
     });
-
     await db.collection('restaurantreports').insertMany(mockReports);
   },
-
   async down(db) {
-    
     await db.collection('restaurantreports').deleteMany({
       createdAt: { $gte: new Date(Date.now() - 48 * 60 * 60 * 1000) }
     });

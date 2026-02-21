@@ -1,7 +1,5 @@
-
 const { faker } = require('@faker-js/faker');
 const mongoose = require('mongoose');
-
 module.exports = {
   async up(db) {
     try {
@@ -9,16 +7,13 @@ module.exports = {
     } catch (e) {
       if (e.codeName !== "NamespaceNotFound") throw e;
     }
-    
     const existingUsers = await db.collection('users')
       .find({})
       .project({ _id: 1 })
       .toArray();
-
     if (existingUsers.length === 0) {
       throw new Error('Aucun utilisateur trouvé dans la base de données');
     }
-    
     const methodTypes = [
       'credit_card', 
       'debit_card', 
@@ -28,18 +23,14 @@ module.exports = {
       'bank_transfer', 
       'cash_on_delivery'
     ];
-    
     const mockPaymentMethods = existingUsers.flatMap(user => {
       const methodsForUser = [];
       const methodsCount = faker.number.int({ min: 1, max: 3 });
-      
       let hasDefault = false;
-
       for (let i = 0; i < methodsCount; i++) {
         const methodType = faker.helpers.arrayElement(methodTypes);
         const isDefault = !hasDefault && faker.datatype.boolean({ probability: 0.7 });
         if (isDefault) hasDefault = true;
-
         const baseMethod = {
           user: user._id,
           methodType,
@@ -52,7 +43,6 @@ module.exports = {
             ? faker.date.recent({ days: 30 }) 
             : null
         };
-        
         switch (methodType) {
           case 'credit_card':
           case 'debit_card':
@@ -60,7 +50,6 @@ module.exports = {
               'visa', 'mastercard', 'amex', 'discover', 
               'jcb', 'diners', 'unionpay', 'other'
             ]);
-            
             baseMethod.cardDetails = {
               cardNumberLast4: faker.string.numeric(4),
               cardBrand,
@@ -77,36 +66,27 @@ module.exports = {
               }
             };
             break;
-
           case 'paypal':
             baseMethod.paypalEmail = faker.internet.email({
               firstName: faker.person.firstName(),
               lastName: faker.person.lastName()
             });
             break;
-
           case 'apple_pay':
           case 'google_pay':
             baseMethod.walletToken = `tok_${faker.string.alphanumeric(24)}`;
             break;
-
           case 'cash_on_delivery':
           case 'bank_transfer':
-            
             break;
         }
-
         methodsForUser.push(baseMethod);
       }
-
       return methodsForUser;
     });
-    
     await db.collection('paymentmethods').insertMany(mockPaymentMethods);
   },
-
   async down(db) {
-    
     await db.collection('paymentmethods').deleteMany({
       createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }
     });

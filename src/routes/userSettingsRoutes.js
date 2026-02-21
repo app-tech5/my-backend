@@ -1,19 +1,13 @@
 const express = require('express');
 const authMiddleware = require('../middleware/authMiddleware');
 const UserSettings = require('../models/UserSettings');
-
 const router = express.Router();
-
 router.use(authMiddleware);
-
 router.get('/', async (req, res) => {
   try {
     const userId = req.user.id;
-    
     let userSettings = await UserSettings.findOne({ userId });
-
     if (!userSettings) {
-      
       const user = await require('../models/User').findById(userId);
       if (!user || !user.restaurant) {
         return res.status(400).json({
@@ -21,7 +15,6 @@ router.get('/', async (req, res) => {
           message: 'Utilisateur non associé à un restaurant'
         });
       }
-
       userSettings = new UserSettings({
         userId,
         restaurantId: user.restaurant,
@@ -36,10 +29,8 @@ router.get('/', async (req, res) => {
           preparationTime: 15,
         }
       });
-
       await userSettings.save();
     }
-
     res.json({
       success: true,
       data: userSettings
@@ -52,12 +43,10 @@ router.get('/', async (req, res) => {
     });
   }
 });
-
 router.put('/', async (req, res) => {
   try {
     const userId = req.user.id;
     const updates = req.body;
-    
     if (updates.notifications) {
       const allowedNotifKeys = ['newOrders', 'orderUpdates', 'lowStock', 'marketing'];
       for (const key in updates.notifications) {
@@ -66,7 +55,6 @@ router.put('/', async (req, res) => {
         }
       }
     }
-
     if (updates.restaurantSettings) {
       const allowedSettingsKeys = ['autoAcceptOrders', 'preparationTime'];
       for (const key in updates.restaurantSettings) {
@@ -74,7 +62,6 @@ router.put('/', async (req, res) => {
           delete updates.restaurantSettings[key];
         }
       }
-      
       if (updates.restaurantSettings.preparationTime !== undefined) {
         const prepTime = parseInt(updates.restaurantSettings.preparationTime);
         if (isNaN(prepTime) || prepTime < 1 || prepTime > 120) {
@@ -86,15 +73,12 @@ router.put('/', async (req, res) => {
         updates.restaurantSettings.preparationTime = prepTime;
       }
     }
-    
     const userSettings = await UserSettings.findOneAndUpdate(
       { userId },
       { $set: updates },
       { new: true, upsert: true }
     );
-
     console.log(`Paramètres utilisateur mis à jour: ${userId}`);
-
     res.json({
       success: true,
       message: 'Paramètres mis à jour avec succès',
@@ -108,25 +92,21 @@ router.put('/', async (req, res) => {
     });
   }
 });
-
 router.patch('/notifications', async (req, res) => {
   try {
     const userId = req.user.id;
     const { notifications } = req.body;
-
     if (!notifications || typeof notifications !== 'object') {
       return res.status(400).json({
         success: false,
         message: 'Données de notification invalides'
       });
     }
-
     const userSettings = await UserSettings.findOneAndUpdate(
       { userId },
       { $set: { 'notifications': notifications } },
       { new: true, upsert: true }
     );
-
     res.json({
       success: true,
       message: 'Notifications mises à jour',
@@ -140,25 +120,21 @@ router.patch('/notifications', async (req, res) => {
     });
   }
 });
-
 router.patch('/restaurant', async (req, res) => {
   try {
     const userId = req.user.id;
     const { restaurantSettings } = req.body;
-
     if (!restaurantSettings || typeof restaurantSettings !== 'object') {
       return res.status(400).json({
         success: false,
         message: 'Données de paramètres restaurant invalides'
       });
     }
-
     const userSettings = await UserSettings.findOneAndUpdate(
       { userId },
       { $set: { 'restaurantSettings': restaurantSettings } },
       { new: true, upsert: true }
     );
-
     res.json({
       success: true,
       message: 'Paramètres restaurant mis à jour',
@@ -172,5 +148,4 @@ router.patch('/restaurant', async (req, res) => {
     });
   }
 });
-
 module.exports = router;

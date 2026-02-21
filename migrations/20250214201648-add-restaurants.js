@@ -1,7 +1,5 @@
-
 const { faker } = require('@faker-js/faker');
 const mongoose = require('mongoose');
-
 const RESTAURANT_IMAGES = [
   'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4',
   'https://images.unsplash.com/photo-1555396273-367ea4eb4db5',
@@ -9,7 +7,6 @@ const RESTAURANT_IMAGES = [
   'https://images.unsplash.com/photo-1581349485608-9469926a8e5e',
   'https://images.unsplash.com/photo-1514933651103-005eec06c04b'
 ];
-
 module.exports = {
   async up(db) {
     try {
@@ -17,17 +14,13 @@ module.exports = {
     } catch (e) {
       if (e.codeName !== "NamespaceNotFound") throw e;
     }
-    
     const categories = await db.collection('categories').find({}).project({ _id: 1, title: 1 }).toArray();
     const taxes = await db.collection('taxes').find({}).project({ _id: 1, name: 1, rate: 1 }).toArray();
     const users = await db.collection('users').find({}).project({ _id: 1, name: 1 }).toArray();
-
     if (!categories.length || !taxes.length || !users.length) {
       console.warn('⚠️  Avertissement : les collections categories, taxes ou users sont vides.');
       return;
-      
     }
-    
     const mockRestaurants = Array.from({ length: 20 }, (_, i) => {
       const selectedCategories = faker.helpers.arrayElements(
         categories,
@@ -39,15 +32,12 @@ module.exports = {
         value: cat._id,
         label: cat.title
       }));
-
       const tax = faker.helpers.arrayElement(taxes);
       const city = faker.location.city();
       const isClosed = faker.datatype.boolean({ probability: 0.1 });
       const priceLevel = faker.helpers.arrayElement(['$', '$$', '$$$', '$$$$']);
       const user = faker.helpers.arrayElement(users);
-      
       const restaurantImage = faker.helpers.arrayElement(RESTAURANT_IMAGES);
-      
       return {
         name: faker.company.name(),
         alias: faker.lorem.slug(),
@@ -107,14 +97,11 @@ module.exports = {
         }
       };
     });
-
     await db.collection('restaurants').insertMany(mockRestaurants);
   },
-
   async down(db) {
     await db.collection('restaurants').deleteMany({
       createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }
     });
   }
 };
-

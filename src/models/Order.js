@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const autopopulate = require('mongoose-autopopulate');
 const Driver = require("./Driver");
-
 const orderSchema = new mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true,
@@ -15,7 +14,6 @@ const orderSchema = new mongoose.Schema(
         }
      },
      driver: { type: mongoose.Schema.Types.ObjectId, ref: "Driver",
-    
      }, 
     items: [
             {
@@ -71,14 +69,11 @@ const orderSchema = new mongoose.Schema(
       address: { type: String },
       estimatedTime: { type: Date },
       deliveryFee: { type: Number },
-    
     }
   },
   { timestamps: true }
 );
-
 orderSchema.plugin(autopopulate);
-
 orderSchema.pre("findOne", function () {
     this.populate({
         path: "items.item",
@@ -93,59 +88,44 @@ orderSchema.pre("findOne", function () {
       }
   });
 });
-
 orderSchema.post('findOne', function (order) {
     console.log('🟢 Hook post(findOne) exécuté !');
     if (!order) {
         console.log('⚠️ Aucun document trouvé.');
         return;
     }
-    
     if (!Array.isArray(order.items)) {
         console.log('❌ order.items n\'est pas un tableau !', order.items);
         return;
     }
-
     console.log(`📌 Nombre d'items : ${order.items.length}`);
-
     order.items = order.items.map(item => {
-
         const itemId = item.item?._id || item.item; 
-
         const extrasWithoutId = item.toObject().extras.map(extra => {
           const { _id, ...rest } = extra; 
-          
           return rest; 
         });
-
         const updatedItem = {
-            
             name: item.item?.name || "",
             image: item.item?.image || "",
-            
             price: (item.item?.price) || 0,
             quantity: item.quantity,
             extras: item.toObject().extras.map(({ productId, ...rest }) => rest),
             variants: item.variants,
             total: item.quantity * item.item?.price + item.extras.reduce((a, v)=> a+v.price*v.quantity,0)
-            
         };
-        
         return updatedItem;
     });
     order.subtotal = order.items.reduce((a,v) => a + v.total, 0);
     order.tax.amount = order.tax.rate * order.subtotal;
     order.totalPrice = order.items.reduce((a,v) => a + v.total, 0) + order.delivery.deliveryFee + order.tax.amount;
     console.log('✅ Order final mis à jour:', order.tax.amount);
-    
 });
-
 orderSchema.pre('findOneAndUpdate', async function (next) {
   this.previousOrder = await this.model.findOne(this.getQuery()); 
   if (this.previousOrder?.status !== "delivered")
   next();
 });
-
 orderSchema.post('findOneAndUpdate', async function (doc) {
   if (doc?.status === "delivered" && this.previousOrder.status !== "delivered") {
     console.log("111111111111", this.previousOrder.status)
@@ -154,5 +134,4 @@ orderSchema.post('findOneAndUpdate', async function (doc) {
       }
   }
 });
-  
 module.exports = mongoose.model("Order", orderSchema);

@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-
 const deliverySettingsSchema = new Schema({
-  
   isDeliveryEnabled: {
     type: Boolean,
     default: true,
@@ -20,7 +18,6 @@ const deliverySettingsSchema = new Schema({
     min: 1,
     max: 50
   },
-  
   deliveryFeeType: {
     type: String,
     enum: ['FIXED', 'DYNAMIC', 'FREE', 'RESTAURANT_DEFINED'],
@@ -44,7 +41,6 @@ const deliverySettingsSchema = new Schema({
     type: Number,
     default: 25
   },
-  
   deliveryZones: [{
     name: String,
     polygonCoordinates: [[Number]], 
@@ -52,14 +48,12 @@ const deliverySettingsSchema = new Schema({
   }],
   deliveryHours: {
     type: Object,
-    
     default: {
       start : '08:00',
       end: '23:00'
     }
   },
   blackoutDays: [Date], 
-  
   allowScheduledDelivery: {
     type: Boolean,
     default: true
@@ -73,7 +67,6 @@ const deliverySettingsSchema = new Schema({
     default: 30,
     enum: [15, 30, 45, 60]
   },
-  
   driverAssignmentMethod: {
     type: String,
     enum: ['AUTO', 'MANUAL', 'HYBRID'],
@@ -87,7 +80,6 @@ const deliverySettingsSchema = new Schema({
     type: Boolean,
     default: true
   },
-  
   lastUpdated: {
     type: Date,
     default: Date.now
@@ -97,7 +89,5 @@ const deliverySettingsSchema = new Schema({
     ref: 'User'
   }
 }, { timestamps: true });
-
 const DeliverySettings = mongoose.model('DeliverySetting', deliverySettingsSchema);
-
 module.exports = DeliverySettings;

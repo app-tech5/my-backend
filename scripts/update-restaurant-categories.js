@@ -2,34 +2,26 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const Restaurant = require('../src/models/Restaurant');
 const loadModels = require('../src/utils/loadModels');
-
 const connectDB = async () => {
   try {
     const mongoUri = 'mongodb://localhost:27017/good-foods';
     console.log('🔗 Tentative de connexion à:', mongoUri);
     await mongoose.connect(mongoUri);
     console.log('✅ Connecté à MongoDB');
-    
     loadModels();
-    
     const collections = await mongoose.connection.db.listCollections().toArray();
     console.log('📋 Collections disponibles:', collections.map(c => c.name));
-    
     const count = await mongoose.connection.db.collection('restaurants').countDocuments();
     console.log('📊 Nombre de documents dans restaurants:', count);
-
   } catch (error) {
     console.error('❌ Erreur de connexion MongoDB:', error);
     process.exit(1);
   }
 };
-
 const categoryMapping = {
-  
   'cetera-calculus-tergo': 'Italian',
   'adsum-victus-expedita': 'Pizza',
   'dedecor-abundans-circumvenio': 'American',
-  
   'accusantium-tero-comedo': 'Italian',
   'aegre-sequi-textilis': 'French',
   'aiunt-totam-vetus': 'Mediterranean',
@@ -68,7 +60,6 @@ const categoryMapping = {
   'voluptas-cuppedia-certus': 'French',
   'voluptatibus-thymum-volo': 'Seafood',
   'voveo-audacia-dolorem': 'Italian',
-  
   'fast-food': 'Fast Food',
   'seafood': 'Seafood',
   'thai': 'Thai',
@@ -85,38 +76,29 @@ const categoryMapping = {
   'spanish': 'Spanish',
   'german': 'German'
 };
-
 const updateRestaurantCategories = async () => {
   try {
     console.log('🍽️ Mise à jour des catégories des restaurants...');
-    
     const restaurants = await mongoose.connection.db.collection('restaurants').find({}).toArray();
     console.log(`📊 Trouvé ${restaurants.length} restaurants via MongoDB direct`);
-    
     const mongooseRestaurants = await Restaurant.find({});
     console.log(`📊 Trouvé ${mongooseRestaurants.length} restaurants via Mongoose`);
-
     let updatedCount = 0;
-
     for (const restaurant of restaurants) {
       let restaurantUpdated = false;
       let updatedCategories = [...restaurant.categories];
-
       if (restaurant.categories && Array.isArray(restaurant.categories)) {
         updatedCategories = restaurant.categories.map(category => {
           let updatedCategory = { ...category };
-          
           if (updatedCategory.alias) {
             const mappedTitle = categoryMapping[updatedCategory.alias];
             if (mappedTitle) {
-              
               if (updatedCategory.title !== mappedTitle) {
                 console.log(`🔄 Restaurant "${restaurant.name}": ${updatedCategory.alias} → ${mappedTitle} (was: ${updatedCategory.title || 'null'})`);
                 updatedCategory.title = mappedTitle;
                 restaurantUpdated = true;
               }
             } else {
-              
               if (!updatedCategory.title) {
                 const formattedTitle = updatedCategory.alias
                   .split('-')
@@ -131,9 +113,7 @@ const updateRestaurantCategories = async () => {
           return updatedCategory;
         });
       }
-
       if (restaurantUpdated) {
-        
         await mongoose.connection.db.collection('restaurants').updateOne(
           { _id: restaurant._id },
           { $set: { categories: updatedCategories } }
@@ -141,9 +121,7 @@ const updateRestaurantCategories = async () => {
         updatedCount++;
       }
     }
-
     console.log(`✅ Mise à jour terminée: ${updatedCount} restaurants modifiés`);
-    
     const sampleRestaurant = await Restaurant.findOne().limit(1);
     if (sampleRestaurant && sampleRestaurant.categories) {
       console.log('📋 Exemple de restaurant mis à jour:');
@@ -153,18 +131,15 @@ const updateRestaurantCategories = async () => {
         title: cat.title
       })));
     }
-
   } catch (error) {
     console.error('❌ Erreur lors de la mise à jour:', error);
   } finally {
     mongoose.connection.close();
   }
 };
-
 const runScript = async () => {
   await connectDB();
   await updateRestaurantCategories();
   process.exit(0);
 };
-
 runScript();

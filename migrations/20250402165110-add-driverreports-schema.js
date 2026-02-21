@@ -1,7 +1,5 @@
-
 const { faker } = require('@faker-js/faker');
 const mongoose = require('mongoose');
-
 module.exports = {
   async up(db) {
     try {
@@ -9,17 +7,14 @@ module.exports = {
     } catch (e) {
       if (e.codeName !== "NamespaceNotFound") throw e;
     }
-    
     const [users, drivers, orders] = await Promise.all([
       db.collection('users').find({}).project({ _id: 1 }).toArray(),
       db.collection('drivers').find({}).project({ _id: 1 }).toArray(),
       db.collection('orders').find({}).project({ _id: 1 }).toArray()
     ]);
-    
     if (users.length === 0 || drivers.length === 0 || orders.length === 0){
       return
     }
-    
     const reportTypes = [
       'late_delivery',
       'rude_behavior',
@@ -29,19 +24,14 @@ module.exports = {
       'driving_issues',
       'other'
     ];
-    
     const severities = ['low', 'medium', 'high', 'critical'];
-    
     const statuses = ['pending', 'under_review', 'resolved', 'dismissed', 'requires_action'];
-    
     const resolutions = ['warning_issued', 'driver_suspended', 'driver_terminated', 'compensation_issued', 'no_action'];
-    
     const mockReports = Array.from({ length: 50 }, (_, i) => {
       const reportType = faker.helpers.arrayElement(reportTypes);
       const status = faker.helpers.arrayElement(statuses);
       const isResolved = status === 'resolved';
       const hasOrder = faker.datatype.boolean({ probability: 0.7 });
-
       return {
         reportType,
         description: faker.lorem.paragraphs(2),
@@ -68,12 +58,9 @@ module.exports = {
         resolvedAt: isResolved ? faker.date.recent() : null
       };
     });
-    
     await db.collection('driverreports').insertMany(mockReports);
   },
-
   async down(db) {
-    
     await db.collection('driverreports').deleteMany({
       createdAt: { $gte: new Date(Date.now() - 48 * 60 * 60 * 1000) }
     });

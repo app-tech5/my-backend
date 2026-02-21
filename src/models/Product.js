@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const pluralize = require("pluralize");
 const applyTransformHooks = require("../utils/applyTransformHooks");
-
 const ProductSchema = new mongoose.Schema({
   name: { type: String, required: true, default: "" },
   description: { type: String, required: true, default: "" },
@@ -29,20 +28,15 @@ const ProductSchema = new mongoose.Schema({
   discount: {
     type: Object,
     default: {
-      
       isActive: false,
       percentage: 0,
-      
     },
   },
   rating: {
-    
     type: Object,
     default: {
-      
       average: 0,
       count: 0,
-      
     },
   },
   variants: [{
@@ -58,9 +52,7 @@ const ProductSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
-
 applyTransformHooks(ProductSchema, ["restaurants", "categories"]);
-
 ProductSchema.pre("findOne", function () {
   this.populate([
     {
@@ -73,14 +65,11 @@ ProductSchema.pre("findOne", function () {
     },
   ]);
 });
-
 ProductSchema.pre("find", function () {
   const { queryParams } = this.options;
-  
   if (queryParams?.type) {
     this.where({ restaurant: queryParams.type });
   }
-  
   this.populate([
     {
       path: "restaurant",
@@ -92,7 +81,5 @@ ProductSchema.pre("find", function () {
     },
   ]);
 });
-
 const Product = mongoose.model("Product", ProductSchema);
-
 module.exports = Product;

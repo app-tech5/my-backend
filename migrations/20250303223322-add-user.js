@@ -2,7 +2,6 @@ const { faker } = require('@faker-js/faker');
 const bcrypt = require('bcryptjs');
 const { ObjectId } = require('mongodb');
 const mongoose = require("mongoose");
-
 module.exports = {
   async up(db) {
     try {
@@ -10,7 +9,6 @@ module.exports = {
     } catch (e) {
       if (e.codeName !== "NamespaceNotFound") throw e;
     }
-    
     const adminUser = {
       _id: new ObjectId('67c62fae5a9b19466ee230d6'),
       email: "admin@example.com",
@@ -31,7 +29,6 @@ module.exports = {
       createdAt: new Date(),
       updatedAt: new Date()
     };
-    
     const demoCustomer = {
       _id: new ObjectId('67c62fae5a9b19466ee230d7'),
       email: "demo@customer.com",
@@ -54,7 +51,6 @@ module.exports = {
       createdAt: new Date(),
       updatedAt: new Date()
     };
-    
     const generateMockUsers = (count, role) => {
       const users = [];
       const rolesSpecificData = {
@@ -78,7 +74,6 @@ module.exports = {
           vehicleType: faker.helpers.arrayElement(['bike', 'scooter', 'car'])
         })
       };
-
       for (let i = 0; i < count; i++) {
         const firstName = faker.person.firstName();
         const lastName = faker.person.lastName();
@@ -98,26 +93,18 @@ module.exports = {
       }
       return users;
     };
-    
     const mockData = [
       ...generateMockUsers(50, 'customer'),
       ...generateMockUsers(20, 'restaurant'), 
       ...generateMockUsers(30, 'delivery')
     ].filter(user => {
-      
       return user.image.includes('jsdelivr.net');
-      
     });
-    
     await db.collection('users').insertOne(adminUser);
     await db.collection('users').insertOne(demoCustomer);
     await db.collection('users').insertMany(mockData);
-
-    console.log(`Inserted 1 admin + 1 demo customer + ${mockData.length} mock users`);
   },
-
   async down(db) {
-    
     const result = await db.collection('users').deleteMany({
       $or: [
         { email: { $regex: /@mock\.com$/ } },
@@ -125,8 +112,6 @@ module.exports = {
         { _id: new ObjectId('67c62fae5a9b19466ee230d6') }
       ]
     });
-    console.log(`Deleted ${result.deletedCount} users`);
     return result;
   }
 };
-

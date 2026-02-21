@@ -1,7 +1,5 @@
-
 const { faker } = require('@faker-js/faker');
 const mongoose = require('mongoose');
-
 module.exports = {
   async up(db) {
     try {
@@ -9,25 +7,20 @@ module.exports = {
     } catch (e) {
       if (e.codeName !== "NamespaceNotFound") throw e;
     }
-    
     const existingRestaurants = await db.collection('restaurants')
       .find({})
       .project({ _id: 1, name: 1 })
       .toArray();
-
     if (existingRestaurants.length === 0) {
       throw new Error('Aucun restaurant trouvé dans la base de données');
     }
-    
     const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
     const slotTypes = ['delivery', 'pickup', 'both'];
-    
     const mockTimeSlots = existingRestaurants.flatMap(restaurant => {
       return Array.from({ length: 3 }, () => {
         const day = faker.helpers.arrayElement(daysOfWeek);
         const startHour = faker.number.int({ min: 8, max: 12 }); 
         const endHour = startHour + faker.number.int({ min: 4, max: 8 }); 
-        
         return {
           restaurant: restaurant._id,
           restaurants: {
@@ -45,15 +38,11 @@ module.exports = {
         };
       });
     });
-    
     await db.collection('timeslots').insertMany(mockTimeSlots);
   },
-
   async down(db) {
-    
     await db.collection('timeslots').deleteMany({
       created_at: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }
     });
   }
 };
-

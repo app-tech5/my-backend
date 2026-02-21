@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 const serviceModeSchema = new mongoose.Schema({
   value: {
     type: String,
@@ -14,7 +13,5 @@ const serviceModeSchema = new mongoose.Schema({
     ref: 'Restaurant' 
   }
 });
-
 const ServiceMode = mongoose.model('ServiceMode', serviceModeSchema);
-
 module.exports = ServiceMode;

@@ -1,8 +1,6 @@
-
 const { faker } = require('@faker-js/faker');
 const mongoose = require('mongoose');
 const { ObjectId } = require('mongodb');
-
 module.exports = {
   async up(db) {
     try {
@@ -10,7 +8,6 @@ module.exports = {
     } catch (e) {
       if (e.codeName !== "NamespaceNotFound") throw e;
     }
-    
     let mockRestaurants = await db.collection('restaurants').find({}).toArray();
     if (mockRestaurants.length === 0) {
       mockRestaurants = Array.from({ length: 5 }, (_, i) => ({
@@ -20,7 +17,6 @@ module.exports = {
       }));
       await db.collection('restaurants').insertMany(mockRestaurants);
     }
-    
     let mockProducts = await db.collection('products').find({}).toArray();
     if (mockProducts.length === 0) {
       mockProducts = Array.from({ length: 20 }, (_, i) => ({
@@ -30,7 +26,6 @@ module.exports = {
       }));
       await db.collection('products').insertMany(mockProducts);
     }
-    
     const mockMenus = Array.from({ length: 30 }, (_, i) => {
       const restaurant = faker.helpers.arrayElement(mockRestaurants);
       const selectedProducts = faker.helpers.arrayElements(
@@ -40,18 +35,14 @@ module.exports = {
         value: product._id,
         label: product.name
       }));
-
       const hasDiscount = faker.datatype.boolean({ probability: 0.3 });
       const ratingAverage = faker.number.float({ min: 1, max: 5, precision: 0.1 });
-      
       const foodImages = [
         'https://images.unsplash.com/photo-1546069901-ba9599a7e63c',
         'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38',
         'https://images.unsplash.com/photo-1565958011703-44f9829ba187',
         'https://images.unsplash.com/photo-1482049016688-2d3e1b311543',
-        
       ];
-      
       return {
         name: faker.commerce.productName(),
         description: faker.lorem.sentence(),
@@ -77,14 +68,9 @@ module.exports = {
         updated_at: faker.date.recent({ days: 30 }),
       };
     });
-    
     await db.collection('menus').insertMany(mockMenus);
   },
-
   async down(db) {
-    
     await db.collection('menus').deleteMany({});
-    
   }
 };
-

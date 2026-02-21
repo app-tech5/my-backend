@@ -8,6 +8,4 @@ const responseHandler = (controllerMethod) => {
       }
     };
   };
-  
   module.exports = responseHandler;
-  

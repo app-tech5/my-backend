@@ -1,11 +1,9 @@
-
 module.exports = {
   async up(db, client) {
     const defaultDeliverySettings = {
       isDeliveryEnabled: true,
       deliveryPreparationTime: 30,
       maxDeliveryDistance: 15,
-      
       deliveryFeeType: "FIXED",
       fixedDeliveryFee: 2.5,
       dynamicDeliveryFee: {
@@ -15,7 +13,6 @@ module.exports = {
         maxFee: 10
       },
       freeDeliveryThreshold: 25,
-
       deliveryZones: [
         {
           name: "Centre-ville",
@@ -28,28 +25,22 @@ module.exports = {
           fee: 2.0
         }
       ],
-      
       deliveryHours: {
         start: "08:00",
         end: "23:00"
       },
       blackoutDays: [],
-      
       allowScheduledDelivery: true,
       schedulingLeadTime: 2,
       timeSlotDuration: 30,
-      
       driverAssignmentMethod: "AUTO",
       autoAssignmentRadius: 5,
       realTimeTracking: true,
-      
       createdAt: new Date(),
       updatedAt: new Date()
     };
-
     await db.collection('deliverysettings').insertOne(defaultDeliverySettings);
   },
-
   async down(db, client) {
     await db.collection('deliverysettings').deleteOne({ 
       deliveryFeeType: "FIXED" 

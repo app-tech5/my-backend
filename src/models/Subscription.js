@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-
 const SubscriptionSchema = new Schema({
-  
   name: {
     type: String,
     required: [true, 'Le nom est obligatoire'],
@@ -10,14 +8,12 @@ const SubscriptionSchema = new Schema({
     trim: true,
     maxlength: 50
   },
-  
   target: {
     type: String,
     required: true,
     enum: ['customer', 'restaurant', 'driver'],
     default: 'customer'
   },
-  
   price: {
     type: Number,
     required: true,
@@ -35,12 +31,10 @@ const SubscriptionSchema = new Schema({
     enum: ['daily', 'weekly', 'monthly', 'yearly'],
     default: 'monthly'
   },
-  
   benefits: {  
     type: [String],
     default: []
   },
-  
   is_active: {
     type: Boolean,
     default: true
@@ -50,12 +44,10 @@ const SubscriptionSchema = new Schema({
     default: Date.now
   },
   end_date: Date,  
-  
   max_usage: {  
     type: Number,
     default: null
   },
-
   serviceModes: [{
     value: {
       type: String,
@@ -71,7 +63,6 @@ const SubscriptionSchema = new Schema({
       default: ""
     }
   }],
-  
   stripe_id: String,  
   created_by: {
     type: Schema.Types.ObjectId,
@@ -81,12 +72,10 @@ const SubscriptionSchema = new Schema({
   timestamps: true,
   versionKey: false
 });
-
 SubscriptionSchema.pre("find", function () {
   this.populate({
     path: "created_by",
     select: "name"
   });
 });
-
 module.exports = mongoose.model('Subscription', SubscriptionSchema);

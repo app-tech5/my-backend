@@ -1,21 +1,17 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-
 const paymentMethodSchema = new Schema({
-  
   user: {
     type: Schema.Types.ObjectId,
     ref: 'User',
     required: true
   },
-  
   methodType: {
     type: String,
     required: true,
     enum: ['credit_card', 'debit_card', 'paypal', 'apple_pay', 'google_pay', 'bank_transfer', 'cash_on_delivery'],
     default: 'credit_card'
   },
-  
   isDefault: {
     type: Boolean,
     default: false
@@ -24,7 +20,6 @@ const paymentMethodSchema = new Schema({
     type: Boolean,
     default: true
   },
-  
   cardDetails: {
     cardNumberLast4: {
       type: String,
@@ -72,20 +67,17 @@ const paymentMethodSchema = new Schema({
       country: String
     }
   },
-  
   paypalEmail: {
     type: String,
     required: function() { return this.methodType === 'paypal'; },
     match: [/.+\@.+\..+/, 'Veuillez entrer un email valide']
   },
-  
   walletToken: {
     type: String,
     required: function() { 
       return ['apple_pay', 'google_pay'].includes(this.methodType); 
     }
   },
-  
   createdAt: {
     type: Date,
     default: Date.now
@@ -98,7 +90,6 @@ const paymentMethodSchema = new Schema({
     type: Date,
     default: null
   },
-  
   verificationStatus: {
     type: String,
     enum: ['unverified', 'pending', 'verified', 'failed'],
@@ -113,7 +104,6 @@ const paymentMethodSchema = new Schema({
   toJSON: {
     virtuals: true,
     transform: function(doc, ret) {
-      
       delete ret.cardDetails;
       delete ret.paypalEmail;
       delete ret.walletToken;
@@ -121,10 +111,8 @@ const paymentMethodSchema = new Schema({
     }
   }
 });
-
 paymentMethodSchema.index({ user: 1, isActive: 1 });
 paymentMethodSchema.index({ user: 1, isDefault: 1 });
-
 paymentMethodSchema.pre(/^find/, function(next) {
     this.populate({
       path: 'user',
@@ -132,7 +120,6 @@ paymentMethodSchema.pre(/^find/, function(next) {
     });
     next();
   });
-
 paymentMethodSchema.pre('save', async function(next) {
   if (this.isDefault) {
     try {
@@ -146,7 +133,6 @@ paymentMethodSchema.pre('save', async function(next) {
   }
   next();
 });
-
 paymentMethodSchema.methods.getMaskedDetails = function() {
   switch (this.methodType) {
     case 'credit_card':
@@ -174,7 +160,6 @@ paymentMethodSchema.methods.getMaskedDetails = function() {
       return { type: 'other' };
   }
 };
-
 paymentMethodSchema.methods.isExpired = function() {
   if (['credit_card', 'debit_card'].includes(this.methodType)) {
     const now = new Date();
@@ -187,7 +172,5 @@ paymentMethodSchema.methods.isExpired = function() {
   }
   return false;
 };
-
 const PaymentMethod = mongoose.model('PaymentMethod', paymentMethodSchema);
-
 module.exports = PaymentMethod;

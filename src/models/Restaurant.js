@@ -1,16 +1,13 @@
 const mongoose = require('mongoose');
-
 const restaurantSchema = new mongoose.Schema({
   distance: { type: Number, required: true, default: 0 },
   rating: { type: Number, required: true, default: 0 },
-  
   review_count: { type: Number, required: true, default: 0 },
   serviceModes: { 
     type: String, 
     enum: ["delivery", "pickup"], 
     default: "pending" 
   },
-  
   url: { type: String, required: true, default: "" },
   display_phone: { type: String, required: true, default: "" },
   phone: { type: String, required: true, default: "" },
@@ -23,7 +20,6 @@ const restaurantSchema = new mongoose.Schema({
       alias: { type: String, required: true, default: "" },
       title: { type: String, required: true, default: "" },
       image: { type: String, default: "" },
-      
       value: { type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true, default: null },
       label: { type: String, default: "" },
     },
@@ -48,25 +44,20 @@ const restaurantSchema = new mongoose.Schema({
   openingTime: { type: String, default: "09:00" },
   closingTime: { type: String, default: "21:00" },
   createdAt: { type: Date, default: Date.now },
-  
   tax: {
     type: Object,
     default:{
-
       id: { type: String },
       location:"",
       rate:"0.00",
       name:"TVA",
-      
       value: { type: mongoose.Schema.Types.ObjectId, ref: "Tax", required: true},
       label:"",
-
     }
   },
   commission_rate: { type: Number, default: 0 },
   reward: { type: String, default: "" },
 });
-
 restaurantSchema.pre("find", function (next) {
   this.populate([
     { path: "serviceModes.value", model: "ServiceMode" },
@@ -76,7 +67,5 @@ restaurantSchema.pre("find", function (next) {
   ]);
   next();
 });
-
 const Restaurant = mongoose.model('Restaurant', restaurantSchema);
-
 module.exports = Restaurant;

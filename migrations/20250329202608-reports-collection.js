@@ -1,21 +1,16 @@
 const mongoose = require('mongoose');
 const { faker } = require('@faker-js/faker');
 const { ObjectId } = require('mongodb');
-
 const NUMBER_OF_REPORTS = 15; 
-
 function generateMockReports(generatedBy) {
   const reportTypes = ["sales", "driver_performance", "customer_behavior"];
   const reports = [];
   const currentDate = new Date();
-  
   for (let i = 0; i < NUMBER_OF_REPORTS; i++) {
     const reportType = reportTypes[i % reportTypes.length]; 
     const monthsToSubtract = Math.floor(i / reportTypes.length); 
-    
     const baseDate = new Date(currentDate);
     baseDate.setMonth(currentDate.getMonth() - monthsToSubtract);
-    
     const report = {
       _id: new ObjectId(),
       title: getReportTitle(reportType, baseDate, i),
@@ -27,20 +22,16 @@ function generateMockReports(generatedBy) {
       createdAt: new Date(),
       updatedAt: new Date()
     };
-    
     if (reportType === "customer_behavior") {
       report.isRecurring = faker.datatype.boolean();
       if (report.isRecurring) {
         report.recurrencePattern = faker.helpers.arrayElement(["daily", "weekly", "monthly"]);
       }
     }
-
     reports.push(report);
   }
-
   return reports;
 }
-
 function getReportTitle(reportType, date, index) {
   const typeTitles = {
     sales: `Sales Report - ${date.toLocaleDateString('en-US', { month: 'long' })} ${date.getFullYear()}${index > 0 ? ` (${index})` : ''}`,
@@ -49,11 +40,9 @@ function getReportTitle(reportType, date, index) {
   };
   return typeTitles[reportType];
 }
-
 function generateDateRange(reportType, baseDate) {
   const start = new Date(baseDate);
   start.setDate(1);
-  
   const end = new Date(start);
   if (reportType === "driver_performance") {
     start.setDate(faker.number.int({ min: 1, max: 28 }));
@@ -64,16 +53,13 @@ function generateDateRange(reportType, baseDate) {
     end.setMonth(start.getMonth() + 1);
     end.setDate(0);
   }
-
   return {
     start: start,
     end: end
   };
 }
-
 function generateFilters(reportType) {
   const filters = {};
-  
   if (reportType === "sales") {
     filters.restaurantIds = Array.from({ length: faker.number.int({ min: 1, max: 3 }) }, 
       () => new ObjectId());
@@ -82,13 +68,10 @@ function generateFilters(reportType) {
     filters.driverIds = Array.from({ length: faker.number.int({ min: 2, max: 5 }) }, 
       () => new ObjectId());
   }
-  
   return filters;
 }
-
 function generateMetrics(reportType) {
   const metrics = {};
-  
   switch(reportType) {
     case "sales":
     const totalOrders = faker.number.int({ min: 500, max: 2000 });
@@ -112,14 +95,12 @@ function generateMetrics(reportType) {
     });
     metrics.averageDeliveryTime = faker.number.int({ min: 20, max: 45 });
     break;
-      
     case "driver_performance":
       metrics.totalDeliveries = faker.number.int({ min: 100, max: 500 });
       metrics.onTimeRate = faker.number.int({ min: 80, max: 95, precision: 0.1 });
       metrics.averageRating = faker.number.int({ min: 3.5, max: 5, precision: 0.1 });
       metrics.totalEarnings = faker.number.int({ min: 1000, max: 5000 });
       break;
-      
     case "customer_behavior":
       metrics.activeCustomers = faker.number.int({ min: 500, max: 2000 });
       metrics.repeatOrderRate = faker.number.int({ min: 30, max: 60, precision: 0.1 });
@@ -130,10 +111,8 @@ function generateMetrics(reportType) {
       );
       break;
   }
-  
   return metrics;
 }
-
 module.exports = {
   async up(db, client) {
     try {
@@ -141,15 +120,11 @@ module.exports = {
     } catch (e) {
       if (e.codeName !== "NamespaceNotFound") throw e;
     }
-
     const user = await db.collection('users').findOne({});
     const generatedBy = user ? user._id : new ObjectId();
-
     const mockReports = generateMockReports(generatedBy);
-    
     await db.collection('reports').insertMany(mockReports);
   },
-
   async down(db, client) {
     await db.collection('reports').deleteMany({});
     await db.collection('reports').dropIndex("reportType_1");
@@ -157,4 +132,3 @@ module.exports = {
     await db.collection('reports').dropIndex("filters.restaurantIds_1");
   }
 };
-

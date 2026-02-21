@@ -1,6 +1,5 @@
 module.exports = {
   async up(db) {
-    
     await db.collection('settings').updateOne(
       { _id: 'app_settings' }, 
       { 
@@ -13,9 +12,7 @@ module.exports = {
       } 
     );
   },
-
   async down(db) {
-    
     await db.collection('settings').updateOne(
       { _id: 'app_settings' }, 
       { 

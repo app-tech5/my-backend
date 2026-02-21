@@ -2,7 +2,6 @@ class BaseController {
     constructor(Model) {
       this.Model = Model;
     }
-  
     async getAll(req, res) {
       try {
         const items = await this.Model.findAll();
@@ -11,7 +10,6 @@ class BaseController {
         res.status(500).json({ error: error.message });
       }
     }
-
     async getById (req, res) {
         try {
             const item = await this.Model.findById(req.params.id);
@@ -21,7 +19,6 @@ class BaseController {
             res.status(500).json({ error: error.message });
         }
     }
-
     async create (req, res) {
         try {
             if (req.body.isDefault) {
@@ -34,7 +31,6 @@ class BaseController {
             res.status(400).json({ error: error.message });
         }
     }
-
     update = async (req, res) => {
         try {
             if (req.body.isDefault) {
@@ -47,7 +43,6 @@ class BaseController {
             res.status(500).json({ error: error.message });
         }
     }
-
     delete = async (req, res) => {
         try {
             const deletedItem = await this.Model.findByIdAndDelete(req.params.id);
@@ -57,6 +52,4 @@ class BaseController {
             res.status(500).json({ error: error.message });
         }
     }
-    
   }
-  

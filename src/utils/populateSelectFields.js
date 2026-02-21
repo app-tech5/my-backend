@@ -27,5 +27,4 @@ async function populateSelectFields(data) {
     }
   }
 }
-
 module.exports = { populateSelectFields };

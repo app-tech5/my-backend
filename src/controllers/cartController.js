@@ -1,16 +1,12 @@
 const Cart = require("../models/Cart");
-
 const cartController = {
-  
   getCart: async (req, res) => {
     try {
       const userId = req.user?.id;
       if (!userId) {
         return res.status(401).json({ message: "Authentication required" });
       }
-
       let cart = await Cart.findByUser(userId);
-      
       if (!cart) {
         cart = new Cart({
           user: userId,
@@ -20,18 +16,15 @@ const cartController = {
         });
         await cart.save();
       }
-      
       cart.items = cart.items.map(item => {
         if (!item.id) {
           item.id = item._id || item.uniqueKey || `item_${Date.now()}_${Math.random()}`;
         }
         return item;
       });
-      
       if (cart.isModified()) {
         await cart.save();
       }
-
       res.json({
         _id: cart._id,
         user: cart.user,
@@ -45,18 +38,14 @@ const cartController = {
       res.status(500).json({ error: error.message });
     }
   },
-  
   addItem: async (req, res) => {
     try {
       const userId = req.user?.id;
       if (!userId) {
         return res.status(401).json({ message: "Authentication required" });
       }
-
       const itemData = req.body;
-
       let cart = await Cart.findByUser(userId);
-      
       if (!cart) {
         cart = new Cart({
           user: userId,
@@ -65,13 +54,10 @@ const cartController = {
           sessionId: req.headers['x-session-id']
         });
       }
-      
       if (!itemData.name || !itemData.image || !itemData.price) {
         throw new Error('Item data is incomplete: name, image, and price are required');
       }
-      
       const itemId = itemData.id || itemData._id || itemData.uniqueKey || `item_${Date.now()}_${Math.random()}`;
-
       const preparedItem = {
         id: itemId,
         name: itemData.name,
@@ -87,18 +73,14 @@ const cartController = {
         variants: itemData.variants || [],
         addedAt: new Date()
       };
-      
       if (itemData.restaurant && itemData.restaurant._id) {
         preparedItem.restaurant = itemData.restaurant._id;
       }
-      
       if (itemData.itemType) {
         preparedItem.itemType = itemData.itemType;
         preparedItem.item = itemData.item;
       }
-      
       await cart.addItem(preparedItem);
-
       res.json({
         _id: cart._id,
         user: cart.user,
@@ -112,23 +94,18 @@ const cartController = {
       res.status(500).json({ error: error.message });
     }
   },
-  
   removeItem: async (req, res) => {
     try {
       const userId = req.user?.id;
       if (!userId) {
         return res.status(401).json({ message: "Authentication required" });
       }
-
       const { itemId } = req.params; 
-
       const cart = await Cart.findByUser(userId);
       if (!cart) {
         return res.status(404).json({ message: "Cart not found" });
       }
-
       await cart.removeItem(itemId);
-
       res.json({
         _id: cart._id,
         user: cart.user,
@@ -142,24 +119,19 @@ const cartController = {
       res.status(500).json({ error: error.message });
     }
   },
-  
   updateItem: async (req, res) => {
     try {
       const userId = req.user?.id;
       if (!userId) {
         return res.status(401).json({ message: "Authentication required" });
       }
-
       const { itemId } = req.params; 
       const itemData = req.body;
-
       const cart = await Cart.findByUser(userId);
       if (!cart) {
         return res.status(404).json({ message: "Cart not found" });
       }
-
       await cart.updateItem(itemId, itemData);
-
       res.json({
         _id: cart._id,
         user: cart.user,
@@ -173,23 +145,18 @@ const cartController = {
       res.status(500).json({ error: error.message });
     }
   },
-  
   clearRestaurant: async (req, res) => {
     try {
       const userId = req.user?.id;
       if (!userId) {
         return res.status(401).json({ message: "Authentication required" });
       }
-
       const { restaurantName } = req.params;
-
       const cart = await Cart.findByUser(userId);
       if (!cart) {
         return res.status(404).json({ message: "Cart not found" });
       }
-
       await cart.clearRestaurant(restaurantName);
-
       res.json({
         _id: cart._id,
         user: cart.user,
@@ -203,21 +170,17 @@ const cartController = {
       res.status(500).json({ error: error.message });
     }
   },
-  
   clearCart: async (req, res) => {
     try {
       const userId = req.user?.id;
       if (!userId) {
         return res.status(401).json({ message: "Authentication required" });
       }
-
       const cart = await Cart.findByUser(userId);
       if (!cart) {
         return res.status(404).json({ message: "Cart not found" });
       }
-
       await cart.clear();
-
       res.json({
         _id: cart._id,
         user: cart.user,
@@ -231,18 +194,14 @@ const cartController = {
       res.status(500).json({ error: error.message });
     }
   },
-  
   syncCart: async (req, res) => {
     try {
       const userId = req.user?.id;
       if (!userId) {
         return res.status(401).json({ message: "Authentication required" });
       }
-
       const { localItems } = req.body; 
-
       let cart = await Cart.findByUser(userId);
-      
       if (!cart) {
         cart = new Cart({
           user: userId,
@@ -251,29 +210,23 @@ const cartController = {
           sessionId: req.headers['x-session-id']
         });
       }
-      
       if (localItems && Array.isArray(localItems)) {
         for (const localItem of localItems) {
           const existingItemIndex = cart.items.findIndex(item =>
             item.uniqueKey === localItem.uniqueKey
           );
-
           if (existingItemIndex >= 0) {
-            
             cart.items[existingItemIndex].quantity = Math.max(
               cart.items[existingItemIndex].quantity,
               localItem.quantity || 1
             );
             cart.items[existingItemIndex].totalPrice = cart.items[existingItemIndex].quantity * (cart.items[existingItemIndex].price || 0);
           } else {
-            
             if (!localItem.name || !localItem.image || !localItem.price) {
               console.warn('Skipping invalid item in sync:', localItem);
               return; 
             }
-            
             const itemId = localItem.id || localItem._id || localItem.uniqueKey || `item_${Date.now()}_${Math.random()}`;
-
             const preparedItem = {
               id: itemId,
               name: localItem.name,
@@ -288,23 +241,18 @@ const cartController = {
               extras: localItem.extras || [],
               variants: localItem.variants || []
             };
-
             if (localItem.restaurant && localItem.restaurant._id) {
               preparedItem.restaurant = localItem.restaurant._id;
             }
-
             if (localItem.itemType) {
               preparedItem.itemType = localItem.itemType;
               preparedItem.item = localItem.item;
             }
-
             cart.items.push(preparedItem);
           }
         }
       }
-
       await cart.save();
-
       res.json({
         _id: cart._id,
         user: cart.user,
@@ -319,5 +267,4 @@ const cartController = {
     }
   }
 };
-
 module.exports = cartController;

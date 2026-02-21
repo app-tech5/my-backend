@@ -2,7 +2,6 @@ const express = require('express');
 const deleteOrphanedFiles = require('../utils/cleanupOrphanedFiles'); 
 const loadModels = require('../utils/loadModels');
 const router = express.Router();
-
 router.get('/cleanup', async (req, res) => {
   try {
     loadModels();
@@ -14,5 +13,4 @@ router.get('/cleanup', async (req, res) => {
     res.status(500).json({ error: 'Erreur lors du nettoyage des fichiers orphelins' });
   }
 });
-
 module.exports = router;

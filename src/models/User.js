@@ -1,11 +1,9 @@
 const mongoose = require("mongoose");
 const convertToModelName = require("../utils/convertToModelName");
-
 const UserSchema = new mongoose.Schema(
     {
       email: { type: String, required: true, unique: true, default: "" },
       password: { type: String, required: true, 
-        
         default: ''},
       name: { type: String, default: '' },
       phone: { type: String, default: '' },
@@ -15,7 +13,6 @@ const UserSchema = new mongoose.Schema(
         latitude: { type: Number, default: null },
         longitude: { type: Number, default: null }
       },
-      
       role: { 
         type: String, 
         enum: ['customer', 'restaurant', 'delivery'], 
@@ -48,33 +45,23 @@ const UserSchema = new mongoose.Schema(
     },
     { timestamps: true }
   );
-
 UserSchema.virtual("value").get(function () {
   return this._id;
 });
-
 UserSchema.virtual("label").get(function () {
   return this.email;
 });
-
 UserSchema.set("toJSON", { virtuals: true });
 UserSchema.set("toObject", { virtuals: true });
-
 UserSchema.pre("find", async function (next) {
-  
   const queryParams = this.options.queryParams;
-  
   if (queryParams && Object.keys(queryParams).length > 0) {
-    
     const Model = mongoose.model(convertToModelName(queryParams.type));
-    
     const items = await Model.find({}, "userId").lean();
     const itemUserIds = items.map((item) => item.userId);
-    
     this.where({ _id: { $nin: itemUserIds } });
     console.log("-->", Model);
   }
   next();
 });
-
 module.exports = mongoose.model("User", UserSchema);

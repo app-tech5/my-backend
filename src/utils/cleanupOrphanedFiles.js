@@ -3,30 +3,23 @@ const path = require('path');
 const mongoose = require('mongoose');
 const getModelsWithImageField = require('./getModelsWithImageField');
 const getModelsWithImageOrDocumentsField = require('./getModelsWithImageField');
-
 const uploadsDir = path.join(__dirname, '..', '..', 'uploads');
-
 async function deleteOrphanedFiles() {
   try {
     console.log('Début du nettoyage des fichiers orphelins...');
-    
     console.log('Lecture du dossier uploads...');
     const files = fs.readdirSync(uploadsDir);
     console.log('Fichiers dans uploads :', files);
-    
     console.log('Récupération des modèles avec un champ `image` ou `documents`...');
     const models = getModelsWithImageOrDocumentsField();
     console.log('Modèles concernés :', models.map(m => m.modelName));
-    
     console.log('Récupération des fichiers référencés dans la base de données...');
     const usedFiles = new Set(); 
-
     for (const model of models) {
       console.log(`Récupération des documents pour le modèle : ${model.modelName}`);
       const documents = await model.find({
         $or: [{ image: { $exists: true } }, { documents: { $exists: true } }]
       });
-
       documents.forEach(doc => {
         if (doc.image) {
           const filename = path.basename(doc.image);
@@ -44,9 +37,7 @@ async function deleteOrphanedFiles() {
         }
       });
     }
-
     console.log('Fichiers référencés dans la base de données :', Array.from(usedFiles));
-    
     console.log('Début de la suppression des fichiers orphelins...');
     files.forEach(file => {
       if (!usedFiles.has(file)) {
@@ -57,11 +48,9 @@ async function deleteOrphanedFiles() {
         console.log(`Fichier utilisé, non supprimé : ${file}`);
       }
     });
-
     console.log('Nettoyage des fichiers orphelins terminé.');
   } catch (error) {
     console.error('Erreur lors du nettoyage des fichiers orphelins :', error);
   }
 }
-
 module.exports = deleteOrphanedFiles;

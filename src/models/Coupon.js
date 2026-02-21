@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-
 const couponSchema = new Schema({
-  
   code: {
     type: String,
     required: true,
@@ -17,7 +15,6 @@ const couponSchema = new Schema({
     required: false,
     maxlength: 200
   },
-  
   discountType: {
     type: String,
     required: true,
@@ -31,7 +28,6 @@ const couponSchema = new Schema({
     },
     min: 0
   },
-  
   minOrderAmount: {
     type: Number,
     required: false,
@@ -45,7 +41,6 @@ const couponSchema = new Schema({
     type: String,
     enum: ['pizza', 'burger', 'sushi', 'dessert', 'boisson', 'asiatique', 'italien']
   }],
-  
   startDate: {
     type: Date,
     required: true,
@@ -61,7 +56,6 @@ const couponSchema = new Schema({
       message: 'La date de fin doit être après la date de début'
     }
   },
-  
   maxUses: {
     type: Number,
     required: false,
@@ -78,7 +72,6 @@ const couponSchema = new Schema({
     min: 1,
     default: 1
   },
-  
   isPublic: {
     type: Boolean,
     default: true
@@ -91,7 +84,6 @@ const couponSchema = new Schema({
     type: Boolean,
     default: false
   },
-  
   createdBy: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -110,10 +102,8 @@ const couponSchema = new Schema({
   toJSON: { virtuals: true },
   toObject: { virtuals: true }
 });
-
 couponSchema.index({ code: 1, isActive: 1 });
 couponSchema.index({ endDate: 1, isActive: 1 });
-
 couponSchema.methods.isValid = function() {
   const now = new Date();
   return (
@@ -123,16 +113,13 @@ couponSchema.methods.isValid = function() {
     (this.maxUses ? this.currentUses < this.maxUses : true)
   );
 };
-
 couponSchema.methods.applyDiscount = function(totalAmount) {
   if (!this.isValid()) {
     throw new Error('Coupon non valide');
   }
-  
   if (this.minOrderAmount && totalAmount < this.minOrderAmount) {
     throw new Error(`Montant minimum de commande non atteint (${this.minOrderAmount})`);
   }
-  
   switch (this.discountType) {
     case 'percentage':
       return totalAmount * (1 - this.discountValue / 100);
@@ -144,7 +131,5 @@ couponSchema.methods.applyDiscount = function(totalAmount) {
       return totalAmount;
   }
 };
-
 const Coupon = mongoose.model('Coupon', couponSchema);
-
 module.exports = Coupon;

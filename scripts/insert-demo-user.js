@@ -1,29 +1,21 @@
 const { MongoClient } = require('mongodb');
 const bcrypt = require('bcryptjs');
 const { ObjectId } = require('mongodb');
-
 async function insertDemoUser() {
-  
   const mongoUri = 'mongodb://127.0.0.1:27017/good-foods';
   const dbName = 'good-foods';
-
   console.log('🔍 Utilisation de:', mongoUri);
-
   const client = new MongoClient(mongoUri);
-
   try {
     await client.connect();
     console.log('✅ Connecté à MongoDB');
-
     const db = client.db(dbName);
     const usersCollection = db.collection('users');
-    
     const existingUser = await usersCollection.findOne({ email: 'demo@customer.com' });
     if (existingUser) {
       console.log('ℹ️ Utilisateur demo@customer.com existe déjà');
       return;
     }
-    
     const demoCustomer = {
       _id: new ObjectId('67c62fae5a9b19466ee230d7'),
       email: "demo@customer.com",
@@ -50,17 +42,14 @@ async function insertDemoUser() {
       createdAt: new Date(),
       updatedAt: new Date()
     };
-
     const result = await usersCollection.insertOne(demoCustomer);
     console.log('✅ Utilisateur de démo inséré avec succès:', result.insertedId);
-    
     const insertedUser = await usersCollection.findOne({ email: 'demo@customer.com' });
     console.log('🔍 Utilisateur trouvé:', {
       email: insertedUser.email,
       name: insertedUser.name,
       role: insertedUser.role
     });
-
   } catch (error) {
     console.error('❌ Erreur:', error);
   } finally {
@@ -68,5 +57,4 @@ async function insertDemoUser() {
     console.log('🔌 Connexion fermée');
   }
 }
-
 insertDemoUser();

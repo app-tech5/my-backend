@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
-
 module.exports = {
   async up(db) {
-    
     await db.createCollection('carts', {
       validator: {
         $jsonSchema: {
@@ -79,18 +77,12 @@ module.exports = {
         }
       }
     });
-    
     await db.collection('carts').createIndex({ user: 1 }, { unique: true });
     await db.collection('carts').createIndex({ deviceId: 1 });
     await db.collection('carts').createIndex({ sessionId: 1 });
     await db.collection('carts').createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 });
-
-    console.log('✅ Cart collection created successfully');
   },
-
   async down(db) {
-    
     await db.collection('carts').drop();
-    console.log('✅ Cart collection dropped');
   }
 };

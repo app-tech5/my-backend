@@ -1,8 +1,6 @@
-
 const { faker } = require('@faker-js/faker');
 const mongoose = require('mongoose');
 const { ObjectId } = require('mongodb');
-
 module.exports = {
   async up(db) {
     try {
@@ -10,10 +8,8 @@ module.exports = {
     } catch (e) {
       if (e.codeName !== "NamespaceNotFound") throw e;
     }
-    
     const adminUser = await db.collection('users').findOne({ role: 'admin' });
     const createdBy = adminUser ? adminUser._id : new ObjectId();
-    
     const TARGETS = ['customer', 'restaurant', 'driver'];
     const BILLING_CYCLES = ['daily', 'weekly', 'monthly', 'yearly'];
     const SERVICE_MODES = [
@@ -21,7 +17,6 @@ module.exports = {
       { value: 'pickup', label: 'Pickup' },
       { value: 'dinein', label: 'Dine-in' }
     ];
-    
     const BENEFITS = [
       "Exclusive discounts",
       "Free delivery",
@@ -29,7 +24,6 @@ module.exports = {
       "Premium support",
       "Advanced statistics"
     ];
-    
     const mockSubscriptions = Array.from({ length: 10 }, (_, i) => {
       const target = faker.helpers.arrayElement(TARGETS);
       const billingCycle = faker.helpers.arrayElement(BILLING_CYCLES);
@@ -37,7 +31,6 @@ module.exports = {
         SERVICE_MODES,
         faker.number.int({ min: 1, max: 3 })
       );
-
       return {
         name: `Subscription ${faker.word.adjective()} ${faker.word.noun()}`,
         target,
@@ -65,7 +58,6 @@ module.exports = {
         updatedAt: faker.date.recent()
       };
     });
-    
     for (const sub of mockSubscriptions) {
       const exists = await db.collection('subscriptions').countDocuments({ name: sub.name });
       if (!exists) {
@@ -73,12 +65,9 @@ module.exports = {
       }
     }
   },
-
   async down(db) {
-    
     await db.collection('subscriptions').deleteMany({
       createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }
     });
   }
 };
-

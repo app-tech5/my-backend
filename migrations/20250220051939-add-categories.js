@@ -1,4 +1,3 @@
-
 module.exports = {
   async up(db) {
     try {
@@ -48,7 +47,6 @@ module.exports = {
         image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=400&fit=crop' 
       }
     ];
-
     await db.collection('categories').insertMany(
       categories.map(cat => ({
         ...cat,
@@ -57,7 +55,6 @@ module.exports = {
       }))
     );
   },
-
   async down(db) {
     await db.collection('categories').deleteMany({
       name: { $in: [
@@ -67,4 +64,3 @@ module.exports = {
     });
   }
 };
-

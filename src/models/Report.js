@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
-
 const reportSchema = new mongoose.Schema(
   {
-    
     title: { 
       type: String, 
       required: [true, 'Un titre est requis'], 
@@ -17,7 +15,6 @@ const reportSchema = new mongoose.Schema(
       },
       index: true
     },
-    
     dateRange: {
       start: { 
         type: Date, 
@@ -34,16 +31,13 @@ const reportSchema = new mongoose.Schema(
         required: true 
       }
     },
-    
     filters: {
       restaurantIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' }],
       driverIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Driver' }],
       orderStatuses: [String],
       paymentMethods: [String]
     },
-    
     metrics: {
-        
         totalOrders: Number,
         completedOrders: Number,
         cancellationRate: Number,
@@ -51,20 +45,16 @@ const reportSchema = new mongoose.Schema(
         netProfit: Number,
         averageOrderValue: Number,
         averageDeliveryTime: Number,
-        
         totalDeliveries: Number,
         onTimeRate: Number,
         averageRating: Number,
         totalEarnings: Number,
-        
         activeCustomers: Number,
         repeatOrderRate: Number,
         averageOrdersPerCustomer: Number,
         favoriteCategories: [String]
       },
-    
     rawData: mongoose.Schema.Types.Mixed, 
-    
     generatedBy: { 
       type: mongoose.Schema.Types.ObjectId, 
       ref: 'User', 
@@ -80,22 +70,17 @@ const reportSchema = new mongoose.Schema(
     toObject: { virtuals: true }
   }
 );
-
 reportSchema.pre("find", function () {
     this.populate({
       path: "generatedBy",
       select: "name", 
     });
   });
-
 reportSchema.methods.generatePDF = function() {
-  
   return `/reports/${this._id}/download`;
 };
-
 reportSchema.pre('save', async function(next) {
   if (this.isNew) {
-    
     if (!this.metrics.cancellationRate && this.metrics.totalOrders > 0) {
       this.metrics.cancellationRate = 
         ((this.metrics.totalOrders - this.metrics.completedOrders) / this.metrics.totalOrders) * 100;
@@ -103,11 +88,8 @@ reportSchema.pre('save', async function(next) {
   }
   next();
 });
-
 reportSchema.path('metrics.netProfit').validate(function(value) {
   return value <= this.metrics.grossRevenue;
 }, 'Le profit net ne peut pas dépasser le revenu brut');
-
 const Report = mongoose.model('Report', reportSchema);
-
 module.exports = Report;

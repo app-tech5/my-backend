@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 const SettingSchema = new mongoose.Schema({
     _id: { type: String, required: true }, 
     appName: { type: String, required: true },
@@ -14,7 +13,5 @@ const SettingSchema = new mongoose.Schema({
         name: { type: String, required: true },
     },
     image_url: { type: String },
-    
   }, { timestamps: true } );
-
 module.exports = mongoose.model('Setting', SettingSchema);

@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-
 const promotionSchema = new Schema({
-  
   name: {
     type: String,
     required: true,
@@ -18,7 +16,6 @@ const promotionSchema = new Schema({
     type: String,
     required: false
   },
-  
   promotionType: {
     type: String,
     required: true,
@@ -33,7 +30,6 @@ const promotionSchema = new Schema({
     ],
     default: 'percentage_discount'
   },
-  
   discountValue: {
     type: Number,
     required: function() {
@@ -67,7 +63,6 @@ const promotionSchema = new Schema({
       min: 0
     }
   }],
-  
   scope: {
     type: String,
     required: true,
@@ -86,7 +81,6 @@ const promotionSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'MenuItem'
   }],
-  
   startDate: {
     type: Date,
     required: true,
@@ -117,7 +111,6 @@ const promotionSchema = new Schema({
       max: 6
     }]
   }],
-  
   minOrderAmount: {
     type: Number,
     required: false,
@@ -133,7 +126,6 @@ const promotionSchema = new Schema({
     enum: ['all', 'new_users', 'existing_users', 'vip'],
     default: 'all'
   },
-  
   maxUsage: {
     type: Number,
     required: false,
@@ -144,7 +136,6 @@ const promotionSchema = new Schema({
     default: 0,
     min: 0
   },
-  
   createdBy: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -165,88 +156,66 @@ const promotionSchema = new Schema({
   toJSON: { virtuals: true },
   toObject: { virtuals: true }
 });
-
 promotionSchema.index({ promotionType: 1, isActive: 1 });
 promotionSchema.index({ scope: 1, isActive: 1 });
 promotionSchema.index({ endDate: 1, isActive: 1 });
-
 promotionSchema.methods.isActiveNow = function() {
   const now = new Date();
   const isWithinDateRange = now >= this.startDate && now <= this.endDate;
-  
   if (this.happyHours && this.happyHours.length > 0) {
     const currentHour = now.getHours();
     const currentMinutes = now.getMinutes();
     const currentDay = now.getDay();
-    
     const isHappyHour = this.happyHours.some(slot => {
       const [startH, startM] = slot.start.split(':').map(Number);
       const [endH, endM] = slot.end.split(':').map(Number);
-      
       const isDayMatch = slot.days.includes(currentDay);
       const isTimeMatch = (
         (currentHour > startH || (currentHour === startH && currentMinutes >= startM)) &&
         (currentHour < endH || (currentHour === endH && currentMinutes <= endM))
       );  
-      
       return isDayMatch && isTimeMatch;
     });
-    
     return this.isActive && isWithinDateRange && isHappyHour;
   }
-  
   return this.isActive && isWithinDateRange;
 };
-
 promotionSchema.methods.applyPromotion = function(item, quantity = 1, totalAmount = 0) {
   if (!this.isActiveNow()) {
     throw new Error('Promotion non active');
   }
-  
   switch (this.promotionType) {
     case 'percentage_discount':
       const discount = item.price * (this.discountValue / 100);
       return Math.min(discount, this.maxDiscountAmount || Infinity);
-      
     case 'fixed_discount':
       return this.discountValue;
-      
     case 'buy_x_get_y':
       const freeItems = Math.floor(quantity / this.buyQuantity) * this.getQuantity;
       return freeItems * item.price;
-      
     case 'combo_deal':
       const comboItem = this.comboItems.find(ci => ci.item.equals(item._id));
       return comboItem ? (item.price - comboItem.discountedPrice) : 0;
-      
     case 'free_delivery':
       return 0; 
-      
     default:
       return 0;
   }
 };
-
 promotionSchema.pre('save', function(next) {
   if (this.promotionType === 'combo_deal' && this.comboItems.length < 2) {
     throw new Error('Un combo deal doit inclure au moins 2 items');
   }
-  
   if (this.scope === 'restaurant' && this.applicableRestaurants.length === 0) {
     throw new Error('Au moins un restaurant doit être spécifié pour ce type de promotion');
   }
-  
   if (this.scope === 'category' && this.applicableCategories.length === 0) {
     throw new Error('Au moins une catégorie doit être spécifiée pour ce type de promotion');
   }
-  
   if (this.scope === 'item' && this.applicableItems.length === 0) {
     throw new Error('Au moins un item doit être spécifié pour ce type de promotion');
   }
-  
   next();
 });
-
 const Promotion = mongoose.model('Promotion', promotionSchema);
-
 module.exports = Promotion;

@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-
 const reviewSchema = new Schema({
-  
   user: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -18,7 +16,6 @@ const reviewSchema = new Schema({
     ref: 'Order',
     required: false 
   },
-  
   rating: {
     type: Number,
     required: true,
@@ -44,7 +41,6 @@ const reviewSchema = new Schema({
       message: 'Maximum 5 photos par avis'
     }
   }],
-  
   foodQuality: {
     type: Number,
     min: 1,
@@ -69,7 +65,6 @@ const reviewSchema = new Schema({
     max: 5,
     required: false
   },
-  
   date: {
     type: Date,
     default: Date.now
@@ -107,7 +102,6 @@ const reviewSchema = new Schema({
   toJSON: { virtuals: true },
   toObject: { virtuals: true }
 });
-
 reviewSchema.pre("find", function () {
     this.populate([
       {
@@ -120,10 +114,8 @@ reviewSchema.pre("find", function () {
       },
     ]);
   });
-
 reviewSchema.index({ restaurant: 1, status: 1 });
 reviewSchema.index({ user: 1, restaurant: 1 }, { unique: true }); 
-
 reviewSchema.pre('save', async function(next) {
   if (this.isNew) {
     const Order = mongoose.model('Order');
@@ -132,14 +124,12 @@ reviewSchema.pre('save', async function(next) {
       restaurant: this.restaurant,
       status: 'delivered'
     });
-    
     if (!hasOrdered) {
       throw new Error('Vous devez avoir commandé dans ce restaurant pour laisser un avis');
     }
   }
   next();
 });
-
 reviewSchema.statics.calculateAverageRating = async function(restaurantId) {
   const result = await this.aggregate([
     {
@@ -160,7 +150,6 @@ reviewSchema.statics.calculateAverageRating = async function(restaurantId) {
       }
     }
   ]);
-
   try {
     const Restaurant = mongoose.model('Restaurant');
     await Restaurant.findByIdAndUpdate(restaurantId, {
@@ -175,15 +164,11 @@ reviewSchema.statics.calculateAverageRating = async function(restaurantId) {
     console.error('Erreur lors de la mise à jour des notes moyennes:', err);
   }
 };
-
 reviewSchema.post('save', function() {
   this.constructor.calculateAverageRating(this.restaurant);
 });
-
 reviewSchema.post('remove', function() {
   this.constructor.calculateAverageRating(this.restaurant);
 });
-
 const Review = mongoose.model('Review', reviewSchema);
-
 module.exports = Review;

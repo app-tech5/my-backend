@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const addPopulateMiddleware = require('../utils/addPopulateMiddleware');
-
 const transactionSchema = new mongoose.Schema({
   transaction_type: {
     type: String,
@@ -24,7 +23,6 @@ const transactionSchema = new mongoose.Schema({
   },
   currency: { 
     type: String, 
-    
     enum: ['USD'],
     required: true,
     select: false
@@ -102,11 +100,8 @@ const transactionSchema = new mongoose.Schema({
   toJSON: { virtuals: true },
   toObject: { virtuals: true }
 });
-
 addPopulateMiddleware(transactionSchema, [
     { path: "user", select: "name image" },
-    
 ])
 const Transaction = mongoose.model('Transaction', transactionSchema);
-
 module.exports = Transaction;

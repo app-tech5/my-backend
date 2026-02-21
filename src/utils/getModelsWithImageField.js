@@ -1,17 +1,12 @@
 const mongoose = require('mongoose');
-
 function getModelsWithImageField() {
   const modelsWithImage = [];
-
   console.log('Début de la détection des modèles avec un champ `image`...');
-  
   for (const modelName of Object.keys(mongoose.models)) {
     const model = mongoose.models[modelName];
     const schema = model.schema;
-
     console.log(`Vérification du modèle : ${modelName}`);
     console.log('Chemins du schéma :', Object.keys(schema.paths));
-    
     if (schema.paths.image) {
       console.log(`Champ \`image\` trouvé dans le modèle ${modelName}.`);
       modelsWithImage.push(model);
@@ -19,23 +14,17 @@ function getModelsWithImageField() {
       console.log(`Aucun champ \`image\` trouvé dans le modèle ${modelName}.`);
     }
   }
-
   console.log('Modèles avec un champ `image` détectés :', modelsWithImage.map(m => m.modelName));
   return modelsWithImage;
 }
-
 function getModelsWithImageOrDocumentsField() {
   const modelsWithFields = [];
-
   console.log('Début de la détection des modèles avec un champ `image` ou `documents`...');
-  
   for (const modelName of Object.keys(mongoose.models)) {
     const model = mongoose.models[modelName];
     const schema = model.schema;
-
     console.log(`Vérification du modèle : ${modelName}`);
     console.log('Chemins du schéma :', Object.keys(schema.paths));
-    
     if (schema.paths.image || schema.paths.documents) {
       console.log(`Champ \`image\` ou \`documents\` trouvé dans le modèle ${modelName}.`);
       modelsWithFields.push(model);
@@ -43,9 +32,7 @@ function getModelsWithImageOrDocumentsField() {
       console.log(`Aucun champ \`image\` ou \`documents\` trouvé dans le modèle ${modelName}.`);
     }
   }
-
   console.log('Modèles détectés :', modelsWithFields.map(m => m.modelName));
   return modelsWithFields;
 }
-
 module.exports = getModelsWithImageOrDocumentsField;

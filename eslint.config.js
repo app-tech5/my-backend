@@ -1,5 +1,4 @@
 const noCommentsPlugin = require('eslint-plugin-no-comments');
-
 module.exports = [
   {
     ignores: [

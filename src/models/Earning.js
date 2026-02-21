@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const User = require("./User");
 const Driver = require("./Driver");
-
 const EarningsSchema = new mongoose.Schema(
   {
     total_earnings: { type: Number, required: true, default: 0 },
@@ -23,7 +22,6 @@ const EarningsSchema = new mongoose.Schema(
           type: mongoose.Schema.Types.ObjectId,
           ref: "Restaurant",
           required: true,
-          
         },
         amount: { type: Number, required: true },
         commission: { type: Number, required: true },
@@ -59,33 +57,25 @@ const EarningsSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
 EarningsSchema.pre("findOne", function (next) {
   this.populate({
     path: "transactions.restaurant",
     select: "name",
   });
-  
   next();
 });
-
 EarningsSchema.post("findOne", async function (doc) {
   console.log("Document trouvé :", doc); 
-
   if (doc && doc.payouts && doc.payouts.length) {
     console.log("Payouts existants :", doc.payouts); 
-
     for (let payout of doc.payouts) {
       console.log("Vérification du recipient :", payout.recipient); 
-
       if (payout.recipientType !== "Restaurant") {
         console.log("Recipient n'est pas un Restaurant, peuplage avec User");
-
         try {
           const recipientDoc = await Driver.findById(payout.recipient).select(
             "userId"
           );
-
           const recipient = recipientDoc.toObject();
           console.log("Recipient trouvé :", recipient); 
           const { userId } = recipient; 
@@ -104,5 +94,4 @@ EarningsSchema.post("findOne", async function (doc) {
     console.log("Aucun payout trouvé dans le document.");
   }
 });
-
 module.exports = mongoose.model("Earning", EarningsSchema);

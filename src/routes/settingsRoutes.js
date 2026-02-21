@@ -1,13 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const Settings = require('../models/Setting');
-
 router.get("/", async (req, res) => {
     try {
         const settings = await Settings.findById("app_settings");
-
         if (!settings) {
-            
             const defaultSettings = new Settings({
                 _id: "app_settings", 
                 appName: "Mon App",
@@ -24,14 +21,12 @@ router.get("/", async (req, res) => {
                 },
                 createdAt: new Date(),
             });
-
             await defaultSettings.save();
             return res.json({
                 success: true,
                 data: defaultSettings
             });
         }
-
         res.json({
             success: true,
             data: settings
@@ -45,7 +40,6 @@ router.get("/", async (req, res) => {
         });
     }
 });
-
 router.put('/', async (req, res) => {
     try {
         const updatedSetting = await Settings.findByIdAndUpdate({}, req.body, { new: true });
@@ -54,5 +48,4 @@ router.put('/', async (req, res) => {
         res.status(500).json({ message: 'Erreur serveur', error });
     }
 });
-
 module.exports = router;

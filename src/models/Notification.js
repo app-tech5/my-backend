@@ -1,15 +1,12 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-
 const notificationSchema = new Schema({
-  
   user: {
     type: Schema.Types.ObjectId,
     ref: 'User',
     required: true,
     index: true
   },
-  
   title: {
     type: String,
     required: true,
@@ -32,7 +29,6 @@ const notificationSchema = new Schema({
       message: props => `${props.value} n'est pas une URL d'image valide!`
     }
   },
-  
   type: {
     type: String,
     required: true,
@@ -61,7 +57,6 @@ const notificationSchema = new Schema({
     },
     enum: ['Order', 'Payment', 'Delivery']
   },
-  
   isRead: {
     type: Boolean,
     default: false,
@@ -83,7 +78,6 @@ const notificationSchema = new Schema({
       message: props => `${props.value} n'est pas une URL valide!`
     }
   },
-  
   priority: {
     type: String,
     enum: ['low', 'medium', 'high', 'critical'],
@@ -94,7 +88,6 @@ const notificationSchema = new Schema({
     required: false,
     index: true
   },
-  
   createdAt: {
     type: Date,
     default: Date.now,
@@ -110,7 +103,6 @@ const notificationSchema = new Schema({
   toJSON: { virtuals: true },
   toObject: { virtuals: true }
 });
-
 notificationSchema.pre("find", function () {
     this.populate(
       {
@@ -118,28 +110,23 @@ notificationSchema.pre("find", function () {
         select: "name", 
       });
 })
-
 notificationSchema.index({ user: 1, isRead: 1, createdAt: -1 });
 notificationSchema.index({ type: 1, createdAt: -1 });
-
 notificationSchema.methods.markAsRead = function() {
   this.isRead = true;
   return this.save();
 };
-
 notificationSchema.pre('save', function(next) {
   if (this.expiresAt && this.expiresAt < new Date()) {
     this.isRead = true; 
   }
   next();
 });
-
 notificationSchema.statics.findUnreadForUser = function(userId) {
   return this.find({ user: userId, isRead: false })
              .sort({ createdAt: -1 })
              .limit(50);
 };
-
 notificationSchema.statics.createOrderNotification = async function(userId, orderId, message, title = 'Mise à jour de commande') {
   return this.create({
     user: userId,
@@ -151,7 +138,5 @@ notificationSchema.statics.createOrderNotification = async function(userId, orde
     priority: 'high'
   });
 };
-
 const Notification = mongoose.model('Notification', notificationSchema);
-
 module.exports = Notification;

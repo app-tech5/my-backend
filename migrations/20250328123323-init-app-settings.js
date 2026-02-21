@@ -1,6 +1,5 @@
 module.exports = {
   async up(db) {
-    
     await db.collection('appsettings').insertOne({
       appName: "My Uber Eats",
       supportEmail: "contact@myapp.com",
@@ -20,11 +19,8 @@ module.exports = {
       createdAt: new Date(),
       updatedAt: new Date()
     });
-    
   },
-
   async down(db) {
-    
     await db.collection('appsettings').drop();
   }
 };

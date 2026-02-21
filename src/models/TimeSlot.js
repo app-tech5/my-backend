@@ -1,7 +1,5 @@
-
 const mongoose = require('mongoose');
 const addPopulateMiddleware = require('../utils/addPopulateMiddleware');
-
 const TimeSlotSchema = new mongoose.Schema({
   restaurant: { 
     type: mongoose.Schema.Types.ObjectId, 
@@ -42,9 +40,7 @@ const TimeSlotSchema = new mongoose.Schema({
     default: 'delivery' 
   }
 }, { timestamps: true });
-
 addPopulateMiddleware(TimeSlotSchema, [
     { path: "restaurant", select: "name" },
 ])
-
 module.exports = mongoose.model('TimeSlot', TimeSlotSchema);

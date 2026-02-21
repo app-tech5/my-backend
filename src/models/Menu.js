@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const applyTransformHooks = require("../utils/applyTransformHooks");
-
 const MenuSchema = new mongoose.Schema(
   {
     name: {
@@ -51,7 +50,6 @@ const MenuSchema = new mongoose.Schema(
           label: { type: String, required: true, default: "" },
         },
     ],
-      
     discount: {
       active: { type: Boolean, default: false },
       percentage: { type: Number, default: 0 },
@@ -71,21 +69,17 @@ const MenuSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
 MenuSchema.pre("findOne", function () {
     this.populate({
         path: "restaurant",
         select: "name"
     })
 });
-
 MenuSchema.pre("find", function () {
     this.populate({
       path: "restaurant",
       select: "name"
     });
   });
-
 applyTransformHooks(MenuSchema, ["restaurants", "products"]);
-
 module.exports = mongoose.model("Menu", MenuSchema);

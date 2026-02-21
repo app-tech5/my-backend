@@ -17,40 +17,28 @@ const reviewRoutes = require("./routes/reviewRoutes");
 const userSettingsRoutes = require("./routes/userSettingsRoutes");
 const http = require('http');
 const cleanupRouter = require('./routes/cleanup');
-
 const { Server } = require('socket.io');
-
 const i18n = require('./config/i18n');
 const { handleSettingsChange } = require('./controllers/settingsController');
 const authMiddleware = require('./middleware/authMiddleware');
 const genericRoutes = require("./routes/genericRoutes");
-
 const fs = require('fs');
 const https = require('https');
-
 dotenv.config();
 connectDB();
-
 const app = express();
 app.use(i18n.init);
-
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
 app.use(cors({
   origin: ['http://localhost:3000', 'https://good-foods.digitaldienste.fr'],
   credentials: true
 }));
-
 app.use(express.json());
-
 app.use(cookieParser());
-
 app.use("/api/auth", authRoutes);
-
 app.use("/api", authMiddleware);
-
 app.use('/api/settings', settingsRoutes);
-
 app.use('/api/drivers', driverRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/cart', cartRoutes);
@@ -60,10 +48,7 @@ app.use("/api/restaurant", restaurantRoutes);
 app.use("/api/user-settings", userSettingsRoutes);
 app.use("/api/resource", genericRoutes);
 app.use("/api/upload", uploadRoutes);
-
 app.use("/api/uploads", express.static("uploads"));
-
 app.use('/api', cleanupRouter);
-
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {});

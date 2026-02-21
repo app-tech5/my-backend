@@ -1,15 +1,12 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
-
 const restaurantReportSchema = new Schema(
   {
-    
     restaurant: {
       type: Schema.Types.ObjectId,
       ref: "Restaurant",
       required: true,
     },
-    
     reportedBy: {
       type: Schema.Types.ObjectId,
       ref: "User",
@@ -19,7 +16,6 @@ const restaurantReportSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    
     reportType: {
       type: String,
       required: true,
@@ -41,7 +37,6 @@ const restaurantReportSchema = new Schema(
       },
       maxlength: 500,
     },
-    
     description: {
       type: String,
       required: true,
@@ -63,7 +58,6 @@ const restaurantReportSchema = new Schema(
         },
       },
     ],
-    
     status: {
       type: String,
       enum: ["pending", "under_review", "resolved", "rejected"],
@@ -96,13 +90,11 @@ const restaurantReportSchema = new Schema(
       type: String,
       maxlength: 1000,
     },
-    
     severity: {
       type: String,
       enum: ["low", "medium", "high", "critical"],
       default: "medium",
     },
-    
     createdAt: {
       type: Date,
       default: Date.now,
@@ -118,11 +110,9 @@ const restaurantReportSchema = new Schema(
     toObject: { virtuals: true },
   }
 );
-
 restaurantReportSchema.index({ restaurant: 1, status: 1 });
 restaurantReportSchema.index({ reportedBy: 1, createdAt: -1 });
 restaurantReportSchema.index({ reportType: 1, status: 1 });
-
 restaurantReportSchema.pre("find", function () {
   this.populate([
     {
@@ -136,12 +126,10 @@ restaurantReportSchema.pre("find", function () {
     { path: "reportedBy", select: "name" },
   ]);
 });
-
 restaurantReportSchema.pre("save", function (next) {
   this.updatedAt = new Date();
   next();
 });
-
 restaurantReportSchema.methods.addAdminNote = function (noteContent, adminId) {
   this.adminNotes.push({
     note: noteContent,
@@ -149,32 +137,26 @@ restaurantReportSchema.methods.addAdminNote = function (noteContent, adminId) {
   });
   return this.save();
 };
-
 restaurantReportSchema.methods.updateStatus = function (
   newStatus,
   resolvedById,
   resolutionDetails
 ) {
   this.status = newStatus;
-
   if (newStatus === "resolved" || newStatus === "rejected") {
     this.resolvedBy = resolvedById;
     this.resolvedAt = new Date();
     this.resolutionDetails = resolutionDetails || "";
   }
-
   return this.save();
 };
-
 restaurantReportSchema.virtual("daysPending").get(function () {
   if (this.status !== "pending") return 0;
   const diff = new Date() - this.createdAt;
   return Math.floor(diff / (1000 * 60 * 60 * 24));
 });
-
 const RestaurantReport = mongoose.model(
   "RestaurantReport",
   restaurantReportSchema
 );
-
 module.exports = RestaurantReport;

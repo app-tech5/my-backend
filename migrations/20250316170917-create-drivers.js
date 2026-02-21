@@ -1,7 +1,5 @@
-
 const { faker } = require('@faker-js/faker');
 const mongoose = require('mongoose');
-
 module.exports = {
   async up(db) {
     try {
@@ -9,21 +7,17 @@ module.exports = {
     } catch (e) {
       if (e.codeName !== "NamespaceNotFound") throw e;
     }
-    
     const existingUsers = await db.collection('users')
       .find({})
       .project({ _id: 1, name: 1 })
       .toArray();
-
     if (existingUsers.length === 0) {
       throw new Error('No users found in the database');
     }
-    
     const mockDrivers = Array.from({ length: 40 }, (_, i) => {
       const user = faker.helpers.arrayElement(existingUsers);
       const vehicleTypes = ['scooter', 'car', 'motorcycle', 'bicycle'];
       const statuses = ['available', 'on_delivery', 'offline'];
-      
       return {
         userId: user._id,
         licenseNumber: `LIC${faker.string.alphanumeric(10).toUpperCase()}`,
@@ -61,15 +55,11 @@ module.exports = {
         updatedAt: faker.date.recent({ days: 30 })
       };
     });
-    
     await db.collection('drivers').insertMany(mockDrivers);
   },
-
   async down(db) {
-    
     await db.collection('drivers').deleteMany({
       createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }
     });
   }
 };
-

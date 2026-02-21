@@ -16,7 +16,7 @@
     "migrate:down": "migrate-mongo down",
     "migrate:create": "migrate-mongo create",
     "lint": "eslint .",
-    "lint-fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix"
   },
   "keywords": [],
   "author": "",

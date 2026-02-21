@@ -8,5 +8,4 @@ function populateFields(Model) {
     );
   });
 }
-
 module.exports = populateFields;

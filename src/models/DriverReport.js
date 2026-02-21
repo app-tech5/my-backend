@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-
 const driverReportSchema = new Schema({
-  
   reportType: {
     type: String,
     required: true,
@@ -28,7 +26,6 @@ const driverReportSchema = new Schema({
     enum: ['low', 'medium', 'high', 'critical'],
     default: 'medium'
   },
-  
   reporter: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -44,7 +41,6 @@ const driverReportSchema = new Schema({
     ref: 'Order',
     required: false
   },
-  
   images: [{
     type: String, 
     validate: {
@@ -63,7 +59,6 @@ const driverReportSchema = new Schema({
       message: 'Vous ne pouvez pas ajouter plus de 2 vidéos'
     }
   }],
-  
   status: {
     type: String,
     enum: ['pending', 'under_review', 'resolved', 'dismissed', 'requires_action'],
@@ -94,7 +89,6 @@ const driverReportSchema = new Schema({
     },
     maxlength: 2000
   },
-  
   createdAt: {
     type: Date,
     default: Date.now
@@ -114,12 +108,10 @@ const driverReportSchema = new Schema({
   toJSON: { virtuals: true },
   toObject: { virtuals: true }
 });
-
 driverReportSchema.index({ driver: 1, status: 1 });
 driverReportSchema.index({ reporter: 1 });
 driverReportSchema.index({ order: 1 });
 driverReportSchema.index({ createdAt: -1 });
-
 driverReportSchema.pre("find", function () {
     this.populate(
       {
@@ -127,12 +119,10 @@ driverReportSchema.pre("find", function () {
         select: "name", 
       })
   });
-
 driverReportSchema.pre('save', function(next) {
   this.updatedAt = new Date();
   next();
 });
-
 driverReportSchema.methods.addAdminNote = function(noteContent, adminId) {
   this.adminNotes.push({
     note: noteContent,
@@ -140,26 +130,20 @@ driverReportSchema.methods.addAdminNote = function(noteContent, adminId) {
   });
   return this.save();
 };
-
 driverReportSchema.methods.updateStatus = function(newStatus, resolutionType, resolutionDetails) {
   this.status = newStatus;
-  
   if (newStatus === 'resolved') {
     this.resolution = resolutionType;
     this.resolutionDetails = resolutionDetails;
     this.resolvedAt = new Date();
   }
-  
   return this.save();
 };
-
 driverReportSchema.virtual('processingTime').get(function() {
   if (this.status === 'resolved' && this.resolvedAt && this.createdAt) {
     return this.resolvedAt - this.createdAt;
   }
   return null;
 });
-
 const DriverReport = mongoose.model('DriverReport', driverReportSchema);
-
 module.exports = DriverReport;

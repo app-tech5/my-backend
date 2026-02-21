@@ -1,7 +1,5 @@
-
 const { faker } = require('@faker-js/faker');
 const mongoose = require('mongoose');
-
 module.exports = {
   async up(db) {
     try {
@@ -9,7 +7,6 @@ module.exports = {
     } catch (e) {
       if (e.codeName !== "NamespaceNotFound") throw e;
     }
-    
     const supportedLanguages = [
       { code: 'en', name: 'English', isDefault: true },
       { code: 'fr', name: 'French', isDefault: false },
@@ -26,9 +23,7 @@ module.exports = {
       { code: 'ko', name: 'Korean', isDefault: false },
       { code: 'tr', name: 'Turkish', isDefault: false }
     ];
-    
     await db.collection('languages').insertMany(supportedLanguages);
-    
     const defaultLanguage = supportedLanguages.find(lang => lang.isDefault);
     await db.collection('settings').updateOne(
       { _id: "app_settings" },
@@ -44,17 +39,13 @@ module.exports = {
       { upsert: true }
     );
   },
-
   async down(db) {
-    
     await db.collection('languages').deleteMany({
       code: { $in: ['en', 'fr', 'es', 'de', 'ar'] }
     });
-    
     await db.collection('settings').updateOne(
       { _id: "app_settings" },
       { $unset: { language: "" } }
     );
   }
 };
-

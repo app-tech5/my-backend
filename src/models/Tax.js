@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 const TaxSchema = new mongoose.Schema({
     location: {
         type: String,
@@ -20,7 +19,5 @@ const TaxSchema = new mongoose.Schema({
         default: 0 
     }
 }, { timestamps: true });
-
 const Tax = mongoose.model('Tax', TaxSchema);
-
 module.exports = Tax;

@@ -1,15 +1,11 @@
-
 const mongoose = require("mongoose");
-
 const salesReportSchema = new mongoose.Schema(
   {
-    
     restaurant: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Restaurant",
       required: false, 
     },
-    
     startDate: {
       type: Date,
       required: true,
@@ -18,7 +14,6 @@ const salesReportSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    
     totalSales: {
       type: Number,
       required: true,
@@ -34,7 +29,6 @@ const salesReportSchema = new mongoose.Schema(
       required: true,
       default: 0,
     },
-    
     salesByCategory: [
       {
         category: {
@@ -47,7 +41,6 @@ const salesReportSchema = new mongoose.Schema(
         },
       },
     ],
-    
     deliveryFees: {
       type: Number,
       default: 0,
@@ -56,13 +49,11 @@ const salesReportSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    
     generatedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    
     status: {
       type: String,
       enum: ["pending", "completed", "failed"],
@@ -71,7 +62,6 @@ const salesReportSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
 salesReportSchema.pre("find", function () {
   this.populate([
     {
@@ -84,15 +74,12 @@ salesReportSchema.pre("find", function () {
     },
   ]);
 });
-
 salesReportSchema.pre("findOne", function () {
   this.populate([
-    
     {
       path: "generatedBy",
       select: "name", 
     },
   ]);
 });
-
 module.exports = mongoose.model("SalesReport", salesReportSchema);

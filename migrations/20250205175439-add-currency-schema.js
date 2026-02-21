@@ -1,4 +1,3 @@
-
 module.exports = {
   up: async (db) => {
       try {
@@ -8,7 +7,6 @@ module.exports = {
       }
     await db.createCollection('currencies');
     await db.collection('currencies').createIndex({ code: 1 }, { unique: true });
-    
     await db.collection('currencies').insertOne({
       code: 'USD',
       exchangeRate: 1,
@@ -16,7 +14,6 @@ module.exports = {
       symbol: '$'
     });
   },
-
   down: async (db) => {
     await db.collection('currencies').drop();
   }
