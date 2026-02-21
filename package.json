@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest",
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "setup": "node scripts/setup.js",
@@ -15,6 +15,7 @@
     "migrate:up": "migrate-mongo up",
     "migrate:down": "migrate-mongo down",
     "migrate:create": "migrate-mongo create",
+    "test:migrations": "vitest run __tests__/migrations.test.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
@@ -22,7 +23,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@babel/core": "^7.29.0",
+    "@babel/plugin-transform-runtime": "^7.29.0",
+    "@babel/preset-env": "^7.29.0",
+    "@babel/runtime": "^7.28.6",
     "@faker-js/faker": "^9.6.0",
+    "babel-jest": "^30.2.0",
     "bcryptjs": "^2.4.3",
     "bson-objectid": "^2.0.4",
     "cookie-parser": "^1.4.7",
@@ -33,7 +39,9 @@
     "express": "^4.21.2",
     "firebase-admin": "^13.0.2",
     "i18n": "^0.15.1",
+    "jest": "^30.2.0",
     "mongodb": "^5.9.2",
+    "mongodb-memory-server": "^10.4.3",
     "mongoose": "^8.9.5",
     "mongoose-autopopulate": "^1.1.0",
     "multer": "^1.4.5-lts.1",
@@ -41,7 +49,8 @@
     "react-date-picker": "^11.0.0",
     "reflect-metadata": "^0.2.2",
     "socket.io": "^4.8.1",
-    "typeorm": "^0.3.20"
+    "typeorm": "^0.3.20",
+    "vitest": "^3.2.4"
   },
   "devDependencies": {
     "migrate-mongo": "^11.0.0"
