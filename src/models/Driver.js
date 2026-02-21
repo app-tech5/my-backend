@@ -53,7 +53,6 @@ DriverSchema.pre("save", function (next) {
 });
 DriverSchema.pre("findOneAndUpdate", function (next) {
     const update = this.getUpdate();
-    console.log(update)
     transformUsersField(update);
     next();
   });
@@ -66,7 +65,6 @@ DriverSchema.pre("findOne", function () {
 DriverSchema.post("findOne", function (doc) {
 });
 DriverSchema.pre("validate", function (next) {
-  console.log("this.users.value", this)
   next();
 });
 const Driver = mongoose.model("Driver", DriverSchema);

@@ -89,16 +89,12 @@ orderSchema.pre("findOne", function () {
   });
 });
 orderSchema.post('findOne', function (order) {
-    console.log('🟢 Hook post(findOne) exécuté !');
     if (!order) {
-        console.log('⚠️ Aucun document trouvé.');
         return;
     }
     if (!Array.isArray(order.items)) {
-        console.log('❌ order.items n\'est pas un tableau !', order.items);
         return;
     }
-    console.log(`📌 Nombre d'items : ${order.items.length}`);
     order.items = order.items.map(item => {
         const itemId = item.item?._id || item.item; 
         const extrasWithoutId = item.toObject().extras.map(extra => {
@@ -119,7 +115,6 @@ orderSchema.post('findOne', function (order) {
     order.subtotal = order.items.reduce((a,v) => a + v.total, 0);
     order.tax.amount = order.tax.rate * order.subtotal;
     order.totalPrice = order.items.reduce((a,v) => a + v.total, 0) + order.delivery.deliveryFee + order.tax.amount;
-    console.log('✅ Order final mis à jour:', order.tax.amount);
 });
 orderSchema.pre('findOneAndUpdate', async function (next) {
   this.previousOrder = await this.model.findOne(this.getQuery()); 
@@ -128,7 +123,6 @@ orderSchema.pre('findOneAndUpdate', async function (next) {
 });
 orderSchema.post('findOneAndUpdate', async function (doc) {
   if (doc?.status === "delivered" && this.previousOrder.status !== "delivered") {
-    console.log("111111111111", this.previousOrder.status)
       if (this.previousOrder.status !== "delivered") {
           await Driver.findByIdAndUpdate(doc.driver, { $inc: { totalDeliveries: 1 } });
       }

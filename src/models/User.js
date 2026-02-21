@@ -60,7 +60,6 @@ UserSchema.pre("find", async function (next) {
     const items = await Model.find({}, "userId").lean();
     const itemUserIds = items.map((item) => item.userId);
     this.where({ _id: { $nin: itemUserIds } });
-    console.log("-->", Model);
   }
   next();
 });

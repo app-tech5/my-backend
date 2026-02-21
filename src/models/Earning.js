@@ -65,33 +65,21 @@ EarningsSchema.pre("findOne", function (next) {
   next();
 });
 EarningsSchema.post("findOne", async function (doc) {
-  console.log("Document trouvé :", doc); 
   if (doc && doc.payouts && doc.payouts.length) {
-    console.log("Payouts existants :", doc.payouts); 
     for (let payout of doc.payouts) {
-      console.log("Vérification du recipient :", payout.recipient); 
       if (payout.recipientType !== "Restaurant") {
-        console.log("Recipient n'est pas un Restaurant, peuplage avec User");
         try {
           const recipientDoc = await Driver.findById(payout.recipient).select(
             "userId"
           );
           const recipient = recipientDoc.toObject();
-          console.log("Recipient trouvé :", recipient); 
-          const { userId } = recipient; 
-          console.log("userId extrait :", userId); 
+          const { userId } = recipient;
           const { name } = userId;
-          console.log("name extrait :", name); 
           payout.recipient = { name };
         } catch (error) {
-          console.log("Erreur lors de la recherche du recipient :", error);
         }
-      } else {
-        console.log("Recipient est un Restaurant, pas de peuplement");
       }
     }
-  } else {
-    console.log("Aucun payout trouvé dans le document.");
   }
 });
 module.exports = mongoose.model("Earning", EarningsSchema);
