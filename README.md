@@ -2,6 +2,26 @@
 
 API backend pour l'application Good Foods avec système de gestion de restaurants, commandes et livraisons.
 
+## ⚠️ IMPORTANT - Pour les Acheteurs du Projet
+
+Si vous avez acheté ce projet, **NE PARTAGEZ PAS** les fichiers de migrations originaux situés dans le dossier `migrations/` car ils contiennent des données sensibles (comptes de test, mots de passe, etc.).
+
+**Utilisez uniquement le dossier `migrations-prod/` pour initialiser votre base de données :**
+
+```bash
+# Copiez les migrations propres dans le dossier migrations
+cp migrations-prod/* migrations/
+
+# Puis lancez les migrations
+npm run migrate:up
+```
+
+Le dossier `migrations-prod/` contient :
+- ✅ Structure de base de données propre
+- ✅ Schémas sans données sensibles
+- ✅ Données génériques essentielles (EUR, langues, taxes, catégories)
+- ❌ Aucune donnée sensible ou comptes de test
+
 ## 🚀 Démarrage Rapide
 
 ### Démarrage rapide
@@ -52,6 +72,18 @@ MONGO_URI=mongodb+srv://user:pass@cluster.mongodb.net/good-foods
 
 Certaines migrations dépendent d'autres collections. Si des collections sont vides après `npm run migrate:up`, relancez simplement la commande.
 
+### 🔒 Sécurité des Migrations
+
+**⚠️ ATTENTION VENDEURS :** Les migrations dans le dossier `migrations/` contiennent des données sensibles :
+- Comptes utilisateurs de test avec mots de passe hashés
+- Données clients fictives mais structurées
+- Informations de configuration spécifiques au développement
+
+**Pour la vente du projet :**
+- Utilisez le dossier `migrations/` avec `./init-database.sh`
+- Ou créez le package sécurisé avec `./create-deployment-package.sh`
+- N'incluez PAS le dossier `migrations/` original dans la vente
+
 ### Commandes
 ```bash
 npm run migrate:status   # Voir le statut
@@ -87,6 +119,10 @@ npm run migrate:status   # Statut des migrations
 npm run migrate:up       # Exécuter les migrations
 npm run migrate:down     # Annuler la dernière migration
 npm run migrate:create   # Créer une nouvelle migration
+
+# Scripts de déploiement sécurisé (pour les vendeurs)
+./init-database.sh       # Initialisation propre (sans données sensibles)
+./create-deployment-package.sh  # Créer le package de déploiement sécurisé
 ```
 
 ## 🧪 Test de Connexion

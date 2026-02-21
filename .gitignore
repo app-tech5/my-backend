@@ -92,3 +92,10 @@ build/
 # Temporary files
 tmp/
 temp/
+
+# Deployment security - Exclude original migrations with sensitive data
+migrations/
+run-migrations-ordered.sh
+
+# Keep only safe migrations (safe for sharing)
+!migrations-prod/
