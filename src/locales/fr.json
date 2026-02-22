@@ -12,5 +12,6 @@
   "logout_successful": "Déconnexion réussie",
   "database_connection_error": "Erreur de connexion à la base de données",
   "mongodb_connection_error": "Erreur de connexion MongoDB",
-  "mongodb_connection_successful": "Connexion MongoDB réussie"
+  "mongodb_connection_successful": "Connexion MongoDB réussie",
+  "mongo_uri_required": "La variable d'environnement MONGO_URI est requise"
 }
