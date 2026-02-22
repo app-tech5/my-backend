@@ -9,5 +9,8 @@
   "login_successful": "Login successful",
   "unauthenticated": "Unauthenticated",
   "invalid_or_expired_token": "Invalid or expired token",
-  "logout_successful": "Logout successful"
+  "logout_successful": "Logout successful",
+  "database_connection_error": "Database connection error",
+  "mongodb_connection_error": "MongoDB connection error",
+  "mongodb_connection_successful": "MongoDB connection successful"
 }

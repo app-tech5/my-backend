@@ -9,5 +9,8 @@
   "login_successful": "Connexion réussie",
   "unauthenticated": "Non authentifié",
   "invalid_or_expired_token": "Token invalide ou expiré",
-  "logout_successful": "Déconnexion réussie"
+  "logout_successful": "Déconnexion réussie",
+  "database_connection_error": "Erreur de connexion à la base de données",
+  "mongodb_connection_error": "Erreur de connexion MongoDB",
+  "mongodb_connection_successful": "Connexion MongoDB réussie"
 }
