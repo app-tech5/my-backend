@@ -78,7 +78,6 @@ router.put('/', async (req, res) => {
       { $set: updates },
       { new: true, upsert: true }
     );
-    console.log(`Paramètres utilisateur mis à jour: ${userId}`);
     res.json({
       success: true,
       message: 'Paramètres mis à jour avec succès',

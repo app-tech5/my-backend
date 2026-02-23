@@ -21,17 +21,14 @@ const authenticateToken = (req, res, next) => {
 };
 router.get('/profile', authenticateToken, async (req, res) => {
   try {
-    console.log('🔵 Récupération du profil driver pour l\'utilisateur:', req.user.id);
     const driver = await Driver.findOne({ userId: req.user.id })
       .populate('userId', 'name email phone image');
     if (!driver) {
-      console.log('🟠 Aucun profil driver trouvé pour l\'utilisateur:', req.user.id);
       return res.status(404).json({
         message: res.__('driver_profile_not_found'),
         errorType: 'profile_not_found'
       });
     }
-    console.log('✅ Profil driver trouvé:', driver._id);
     res.json(driver);
   } catch (error) {
     console.error('🔴 Erreur lors de la récupération du profil driver:', error);
@@ -40,10 +37,8 @@ router.get('/profile', authenticateToken, async (req, res) => {
 });
 router.post('/', authenticateToken, async (req, res) => {
   try {
-    console.log('🔵 Création du profil driver pour l\'utilisateur:', req.user.id);
     const existingDriver = await Driver.findOne({ userId: req.user.id });
     if (existingDriver) {
-      console.log('🟠 Profil driver déjà existant pour l\'utilisateur:', req.user.id);
       return res.status(400).json({
         message: res.__('driver_profile_already_exists'),
         errorType: 'profile_exists'
@@ -68,7 +63,6 @@ router.post('/', authenticateToken, async (req, res) => {
     });
     await newDriver.save();
     await newDriver.populate('userId', 'name email phone');
-    console.log('✅ Profil driver créé:', newDriver._id);
     res.status(201).json(newDriver);
   } catch (error) {
     console.error('🔴 Erreur lors de la création du profil driver:', error);
@@ -77,7 +71,6 @@ router.post('/', authenticateToken, async (req, res) => {
 });
 router.put('/profile', authenticateToken, async (req, res) => {
   try {
-    console.log('🔵 Mise à jour du profil driver pour l\'utilisateur:', req.user.id);
     const updates = req.body;
     delete updates.userId;
     const driver = await Driver.findOneAndUpdate(
@@ -86,10 +79,8 @@ router.put('/profile', authenticateToken, async (req, res) => {
       { new: true, runValidators: true }
     ).populate('userId', 'name email phone image');
     if (!driver) {
-      console.log('🟠 Profil driver non trouvé pour la mise à jour');
       return res.status(404).json({ message: 'Profil driver non trouvé' });
     }
-    console.log('✅ Profil driver mis à jour:', driver._id);
     res.json(driver);
   } catch (error) {
     console.error('🔴 Erreur lors de la mise à jour du profil driver:', error);
@@ -98,7 +89,6 @@ router.put('/profile', authenticateToken, async (req, res) => {
 });
 router.put('/status', authenticateToken, async (req, res) => {
   try {
-    console.log('🔵 Mise à jour du statut driver pour l\'utilisateur:', req.user.id);
     const { status, location } = req.body;
     const updateData = { status };
     if (location) {
@@ -113,10 +103,8 @@ router.put('/status', authenticateToken, async (req, res) => {
       { new: true, runValidators: true }
     ).populate('userId', 'name email phone image');
     if (!driver) {
-      console.log('🟠 Profil driver non trouvé pour la mise à jour du statut');
       return res.status(404).json({ message: 'Profil driver non trouvé' });
     }
-    console.log('✅ Statut driver mis à jour:', driver.status);
     res.json(driver);
   } catch (error) {
     console.error('🔴 Erreur lors de la mise à jour du statut driver:', error);

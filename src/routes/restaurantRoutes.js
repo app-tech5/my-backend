@@ -88,7 +88,6 @@ router.put('/profile', async (req, res) => {
         message: 'Restaurant non trouvé'
       });
     }
-    console.log(`Profil du restaurant mis à jour: ${updatedRestaurant.name}`);
     res.json({
       success: true,
       message: 'Profil mis à jour avec succès',
@@ -104,7 +103,6 @@ router.put('/profile', async (req, res) => {
 });
 router.get('/stats', async (req, res) => {
   try {
-    console.log('Récupération des statistiques pour le restaurant:', req.restaurant.name);
     const restaurantId = req.restaurant._id;
     const orders = await Order.find({ restaurant: restaurantId });
     const totalOrders = orders.length;
@@ -216,8 +214,7 @@ router.get('/orders', async (req, res) => {
     const orders = await Order.find(filter)
       .populate('user', 'name phone')
       .sort({ createdAt: -1 })
-      .limit(50); 
-      console.log(`Récupération des commandes pour le restaurant ${req.restaurant.name} avec filtre:`, filter, `Nombre de commandes trouvées: ${orders.length}`);
+      .limit(50);
     res.json({
       success: true,
       data: orders
@@ -365,8 +362,7 @@ router.get('/menu', async (req, res) => {
     const restaurantId = req.restaurant._id;
     const menuItems = await Product.find({ restaurant: restaurantId })
       .populate('restaurant', 'name')
-      .sort({ created_at: -1 }); 
-    console.log(`Récupération du menu pour le restaurant ${req.restaurant.name}: ${menuItems.length} éléments trouvés`);
+      .sort({ created_at: -1 });
     res.json({
       success: true,
       data: menuItems
@@ -402,7 +398,6 @@ router.post('/menu', async (req, res) => {
     });
     await newMenuItem.save();
     const populatedItem = await Menu.findById(newMenuItem._id).populate('restaurant', 'name');
-    console.log(`Nouvel élément ajouté au menu du restaurant ${req.restaurant.name}: ${name}`);
     res.status(201).json({
       success: true,
       message: 'Élément ajouté au menu avec succès',
@@ -433,7 +428,6 @@ router.put('/menu/:itemId', async (req, res) => {
       { ...updates, updated_at: new Date() },
       { new: true }
     ).populate('restaurant', 'name');
-    console.log(`Élément modifié dans le menu du restaurant ${req.restaurant.name}: ${updatedItem.name}`);
     res.json({
       success: true,
       message: 'Élément modifié avec succès',
@@ -459,7 +453,6 @@ router.delete('/menu/:itemId', async (req, res) => {
       });
     }
     await Menu.findByIdAndDelete(itemId);
-    console.log(`Élément supprimé du menu du restaurant ${req.restaurant.name}: ${menuItem.name}`);
     res.json({
       success: true,
       message: 'Élément supprimé avec succès'
@@ -495,7 +488,6 @@ router.patch('/menu/:itemId/availability', async (req, res) => {
       { availability, updated_at: new Date() },
       { new: true }
     ).populate('restaurant', 'name');
-    console.log(`Disponibilité modifiée pour ${updatedItem.name}: ${availability}`);
     res.json({
       success: true,
       message: `Élément ${availability ? 'activé' : 'désactivé'} avec succès`,

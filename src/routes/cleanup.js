@@ -7,7 +7,6 @@ router.use(i18n.init);
 router.get('/cleanup', async (req, res) => {
   try {
     loadModels();
-    console.log(res.__('cleanup_started'));
     await deleteOrphanedFiles(); 
     res.json({ message: res.__('cleanup_completed') });
   } catch (error) {

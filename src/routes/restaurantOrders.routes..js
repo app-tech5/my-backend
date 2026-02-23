@@ -42,8 +42,7 @@ router.get('/restaurant', requireRestaurant, async (req, res) => {
     const orders = await Order.find(filter)
       .populate('user', 'name phone')
       .sort({ createdAt: -1 })
-      .limit(50); 
-    console.log(`Récupération des commandes pour le restaurant ${req.restaurant.name} avec filtre:`, filter, `Nombre de commandes trouvées: ${orders.length}`);
+      .limit(50);
     res.json({
       success: true,
       data: orders

@@ -49,7 +49,6 @@ router.get('/reviews', async (req, res) => {
       counts[review.rating] = (counts[review.rating] || 0) + 1;
       return counts;
     }, {});
-    console.log(`Récupération des avis pour le restaurant ${req.restaurant.name}: ${totalReviews} avis`);
     res.json({
       success: true,
       data: {
@@ -96,7 +95,6 @@ router.post('/reviews/:reviewId/reply', async (req, res) => {
       by: req.user.id
     };
     await review.save();
-    console.log(`Réponse ajoutée à l'avis ${reviewId} du restaurant ${req.restaurant.name}`);
     res.json({
       success: true,
       message: 'Réponse ajoutée avec succès',
