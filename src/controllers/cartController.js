@@ -1,10 +1,11 @@
 const Cart = require("../models/Cart");
+const i18n = require('../config/i18n');
 const cartController = {
   getCart: async (req, res) => {
     try {
       const userId = req.user?.id;
       if (!userId) {
-        return res.status(401).json({ message: "Authentication required" });
+        return res.status(401).json({ message: i18n.__("authentication_required") });
       }
       let cart = await Cart.findByUser(userId);
       if (!cart) {
@@ -34,7 +35,7 @@ const cartController = {
         lastModified: cart.lastModified
       });
     } catch (error) {
-      console.error("Error getting cart:", error);
+      console.error(i18n.__("error_getting_cart"), error);
       res.status(500).json({ error: error.message });
     }
   },
@@ -42,7 +43,7 @@ const cartController = {
     try {
       const userId = req.user?.id;
       if (!userId) {
-        return res.status(401).json({ message: "Authentication required" });
+        return res.status(401).json({ message: i18n.__("authentication_required") });
       }
       const itemData = req.body;
       let cart = await Cart.findByUser(userId);
@@ -98,12 +99,12 @@ const cartController = {
     try {
       const userId = req.user?.id;
       if (!userId) {
-        return res.status(401).json({ message: "Authentication required" });
+        return res.status(401).json({ message: i18n.__("authentication_required") });
       }
       const { itemId } = req.params; 
       const cart = await Cart.findByUser(userId);
       if (!cart) {
-        return res.status(404).json({ message: "Cart not found" });
+        return res.status(404).json({ message: i18n.__("cart_not_found") });
       }
       await cart.removeItem(itemId);
       res.json({
@@ -123,13 +124,13 @@ const cartController = {
     try {
       const userId = req.user?.id;
       if (!userId) {
-        return res.status(401).json({ message: "Authentication required" });
+        return res.status(401).json({ message: i18n.__("authentication_required") });
       }
       const { itemId } = req.params; 
       const itemData = req.body;
       const cart = await Cart.findByUser(userId);
       if (!cart) {
-        return res.status(404).json({ message: "Cart not found" });
+        return res.status(404).json({ message: i18n.__("cart_not_found") });
       }
       await cart.updateItem(itemId, itemData);
       res.json({
@@ -149,12 +150,12 @@ const cartController = {
     try {
       const userId = req.user?.id;
       if (!userId) {
-        return res.status(401).json({ message: "Authentication required" });
+        return res.status(401).json({ message: i18n.__("authentication_required") });
       }
       const { restaurantName } = req.params;
       const cart = await Cart.findByUser(userId);
       if (!cart) {
-        return res.status(404).json({ message: "Cart not found" });
+        return res.status(404).json({ message: i18n.__("cart_not_found") });
       }
       await cart.clearRestaurant(restaurantName);
       res.json({
@@ -174,11 +175,11 @@ const cartController = {
     try {
       const userId = req.user?.id;
       if (!userId) {
-        return res.status(401).json({ message: "Authentication required" });
+        return res.status(401).json({ message: i18n.__("authentication_required") });
       }
       const cart = await Cart.findByUser(userId);
       if (!cart) {
-        return res.status(404).json({ message: "Cart not found" });
+        return res.status(404).json({ message: i18n.__("cart_not_found") });
       }
       await cart.clear();
       res.json({
@@ -198,7 +199,7 @@ const cartController = {
     try {
       const userId = req.user?.id;
       if (!userId) {
-        return res.status(401).json({ message: "Authentication required" });
+        return res.status(401).json({ message: i18n.__("authentication_required") });
       }
       const { localItems } = req.body; 
       let cart = await Cart.findByUser(userId);

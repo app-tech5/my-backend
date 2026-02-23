@@ -2,16 +2,18 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const Driver = require('../models/Driver');
 const User = require('../models/User');
+const i18n = require('../config/i18n');
 const router = express.Router();
+router.use(i18n.init);
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; 
   if (!token) {
-    return res.status(401).json({ message: 'Token manquant' });
+    return res.status(401).json({ message: res.__('missing_token') });
   }
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) {
-      return res.status(403).json({ message: 'Token invalide' });
+      return res.status(403).json({ message: res.__('invalid_token') });
     }
     req.user = user;
     next();
@@ -25,7 +27,7 @@ router.get('/profile', authenticateToken, async (req, res) => {
     if (!driver) {
       console.log('🟠 Aucun profil driver trouvé pour l\'utilisateur:', req.user.id);
       return res.status(404).json({
-        message: 'Profil driver non trouvé',
+        message: res.__('driver_profile_not_found'),
         errorType: 'profile_not_found'
       });
     }
@@ -33,7 +35,7 @@ router.get('/profile', authenticateToken, async (req, res) => {
     res.json(driver);
   } catch (error) {
     console.error('🔴 Erreur lors de la récupération du profil driver:', error);
-    res.status(500).json({ message: 'Erreur serveur' });
+    res.status(500).json({ message: res.__('server_error') });
   }
 });
 router.post('/', authenticateToken, async (req, res) => {
@@ -43,14 +45,14 @@ router.post('/', authenticateToken, async (req, res) => {
     if (existingDriver) {
       console.log('🟠 Profil driver déjà existant pour l\'utilisateur:', req.user.id);
       return res.status(400).json({
-        message: 'Vous avez déjà un profil driver',
+        message: res.__('driver_profile_already_exists'),
         errorType: 'profile_exists'
       });
     }
     const { licenseNumber, vehicle } = req.body;
     if (!licenseNumber) {
       return res.status(400).json({
-        message: 'Numéro de permis requis',
+        message: res.__('license_number_required'),
         errorType: 'license_required'
       });
     }
@@ -70,7 +72,7 @@ router.post('/', authenticateToken, async (req, res) => {
     res.status(201).json(newDriver);
   } catch (error) {
     console.error('🔴 Erreur lors de la création du profil driver:', error);
-    res.status(500).json({ message: 'Erreur serveur' });
+    res.status(500).json({ message: res.__('server_error') });
   }
 });
 router.put('/profile', authenticateToken, async (req, res) => {
@@ -91,7 +93,7 @@ router.put('/profile', authenticateToken, async (req, res) => {
     res.json(driver);
   } catch (error) {
     console.error('🔴 Erreur lors de la mise à jour du profil driver:', error);
-    res.status(500).json({ message: 'Erreur serveur' });
+    res.status(500).json({ message: res.__('server_error') });
   }
 });
 router.put('/status', authenticateToken, async (req, res) => {
@@ -118,7 +120,7 @@ router.put('/status', authenticateToken, async (req, res) => {
     res.json(driver);
   } catch (error) {
     console.error('🔴 Erreur lors de la mise à jour du statut driver:', error);
-    res.status(500).json({ message: 'Erreur serveur' });
+    res.status(500).json({ message: res.__('server_error') });
   }
 });
 module.exports = router;

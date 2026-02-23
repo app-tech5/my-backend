@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
+const i18n = require('../config/i18n');
 const couponSchema = new Schema({
   code: {
     type: String,
@@ -53,7 +54,7 @@ const couponSchema = new Schema({
       validator: function(value) {
         return value > this.startDate;
       },
-      message: 'La date de fin doit être après la date de début'
+      message: i18n.__('end_date_must_be_after_start_date')
     }
   },
   maxUses: {
@@ -115,10 +116,10 @@ couponSchema.methods.isValid = function() {
 };
 couponSchema.methods.applyDiscount = function(totalAmount) {
   if (!this.isValid()) {
-    throw new Error('Coupon non valide');
+    throw new Error(i18n.__('invalid_coupon'));
   }
   if (this.minOrderAmount && totalAmount < this.minOrderAmount) {
-    throw new Error(`Montant minimum de commande non atteint (${this.minOrderAmount})`);
+    throw new Error(i18n.__('minimum_order_amount_not_reached', this.minOrderAmount));
   }
   switch (this.discountType) {
     case 'percentage':

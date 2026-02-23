@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
+const i18n = require('../config/i18n');
 const notificationSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
@@ -26,7 +27,7 @@ const notificationSchema = new Schema({
       validator: function(v) {
         return /^(https?:\/\/).+\.(jpg|jpeg|png|gif)$/i.test(v);
       },
-      message: props => `${props.value} n'est pas une URL d'image valide!`
+      message: props => i18n.__('invalid_image_url', props.value)
     }
   },
   type: {
@@ -75,7 +76,7 @@ const notificationSchema = new Schema({
       validator: function(v) {
         return /^(https?:\/\/).+/i.test(v);
       },
-      message: props => `${props.value} n'est pas une URL valide!`
+      message: props => i18n.__('invalid_url', props.value)
     }
   },
   priority: {
@@ -127,7 +128,7 @@ notificationSchema.statics.findUnreadForUser = function(userId) {
              .sort({ createdAt: -1 })
              .limit(50);
 };
-notificationSchema.statics.createOrderNotification = async function(userId, orderId, message, title = 'Mise à jour de commande') {
+notificationSchema.statics.createOrderNotification = async function(userId, orderId, message, title = i18n.__('order_update')) {
   return this.create({
     user: userId,
     title,

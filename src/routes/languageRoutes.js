@@ -1,13 +1,15 @@
 const express = require('express');
 const Language = require('../models/Language');
 const Setting = require('../models/Setting');
+const i18n = require('../config/i18n');
 const router = express.Router();
+router.use(i18n.init);
 router.get('/', async (req, res) => {
     try {
         const languages = await Language.find();
         res.json(languages);
     } catch (error) {
-        res.status(500).json({ error: 'Erreur lors de la récupération des langues' });
+        res.status(500).json({ error: res.__('error_retrieving_languages') });
     }
 });
 router.post("/", async (req, res) => {
@@ -23,18 +25,17 @@ router.post("/", async (req, res) => {
     }
     res.status(201).json(newLanguage);
   } catch (error) {
-    console.error("Erreur lors de l'ajout de la langue:", error);
-    res.status(500).json({ error: "Erreur serveur" });
+    res.status(500).json({ error: res.__("server_error") });
   }
 });
 module.exports = router;
 router.get('/:id', async (req, res) => {
     try {
         const language = await Language.findById(req.params.id);
-        if (!language) return res.status(404).json({ error: 'Langue non trouvée' });
+        if (!language) return res.status(404).json({ error: res.__('language_not_found') });
         res.json(language);
     } catch (error) {
-        res.status(500).json({ error: 'Erreur lors de la récupération de la langue' });
+        res.status(500).json({ error: res.__('error_retrieving_language') });
     }
 });
 router.put('/:id', async (req, res) => {
@@ -54,16 +55,16 @@ router.put('/:id', async (req, res) => {
         }
         res.json(updatedLanguage);
     } catch (error) {
-        res.status(400).json({ error: 'Erreur lors de la mise à jour de la langue' });
+        res.status(400).json({ error: res.__('error_updating_language') });
     }
 });
 router.delete('/:id', async (req, res) => {
     try {
         const deletedLanguage = await Language.findByIdAndDelete(req.params.id);
         if (!deletedLanguage) return res.status(404).json({ error: 'Langue non trouvée' });
-        res.json({ message: 'Langue supprimée' });
+        res.json({ message: res.__('language_deleted') });
     } catch (error) {
-        res.status(500).json({ error: 'Erreur lors de la suppression de la langue' });
+        res.status(500).json({ error: res.__('error_deleting_language') });
     }
 });
 module.exports = router;

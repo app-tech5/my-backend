@@ -1,13 +1,15 @@
 const express = require('express');
 const authMiddleware = require('../middleware/authMiddleware');
 const Review = require('../models/Review');
+const i18n = require('../config/i18n');
 const router = express.Router();
+router.use(i18n.init);
 const requireRestaurant = async (req, res, next) => {
   try {
     if (!req.user || req.user.type !== 'restaurant') {
       return res.status(403).json({
         success: false,
-        message: 'Accès réservé aux restaurants'
+        message: res.__('access_reserved_for_restaurants')
       });
     }
     const user = await require('../models/User').findById(req.user.id).select("restaurant");
@@ -15,7 +17,7 @@ const requireRestaurant = async (req, res, next) => {
     if (!restaurant) {
       return res.status(404).json({
         success: false,
-        message: 'Restaurant non trouvé'
+        message: res.__('restaurant_not_found')
       });
     }
     req.restaurant = restaurant;
@@ -24,7 +26,7 @@ const requireRestaurant = async (req, res, next) => {
     console.error('Erreur middleware restaurant:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur serveur'
+      message: res.__('server_error')
     });
   }
 };
@@ -63,7 +65,7 @@ router.get('/reviews', async (req, res) => {
     console.error('Erreur récupération avis:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur serveur'
+      message: res.__('server_error')
     });
   }
 });
@@ -104,7 +106,7 @@ router.post('/reviews/:reviewId/reply', async (req, res) => {
     console.error('Erreur ajout réponse:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur serveur'
+      message: res.__('server_error')
     });
   }
 });

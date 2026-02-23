@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
+const i18n = require('../config/i18n');
 const promotionSchema = new Schema({
   name: {
     type: String,
@@ -93,7 +94,7 @@ const promotionSchema = new Schema({
       validator: function(value) {
         return value > this.startDate;
       },
-      message: 'La date de fin doit être après la date de début'
+      message: i18n.__('end_date_must_be_after_start_date')
     }
   },
   happyHours: [{
@@ -182,7 +183,7 @@ promotionSchema.methods.isActiveNow = function() {
 };
 promotionSchema.methods.applyPromotion = function(item, quantity = 1, totalAmount = 0) {
   if (!this.isActiveNow()) {
-    throw new Error('Promotion non active');
+    throw new Error(i18n.__('promotion_not_active'));
   }
   switch (this.promotionType) {
     case 'percentage_discount':
@@ -204,16 +205,16 @@ promotionSchema.methods.applyPromotion = function(item, quantity = 1, totalAmoun
 };
 promotionSchema.pre('save', function(next) {
   if (this.promotionType === 'combo_deal' && this.comboItems.length < 2) {
-    throw new Error('Un combo deal doit inclure au moins 2 items');
+    throw new Error(i18n.__('combo_deal_must_include_at_least_2_items'));
   }
   if (this.scope === 'restaurant' && this.applicableRestaurants.length === 0) {
-    throw new Error('Au moins un restaurant doit être spécifié pour ce type de promotion');
+    throw new Error(i18n.__('at_least_one_restaurant_must_be_specified'));
   }
   if (this.scope === 'category' && this.applicableCategories.length === 0) {
-    throw new Error('Au moins une catégorie doit être spécifiée pour ce type de promotion');
+    throw new Error(i18n.__('at_least_one_category_must_be_specified'));
   }
   if (this.scope === 'item' && this.applicableItems.length === 0) {
-    throw new Error('Au moins un item doit être spécifié pour ce type de promotion');
+    throw new Error(i18n.__('at_least_one_item_must_be_specified'));
   }
   next();
 });

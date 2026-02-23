@@ -26,7 +26,6 @@ router.post('/login', async (req, res) => {
         res.cookie('token', token, { httpOnly: true, secure: false, sameSite: 'Strict' });
         return res.json({ message: res.__("login_successful"), token, user });
     } catch (error) {
-        console.error("🔴 Erreur serveur:", error);
         res.status(500).json({ message: res.__("server_error") });
     }
 });
@@ -74,7 +73,7 @@ router.post('/favorites/:restaurantId', async (req, res) => {
         }
         const restaurantId = req.params.restaurantId;
         if (user.favorites.includes(restaurantId)) {
-            return res.status(400).json({ message: "Restaurant already in favorites" });
+            return res.status(400).json({ message: res.__("restaurant_already_in_favorites") });
         }
         user.favorites.push(restaurantId);
         await user.save();
@@ -82,7 +81,7 @@ router.post('/favorites/:restaurantId', async (req, res) => {
         res.json({
             success: true,
             favorites: updatedUser.favorites,
-            message: "Restaurant added to favorites"
+            message: res.__("restaurant_added_to_favorites")
         });
     } catch (error) {
         console.error('Add to favorites error:', error);
@@ -257,7 +256,6 @@ router.get('/:id', async (req, res) => {
         }
         res.json(user);
     } catch (error) {
-        console.error("🔴 Erreur lors de la récupération de l'utilisateur:", error);
         res.status(500).json({ message: res.__("server_error") });
     }
 });

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
+const i18n = require('../config/i18n');
 const paymentMethodSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
@@ -70,7 +71,7 @@ const paymentMethodSchema = new Schema({
   paypalEmail: {
     type: String,
     required: function() { return this.methodType === 'paypal'; },
-    match: [/.+\@.+\..+/, 'Veuillez entrer un email valide']
+    match: [/.+\@.+\..+/, i18n.__('please_enter_valid_email')]
   },
   walletToken: {
     type: String,

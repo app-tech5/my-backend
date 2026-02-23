@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const Settings = require('../models/Setting');
+const i18n = require('../config/i18n');
+router.use(i18n.init);
 router.get("/", async (req, res) => {
     try {
         const settings = await Settings.findById("app_settings");
@@ -32,10 +34,9 @@ router.get("/", async (req, res) => {
             data: settings
         });
     } catch (error) {
-        console.error("Erreur serveur :", error);
         res.status(500).json({
             success: false,
-            message: "Erreur serveur",
+            message: res.__("server_error"),
             error: error.message
         });
     }
@@ -45,7 +46,7 @@ router.put('/', async (req, res) => {
         const updatedSetting = await Settings.findByIdAndUpdate({}, req.body, { new: true });
         res.json(updatedSetting);
     } catch (error) {
-        res.status(500).json({ message: 'Erreur serveur', error });
+        res.status(500).json({ message: res.__('server_error'), error });
     }
 });
 module.exports = router;

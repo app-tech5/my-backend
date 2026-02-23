@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
+const i18n = require('../config/i18n');
 const driverReportSchema = new Schema({
   reportType: {
     type: String,
@@ -47,7 +48,7 @@ const driverReportSchema = new Schema({
       validator: function(v) {
         return v.length <= 5; 
       },
-      message: 'Vous ne pouvez pas ajouter plus de 5 images'
+      message: i18n.__('maximum_5_images_allowed')
     }
   }],
   videos: [{
@@ -56,7 +57,7 @@ const driverReportSchema = new Schema({
       validator: function(v) {
         return v.length <= 2; 
       },
-      message: 'Vous ne pouvez pas ajouter plus de 2 vidéos'
+      message: i18n.__('maximum_2_videos_allowed')
     }
   }],
   status: {

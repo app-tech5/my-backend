@@ -9,11 +9,11 @@ router.post('/signup', async (req, res) => {
     try {
         const { email, password, name, phone, address, lat, lng } = req.body;
         if (!email || !password || !name) {
-            return res.status(400).json({errorType: "email", message: "Email, password et name sont requis" });
+            return res.status(400).json({errorType: "email", message: res.__("email_password_name_required") });
         }
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return res.status(400).json({errorType: "email", message: "Email déjà utilisé" });
+            return res.status(400).json({errorType: "email", message: res.__("email_already_in_use") });
         }
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new User({
@@ -28,7 +28,7 @@ router.post('/signup', async (req, res) => {
         await newUser.save();
         const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
         return res.json({
-            message: "Utilisateur enregistré avec succès",
+            message: res.__("user_registered_successfully"),
             token,
             user: {
                 id: newUser._id,
@@ -41,8 +41,7 @@ router.post('/signup', async (req, res) => {
             }
         });
     } catch (error) {
-        console.error("🔴 Erreur serveur:", error);
-        res.status(500).json({ message: "Erreur serveur" });
+        res.status(500).json({ message: res.__("server_error") });
     }
 });
 router.post('/login', async (req, res) => {
@@ -63,7 +62,6 @@ router.post('/login', async (req, res) => {
         res.cookie('token', token, { httpOnly: true, secure: false, sameSite: 'Strict' });
         return res.json({ message: res.__("login_successful"), token, user });
     } catch (error) {
-        console.error("🔴 Erreur serveur:", error);
         res.status(500).json({ message: res.__("server_error") });
     }
 });

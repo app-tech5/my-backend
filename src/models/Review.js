@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
+const i18n = require('../config/i18n');
 const reviewSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
@@ -23,7 +24,7 @@ const reviewSchema = new Schema({
     max: 5,
     validate: {
       validator: Number.isInteger,
-      message: '{VALUE} doit être un entier entre 1 et 5'
+      message: props => i18n.__('rating_must_be_integer_between_1_and_5', props.value)
     }
   },
   comment: {
@@ -38,7 +39,7 @@ const reviewSchema = new Schema({
       validator: function(array) {
         return array.length <= 5; 
       },
-      message: 'Maximum 5 photos par avis'
+      message: i18n.__('maximum_5_photos_per_review')
     }
   }],
   foodQuality: {
@@ -125,7 +126,7 @@ reviewSchema.pre('save', async function(next) {
       status: 'delivered'
     });
     if (!hasOrdered) {
-      throw new Error('Vous devez avoir commandé dans ce restaurant pour laisser un avis');
+      throw new Error(i18n.__('must_have_ordered_from_restaurant_to_leave_review'));
     }
   }
   next();
@@ -161,7 +162,7 @@ reviewSchema.statics.calculateAverageRating = async function(restaurantId) {
       reviewCount: result[0]?.reviewCount || 0
     });
   } catch (err) {
-    console.error('Erreur lors de la mise à jour des notes moyennes:', err);
+    console.error(i18n.__('error_updating_average_ratings'), err);
   }
 };
 reviewSchema.post('save', function() {

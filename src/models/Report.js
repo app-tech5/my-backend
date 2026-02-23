@@ -1,17 +1,18 @@
 const mongoose = require("mongoose");
+const i18n = require('../config/i18n');
 const reportSchema = new mongoose.Schema(
   {
     title: { 
       type: String, 
-      required: [true, 'Un titre est requis'], 
-      maxlength: [100, 'Le titre ne doit pas dépasser 100 caractères'] 
+      required: [true, i18n.__('title_is_required')], 
+      maxlength: [100, i18n.__('title_max_length_100')] 
     },
     reportType: { 
       type: String, 
       required: true,
       enum: {
         values: ['sales', 'driver_performance', 'restaurant_analytics', 'customer_behavior', 'delivery_metrics'],
-        message: 'Type de rapport non valide'
+        message: i18n.__('invalid_report_type')
       },
       index: true
     },
@@ -23,7 +24,7 @@ const reportSchema = new mongoose.Schema(
           validator: function(v) {
             return v <= this.dateRange.end;
           },
-          message: 'La date de début doit être antérieure à la date de fin'
+          message: i18n.__('start_date_must_be_before_end_date')
         }
       },
       end: { 
@@ -90,6 +91,6 @@ reportSchema.pre('save', async function(next) {
 });
 reportSchema.path('metrics.netProfit').validate(function(value) {
   return value <= this.metrics.grossRevenue;
-}, 'Le profit net ne peut pas dépasser le revenu brut');
+}, i18n.__('net_profit_cannot_exceed_gross_revenue'));
 const Report = mongoose.model('Report', reportSchema);
 module.exports = Report;
