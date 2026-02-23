@@ -7,7 +7,7 @@ const requireRestaurant = async (req, res, next) => {
     if (!req.user || req.user.type !== 'restaurant') {
       return res.status(403).json({
         success: false,
-        message: 'Accès réservé aux restaurants'
+        message: res.__('access_reserved_for_restaurants')
       });
     }
     const User = require('../models/User');
@@ -17,7 +17,7 @@ const requireRestaurant = async (req, res, next) => {
     if (!restaurant) {
       return res.status(404).json({
         success: false,
-        message: 'Restaurant non trouvé'
+        message: res.__('restaurant_not_found')
       });
     }
     req.restaurant = restaurant;
@@ -26,7 +26,7 @@ const requireRestaurant = async (req, res, next) => {
     console.error('Erreur middleware restaurant:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur serveur'
+      message: res.__('server_error')
     });
   }
 };
@@ -51,7 +51,7 @@ router.get('/restaurant', requireRestaurant, async (req, res) => {
     console.error('Erreur récupération commandes restaurant:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur serveur'
+      message: res.__('server_error')
     });
   }
 });
@@ -67,7 +67,7 @@ router.post('/restaurant/:orderId/accept', requireRestaurant, async (req, res) =
     if (!order) {
       return res.status(404).json({
         success: false,
-        message: 'Commande non trouvée ou déjà traitée'
+        message: res.__('order_not_found_or_already_processed')
       });
     }
     order.status = 'accepted';
@@ -75,14 +75,14 @@ router.post('/restaurant/:orderId/accept', requireRestaurant, async (req, res) =
     await order.save();
     res.json({
       success: true,
-      message: 'Commande acceptée avec succès',
+      message: res.__('order_accepted_successfully'),
       data: order
     });
   } catch (error) {
     console.error('Erreur acceptation commande:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur serveur'
+      message: res.__('server_error')
     });
   }
 });
@@ -98,7 +98,7 @@ router.post('/restaurant/:orderId/prepare', requireRestaurant, async (req, res) 
     if (!order) {
       return res.status(404).json({
         success: false,
-        message: 'Commande non trouvée ou statut incorrect'
+        message: res.__('order_not_found_or_wrong_status')
       });
     }
     order.status = 'preparing';
@@ -106,14 +106,14 @@ router.post('/restaurant/:orderId/prepare', requireRestaurant, async (req, res) 
     await order.save();
     res.json({
       success: true,
-      message: 'Préparation démarrée',
+      message: res.__('preparation_started'),
       data: order
     });
   } catch (error) {
     console.error('Erreur démarrage préparation:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur serveur'
+      message: res.__('server_error')
     });
   }
 });
@@ -129,7 +129,7 @@ router.post('/restaurant/:orderId/ready', requireRestaurant, async (req, res) =>
     if (!order) {
       return res.status(404).json({
         success: false,
-        message: 'Commande non trouvée ou statut incorrect'
+        message: res.__('order_not_found_or_wrong_status')
       });
     }
     order.status = 'ready';
@@ -137,14 +137,14 @@ router.post('/restaurant/:orderId/ready', requireRestaurant, async (req, res) =>
     await order.save();
     res.json({
       success: true,
-      message: 'Commande prête pour le retrait',
+      message: res.__('order_ready_for_pickup'),
       data: order
     });
   } catch (error) {
     console.error('Erreur marquage commande prête:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur serveur'
+      message: res.__('server_error')
     });
   }
 });
@@ -157,7 +157,7 @@ router.put('/restaurant/:orderId/status', requireRestaurant, async (req, res) =>
     if (!validStatuses.includes(status)) {
       return res.status(400).json({
         success: false,
-        message: 'Statut invalide'
+        message: res.__('invalid_status')
       });
     }
     const order = await Order.findOne({
@@ -167,7 +167,7 @@ router.put('/restaurant/:orderId/status', requireRestaurant, async (req, res) =>
     if (!order) {
       return res.status(404).json({
         success: false,
-        message: 'Commande non trouvée'
+        message: res.__('order_not_found')
       });
     }
     order.status = status;
@@ -181,7 +181,7 @@ router.put('/restaurant/:orderId/status', requireRestaurant, async (req, res) =>
     console.error('Erreur changement statut commande:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur serveur'
+      message: res.__('server_error')
     });
   }
 });

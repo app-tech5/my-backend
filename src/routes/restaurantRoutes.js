@@ -14,7 +14,7 @@ const requireRestaurant = async (req, res, next) => {
     if (!req.user || req.user.type !== 'restaurant') {
       return res.status(403).json({
         success: false,
-        message: 'Accès réservé aux restaurants'
+        message: res.__('access_reserved_for_restaurants')
       });
     }
     const user = await User.findById(req.user.id).select("restaurant");
@@ -22,7 +22,7 @@ const requireRestaurant = async (req, res, next) => {
     if (!restaurant) {
       return res.status(404).json({
         success: false,
-        message: 'Restaurant non trouvé'
+        message: res.__('restaurant_not_found')
       });
     }
     req.restaurant = restaurant;
@@ -31,7 +31,7 @@ const requireRestaurant = async (req, res, next) => {
     console.error('Erreur middleware restaurant:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur serveur'
+      message: res.__('server_error')
     });
   }
 };
@@ -47,7 +47,7 @@ router.get('/profile', async (req, res) => {
     console.error('Erreur récupération profil restaurant:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur serveur'
+      message: res.__('server_error')
     });
   }
 });
@@ -65,7 +65,7 @@ router.put('/profile', async (req, res) => {
     if (filteredUpdates.name && !filteredUpdates.name.trim()) {
       return res.status(400).json({
         success: false,
-        message: 'Le nom du restaurant ne peut pas être vide'
+        message: res.__('restaurant_name_cannot_be_empty')
       });
     }
     if (filteredUpdates.email) {
@@ -73,7 +73,7 @@ router.put('/profile', async (req, res) => {
       if (!emailRegex.test(filteredUpdates.email)) {
         return res.status(400).json({
           success: false,
-          message: 'L\'email n\'est pas valide'
+          message: res.__('email_not_valid')
         });
       }
     }
@@ -85,19 +85,19 @@ router.put('/profile', async (req, res) => {
     if (!updatedRestaurant) {
       return res.status(404).json({
         success: false,
-        message: 'Restaurant non trouvé'
+        message: res.__('restaurant_not_found')
       });
     }
     res.json({
       success: true,
-      message: 'Profil mis à jour avec succès',
+      message: res.__('profile_updated_successfully'),
       data: updatedRestaurant
     });
   } catch (error) {
     console.error('Erreur mise à jour profil restaurant:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur serveur'
+      message: res.__('server_error')
     });
   }
 });
@@ -130,7 +130,7 @@ router.get('/stats', async (req, res) => {
     console.error('Erreur récupération stats restaurant:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur serveur'
+      message: res.__('server_error')
     });
   }
 });
@@ -199,7 +199,7 @@ router.get('/analytics', async (req, res) => {
     console.error('Erreur récupération analytics restaurant:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur serveur'
+      message: res.__('server_error')
     });
   }
 });
@@ -223,7 +223,7 @@ router.get('/orders', async (req, res) => {
     console.error('Erreur récupération commandes restaurant:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur serveur'
+      message: res.__('server_error')
     });
   }
 });
@@ -239,7 +239,7 @@ router.post('/orders/:orderId/accept', async (req, res) => {
     if (!order) {
       return res.status(404).json({
         success: false,
-        message: 'Commande non trouvée ou déjà traitée'
+        message: res.__('order_not_found_or_already_processed')
       });
     }
     order.status = 'accepted';
@@ -247,14 +247,14 @@ router.post('/orders/:orderId/accept', async (req, res) => {
     await order.save();
     res.json({
       success: true,
-      message: 'Commande acceptée avec succès',
+      message: res.__('order_accepted_successfully'),
       data: order
     });
   } catch (error) {
     console.error('Erreur acceptation commande:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur serveur'
+      message: res.__('server_error')
     });
   }
 });
@@ -270,7 +270,7 @@ router.post('/orders/:orderId/prepare', async (req, res) => {
     if (!order) {
       return res.status(404).json({
         success: false,
-        message: 'Commande non trouvée ou statut incorrect'
+        message: res.__('order_not_found_or_wrong_status')
       });
     }
     order.status = 'preparing';
@@ -278,14 +278,14 @@ router.post('/orders/:orderId/prepare', async (req, res) => {
     await order.save();
     res.json({
       success: true,
-      message: 'Préparation démarrée',
+      message: res.__('preparation_started'),
       data: order
     });
   } catch (error) {
     console.error('Erreur démarrage préparation:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur serveur'
+      message: res.__('server_error')
     });
   }
 });
@@ -301,7 +301,7 @@ router.post('/orders/:orderId/ready', async (req, res) => {
     if (!order) {
       return res.status(404).json({
         success: false,
-        message: 'Commande non trouvée ou statut incorrect'
+        message: res.__('order_not_found_or_wrong_status')
       });
     }
     order.status = 'ready';
@@ -309,14 +309,14 @@ router.post('/orders/:orderId/ready', async (req, res) => {
     await order.save();
     res.json({
       success: true,
-      message: 'Commande prête pour le retrait',
+      message: res.__('order_ready_for_pickup'),
       data: order
     });
   } catch (error) {
     console.error('Erreur marquage commande prête:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur serveur'
+      message: res.__('server_error')
     });
   }
 });
@@ -329,7 +329,7 @@ router.put('/orders/:orderId/status', async (req, res) => {
     if (!validStatuses.includes(status)) {
       return res.status(400).json({
         success: false,
-        message: 'Statut invalide'
+        message: res.__('invalid_status')
       });
     }
     const order = await Order.findOne({
@@ -339,7 +339,7 @@ router.put('/orders/:orderId/status', async (req, res) => {
     if (!order) {
       return res.status(404).json({
         success: false,
-        message: 'Commande non trouvée'
+        message: res.__('order_not_found')
       });
     }
     order.status = status;
@@ -353,7 +353,7 @@ router.put('/orders/:orderId/status', async (req, res) => {
     console.error('Erreur changement statut commande:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur serveur'
+      message: res.__('server_error')
     });
   }
 });
@@ -371,7 +371,7 @@ router.get('/menu', async (req, res) => {
     console.error('Erreur récupération menu restaurant:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur serveur'
+      message: res.__('server_error')
     });
   }
 });
@@ -382,7 +382,7 @@ router.post('/menu', async (req, res) => {
     if (!name || !price || !image) {
       return res.status(400).json({
         success: false,
-        message: 'Nom, prix et image sont requis'
+        message: res.__('menu_item_name_price_image_required')
       });
     }
     const newMenuItem = new Menu({
@@ -400,14 +400,14 @@ router.post('/menu', async (req, res) => {
     const populatedItem = await Menu.findById(newMenuItem._id).populate('restaurant', 'name');
     res.status(201).json({
       success: true,
-      message: 'Élément ajouté au menu avec succès',
+      message: res.__('menu_item_added_successfully'),
       data: populatedItem
     });
   } catch (error) {
     console.error('Erreur ajout élément menu:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur serveur'
+      message: res.__('server_error')
     });
   }
 });
@@ -420,7 +420,7 @@ router.put('/menu/:itemId', async (req, res) => {
     if (!menuItem) {
       return res.status(404).json({
         success: false,
-        message: 'Élément de menu non trouvé'
+        message: res.__('menu_item_not_found')
       });
     }
     const updatedItem = await Menu.findByIdAndUpdate(
@@ -430,14 +430,14 @@ router.put('/menu/:itemId', async (req, res) => {
     ).populate('restaurant', 'name');
     res.json({
       success: true,
-      message: 'Élément modifié avec succès',
+      message: res.__('menu_item_modified_successfully'),
       data: updatedItem
     });
   } catch (error) {
     console.error('Erreur modification élément menu:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur serveur'
+      message: res.__('server_error')
     });
   }
 });
@@ -449,19 +449,19 @@ router.delete('/menu/:itemId', async (req, res) => {
     if (!menuItem) {
       return res.status(404).json({
         success: false,
-        message: 'Élément de menu non trouvé'
+        message: res.__('menu_item_not_found')
       });
     }
     await Menu.findByIdAndDelete(itemId);
     res.json({
       success: true,
-      message: 'Élément supprimé avec succès'
+      message: res.__('menu_item_deleted_successfully')
     });
   } catch (error) {
     console.error('Erreur suppression élément menu:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur serveur'
+      message: res.__('server_error')
     });
   }
 });
@@ -473,14 +473,14 @@ router.patch('/menu/:itemId/availability', async (req, res) => {
     if (typeof availability !== 'boolean') {
       return res.status(400).json({
         success: false,
-        message: 'La disponibilité doit être un booléen'
+        message: res.__('availability_must_be_boolean')
       });
     }
     const menuItem = await Menu.findOne({ _id: itemId, restaurant: restaurantId });
     if (!menuItem) {
       return res.status(404).json({
         success: false,
-        message: 'Élément de menu non trouvé'
+        message: res.__('menu_item_not_found')
       });
     }
     const updatedItem = await Menu.findByIdAndUpdate(
@@ -497,7 +497,7 @@ router.patch('/menu/:itemId/availability', async (req, res) => {
     console.error('Erreur changement disponibilité:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur serveur'
+      message: res.__('server_error')
     });
   }
 });

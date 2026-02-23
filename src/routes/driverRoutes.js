@@ -79,7 +79,7 @@ router.put('/profile', authenticateToken, async (req, res) => {
       { new: true, runValidators: true }
     ).populate('userId', 'name email phone image');
     if (!driver) {
-      return res.status(404).json({ message: 'Profil driver non trouvé' });
+      return res.status(404).json({ message: res.__('driver_profile_not_found') });
     }
     res.json(driver);
   } catch (error) {
@@ -103,7 +103,7 @@ router.put('/status', authenticateToken, async (req, res) => {
       { new: true, runValidators: true }
     ).populate('userId', 'name email phone image');
     if (!driver) {
-      return res.status(404).json({ message: 'Profil driver non trouvé' });
+      return res.status(404).json({ message: res.__('driver_profile_not_found') });
     }
     res.json(driver);
   } catch (error) {

@@ -76,7 +76,7 @@ router.post('/reviews/:reviewId/reply', async (req, res) => {
     if (!text || text.trim().length === 0) {
       return res.status(400).json({
         success: false,
-        message: 'Le texte de la réponse est requis'
+        message: res.__('reply_text_required')
       });
     }
     const review = await Review.findOne({
@@ -86,7 +86,7 @@ router.post('/reviews/:reviewId/reply', async (req, res) => {
     if (!review) {
       return res.status(404).json({
         success: false,
-        message: 'Avis non trouvé'
+        message: res.__('review_not_found')
       });
     }
     review.reply = {
@@ -97,7 +97,7 @@ router.post('/reviews/:reviewId/reply', async (req, res) => {
     await review.save();
     res.json({
       success: true,
-      message: 'Réponse ajoutée avec succès',
+      message: res.__('reply_added_successfully'),
       data: review
     });
   } catch (error) {

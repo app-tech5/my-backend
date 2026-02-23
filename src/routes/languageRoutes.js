@@ -45,7 +45,7 @@ router.put('/:id', async (req, res) => {
             req.body,
             { new: true }
         );
-        if (!updatedLanguage) return res.status(404).json({ error: 'Langue non trouvée' });
+        if (!updatedLanguage) return res.status(404).json({ error: res.__('language_not_found') });
         if (req.body.isDefault) {
             await Language.updateMany(
                 { _id: { $ne: req.params.id }, isDefault: true }, 
@@ -61,7 +61,7 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     try {
         const deletedLanguage = await Language.findByIdAndDelete(req.params.id);
-        if (!deletedLanguage) return res.status(404).json({ error: 'Langue non trouvée' });
+        if (!deletedLanguage) return res.status(404).json({ error: res.__('language_not_found') });
         res.json({ message: res.__('language_deleted') });
     } catch (error) {
         res.status(500).json({ error: res.__('error_deleting_language') });

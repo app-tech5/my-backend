@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
       if (!user || !user.restaurant) {
         return res.status(400).json({
           success: false,
-          message: 'Utilisateur non associé à un restaurant'
+          message: res.__('user_not_associated_with_restaurant')
         });
       }
       userSettings = new UserSettings({
@@ -39,7 +39,7 @@ router.get('/', async (req, res) => {
     console.error('Erreur récupération paramètres utilisateur:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur serveur'
+      message: res.__('server_error')
     });
   }
 });
@@ -67,7 +67,7 @@ router.put('/', async (req, res) => {
         if (isNaN(prepTime) || prepTime < 1 || prepTime > 120) {
           return res.status(400).json({
             success: false,
-            message: 'Temps de préparation invalide (1-120 minutes)'
+            message: res.__('invalid_preparation_time')
           });
         }
         updates.restaurantSettings.preparationTime = prepTime;
@@ -80,14 +80,14 @@ router.put('/', async (req, res) => {
     );
     res.json({
       success: true,
-      message: 'Paramètres mis à jour avec succès',
+      message: res.__('settings_updated_successfully'),
       data: userSettings
     });
   } catch (error) {
     console.error('Erreur mise à jour paramètres utilisateur:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur serveur'
+      message: res.__('server_error')
     });
   }
 });
@@ -98,7 +98,7 @@ router.patch('/notifications', async (req, res) => {
     if (!notifications || typeof notifications !== 'object') {
       return res.status(400).json({
         success: false,
-        message: 'Données de notification invalides'
+        message: res.__('invalid_notification_data')
       });
     }
     const userSettings = await UserSettings.findOneAndUpdate(
@@ -108,14 +108,14 @@ router.patch('/notifications', async (req, res) => {
     );
     res.json({
       success: true,
-      message: 'Notifications mises à jour',
+      message: res.__('notifications_updated'),
       data: userSettings.notifications
     });
   } catch (error) {
     console.error('Erreur mise à jour notifications:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur serveur'
+      message: res.__('server_error')
     });
   }
 });
@@ -126,7 +126,7 @@ router.patch('/restaurant', async (req, res) => {
     if (!restaurantSettings || typeof restaurantSettings !== 'object') {
       return res.status(400).json({
         success: false,
-        message: 'Données de paramètres restaurant invalides'
+        message: res.__('invalid_restaurant_settings_data')
       });
     }
     const userSettings = await UserSettings.findOneAndUpdate(
@@ -136,14 +136,14 @@ router.patch('/restaurant', async (req, res) => {
     );
     res.json({
       success: true,
-      message: 'Paramètres restaurant mis à jour',
+      message: res.__('restaurant_settings_updated'),
       data: userSettings.restaurantSettings
     });
   } catch (error) {
     console.error('Erreur mise à jour paramètres restaurant:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur serveur'
+      message: res.__('server_error')
     });
   }
 });

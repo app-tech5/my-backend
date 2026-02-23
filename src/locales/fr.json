@@ -12,6 +12,7 @@
   "invalid_or_expired_token": "Token invalide ou expiré",
   "access_denied_missing_token": "Accès refusé, token manquant",
   "invalid_token": "Token invalide",
+  "driver_profile_not_found": "Profil driver non trouvé",
   "end_date_must_be_after_start_date": "La date de fin doit être après la date de début",
   "invalid_coupon": "Coupon non valide",
   "minimum_order_amount_not_reached": "Montant minimum de commande non atteint (%s)",
@@ -51,5 +52,13 @@
   "database_connection_error": "Erreur de connexion à la base de données",
   "mongodb_connection_error": "Erreur de connexion MongoDB",
   "mongodb_connection_successful": "Connexion MongoDB réussie",
-  "mongo_uri_required": "La variable d'environnement MONGO_URI est requise"
+  "mongo_uri_required": "La variable d'environnement MONGO_URI est requise",
+  "language_not_found": "Langue non trouvée",
+  "order_not_found_or_already_processed": "Commande non trouvée ou déjà traitée",
+  "order_accepted_successfully": "Commande acceptée avec succès",
+  "order_not_found_or_wrong_status": "Commande non trouvée ou statut incorrect",
+  "preparation_started": "Préparation démarrée",
+  "order_ready_for_pickup": "Commande prête pour le retrait",
+  "invalid_status": "Statut invalide",
+  "order_not_found": "Commande non trouvée"
 }

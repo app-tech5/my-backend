@@ -101,7 +101,7 @@ router.delete('/favorites/:restaurantId', async (req, res) => {
         res.json({
             success: true,
             favorites: updatedUser.favorites,
-            message: "Restaurant removed from favorites"
+            message: res.__("restaurant_removed_from_favorites")
         });
     } catch (error) {
         console.error('Remove from favorites error:', error);
@@ -128,7 +128,7 @@ router.get('/:userId/addresses', async (req, res) => {
         const userId = req.params.userId;
         const user = await User.findById(userId);
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ message: res.__('user_not_found') });
         }
         const addresses = [];
         if (user.address) {
@@ -150,7 +150,7 @@ router.get('/:userId/addresses', async (req, res) => {
         res.json(addresses);
     } catch (error) {
         console.error('Get addresses error:', error);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ message: res.__('server_error') });
     }
 });
 router.get('/:userId/payment-methods', async (req, res) => {
@@ -158,13 +158,13 @@ router.get('/:userId/payment-methods', async (req, res) => {
         const userId = req.params.userId;
         const user = await User.findById(userId);
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ message: res.__('user_not_found') });
         }
         const paymentMethods = await PaymentMethod.find({ user: userId, isActive: true });
         res.json(paymentMethods);
     } catch (error) {
         console.error('Get payment methods error:', error);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ message: res.__('server_error') });
     }
 });
 router.post('/:userId/payment-methods', async (req, res) => {
@@ -173,7 +173,7 @@ router.post('/:userId/payment-methods', async (req, res) => {
         const paymentData = req.body;
         const user = await User.findById(userId);
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ message: res.__('user_not_found') });
         }
         if (paymentData.isDefault) {
             await PaymentMethod.updateMany(
@@ -189,11 +189,11 @@ router.post('/:userId/payment-methods', async (req, res) => {
         res.status(201).json({
             success: true,
             paymentMethod,
-            message: 'Payment method added successfully'
+            message: res.__('payment_method_added_successfully')
         });
     } catch (error) {
         console.error('Add payment method error:', error);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ message: res.__('server_error') });
     }
 });
 router.delete('/:userId/payment-methods/:paymentMethodId', async (req, res) => {
@@ -201,22 +201,22 @@ router.delete('/:userId/payment-methods/:paymentMethodId', async (req, res) => {
         const { userId, paymentMethodId } = req.params;
         const user = await User.findById(userId);
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ message: res.__('user_not_found') });
         }
         const paymentMethod = await PaymentMethod.findOneAndDelete({
             _id: paymentMethodId,
             user: userId
         });
         if (!paymentMethod) {
-            return res.status(404).json({ message: 'Payment method not found' });
+            return res.status(404).json({ message: res.__('payment_method_not_found') });
         }
         res.json({
             success: true,
-            message: 'Payment method deleted successfully'
+            message: res.__('payment_method_deleted_successfully')
         });
     } catch (error) {
         console.error('Delete payment method error:', error);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ message: res.__('server_error') });
     }
 });
 router.put('/:userId/payment-methods/:paymentMethodId/default', async (req, res) => {
@@ -224,7 +224,7 @@ router.put('/:userId/payment-methods/:paymentMethodId/default', async (req, res)
         const { userId, paymentMethodId } = req.params;
         const user = await User.findById(userId);
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ message: res.__('user_not_found') });
         }
         await PaymentMethod.updateMany(
             { user: userId },
@@ -236,16 +236,16 @@ router.put('/:userId/payment-methods/:paymentMethodId/default', async (req, res)
             { new: true }
         );
         if (!paymentMethod) {
-            return res.status(404).json({ message: 'Payment method not found' });
+            return res.status(404).json({ message: res.__('payment_method_not_found') });
         }
         res.json({
             success: true,
             paymentMethod,
-            message: 'Payment method set as default successfully'
+            message: res.__('payment_method_set_as_default_successfully')
         });
     } catch (error) {
         console.error('Set default payment method error:', error);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ message: res.__('server_error') });
     }
 });
 router.get('/:id', async (req, res) => {
