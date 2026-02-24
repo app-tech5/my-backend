@@ -7,8 +7,7 @@ module.exports = {
     } catch (e) {
       if (e.codeName !== "NamespaceNotFound") throw e;
     }
-
-    // Basic tax configurations for common locations
+    
     const taxLocations = [
       { location: "France", name: "VAT", baseRate: 20 },
       { location: "Germany", name: "VAT (MwSt)", baseRate: 19 },
@@ -18,7 +17,7 @@ module.exports = {
     const mockTaxes = taxLocations.map(loc => ({
       location: loc.location,
       name: loc.name,
-      rate: loc.baseRate, // Use fixed rates instead of random
+      rate: loc.baseRate, 
       created_at: new Date(),
       updated_at: new Date()
     }));

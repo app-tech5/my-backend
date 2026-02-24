@@ -5,8 +5,7 @@ module.exports = {
     } catch (e) {
       if (e.codeName !== "NamespaceNotFound") throw e;
     }
-
-    // Basic food categories
+    
     const categories = [
       {
         name: 'Pizza',

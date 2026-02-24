@@ -28,7 +28,7 @@ dotenv.config();
 connectDB();
 const app = express();
 app.use(i18n.init);
-// Configuration CORS depuis les variables d'environnement
+
 const corsOrigins = process.env.CORS_ORIGINS
   ? process.env.CORS_ORIGINS.split(',').map(origin => origin.trim())
   : ['http://localhost:3000'];

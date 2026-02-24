@@ -6,8 +6,7 @@ module.exports = {
       if (e.codeName !== "NamespaceNotFound") throw e;
     }
     await db.createCollection('settings');
-
-    // Basic app settings without sensitive data
+    
     await db.collection('settings').insertOne({
       _id: "app_settings",
       appName: "Food Delivery App",

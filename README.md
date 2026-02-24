@@ -1,311 +1,421 @@
-# Good Foods Backend
+# Food Delivery Backend API
 
-API backend pour l'application Good Foods avec système de gestion de restaurants, commandes et livraisons.
+A complete Node.js backend for a food delivery application built with Express.js, MongoDB, Socket.io, and modern development practices.
 
-## ⚠️ IMPORTANT - Pour les Acheteurs du Projet
+## 🚀 Features
 
-Si vous avez acheté ce projet, **NE PARTAGEZ PAS** les fichiers de migrations originaux situés dans le dossier `migrations/` car ils contiennent des données sensibles (comptes de test, mots de passe, etc.).
+### Core Functionality
+- **🔐 User Authentication** - JWT-based authentication with role management (customer, restaurant, delivery driver)
+- **🍽️ Restaurant Management** - Complete restaurant, product, menu, and category management
+- **🛒 Shopping Cart** - Persistent cart with item management and validation
+- **📦 Order Processing** - Order lifecycle management from placement to delivery
+- **🚚 Delivery System** - Real-time driver tracking and delivery management
+- **💳 Payment Integration** - Multiple payment methods and transaction handling
+- **⭐ Reviews & Ratings** - Customer reviews and rating system
+- **📍 Geolocation** - Location-based services for delivery and restaurant discovery
 
-**Utilisez uniquement le dossier `migrations-prod/` pour initialiser votre base de données :**
+### Technical Features
+- **🔄 Real-time Updates** - Socket.io for live order tracking and notifications
+- **🌐 Internationalization** - English and French language support
+- **📁 File Upload** - Image and document upload with Multer
+- **🗄️ Database Migrations** - MongoDB migration system for schema management
+- **🧪 Testing** - Vitest testing framework with MongoDB Memory Server
+- **🔒 Security** - Password hashing, CORS, input validation
+- **📊 Analytics** - Comprehensive reporting and statistics
 
+## 🛠️ Technology Stack
+
+- **Runtime**: Node.js
+- **Framework**: Express.js
+- **Database**: MongoDB with Mongoose ODM
+- **Authentication**: JWT (JSON Web Tokens)
+- **Real-time**: Socket.io
+- **File Handling**: Multer
+- **Internationalization**: i18n library
+- **Testing**: Vitest + MongoDB Memory Server
+- **Migration**: migrate-mongo
+- **Security**: bcryptjs, CORS
+- **Deployment**: Render
+
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js (v14 or higher)
+- MongoDB (local or MongoDB Atlas)
+- npm or yarn
+
+### Installation
+
+1. **Clone and install dependencies**
 ```bash
-# Copiez les migrations propres dans le dossier migrations
-cp migrations-prod/* migrations/
+git clone <your-repo-url>
+cd my-backend
+npm install
+```
 
-# Puis lancez les migrations
+2. **Environment Setup**
+Create a `.env` file in the root directory:
+```env
+# Database
+MONGO_URI=mongodb://127.0.0.1:27017/good-foods
+
+# Authentication
+JWT_SECRET=your-super-secure-jwt-secret-key-here
+
+# Server
+PORT=5000
+NODE_ENV=development
+
+# CORS (comma-separated URLs)
+CORS_ORIGINS=http://localhost:3000,http://localhost:3001
+```
+
+3. **Database Setup**
+```bash
+# Test database connection
+npm run test:db
+
+# Run migrations
 npm run migrate:up
 ```
 
-Le dossier `migrations-prod/` contient :
-- ✅ Structure de base de données propre
-- ✅ Schémas sans données sensibles
-- ✅ Données génériques essentielles (EUR, langues, taxes, catégories)
-- ❌ Aucune donnée sensible ou comptes de test
-
-## 🚀 Démarrage Rapide
-
-### Démarrage rapide
-### Configuration Automatisée (Recommandé)
+4. **Start the server**
 ```bash
-npm install
-npm run setup  # Configuration interactive
-npm run test:db
-npm run migrate:up
+# Development mode
+npm run dev
+
+# Production mode
 npm start
 ```
 
-### Configuration Manuelle
+The API will be available at `http://localhost:5000`
+
+## 📊 Database & Migrations
+
+### Database Setup
 ```bash
-npm install
-cp config-template.env .env  # Copier le template
-# Éditer .env selon vos besoins
+# Test connection
 npm run test:db
+
+# Run all migrations
 npm run migrate:up
-npm start
+
+# Check migration status
+npm run migrate:status
+
+# Rollback last migration (if needed)
+npm run migrate:down
+
+# Create new migration
+npm run migrate:create
 ```
 
-Si certaines collections sont vides après la première migration, relancez :
-```bash
-npm run migrate:up  # Une deuxième fois pour remplir les collections manquées
-```
+### Migration Order
+Migrations run in dependency order:
+1. Base schemas (currencies, languages, settings)
+2. Reference data (taxes, categories)
+3. Users and authentication
+4. Products and menus
+5. Orders and transactions
+6. Reports and analytics
 
-## ⚙️ Configuration de la Base de Données
+## 🛠️ Available Scripts
 
-### Variables d'Environnement
-```env
-MONGO_URI=mongodb://127.0.0.1:27017/good-foods
-```
+| Command | Description |
+|---------|-------------|
+| `npm start` | Start production server |
+| `npm run dev` | Start development server (with nodemon) |
+| `npm test` | Run tests with Vitest |
+| `npm run test:db` | Test database connection |
+| `npm run migrate:up` | Run database migrations |
+| `npm run migrate:status` | Check migration status |
+| `npm run lint` | Run ESLint |
+| `npm run lint:fix` | Auto-fix linting issues |
 
-### Exemples
-```env
-# Local
-MONGO_URI=mongodb://127.0.0.1:27017/good-foods
-
-# Avec authentification
-MONGO_URI=mongodb://user:password@localhost:27017/good-foods
-
-# MongoDB Atlas
-MONGO_URI=mongodb+srv://user:pass@cluster.mongodb.net/good-foods
-```
-
-## 📊 Migrations
-
-Certaines migrations dépendent d'autres collections. Si des collections sont vides après `npm run migrate:up`, relancez simplement la commande.
-
-### 🔒 Sécurité des Migrations
-
-**⚠️ ATTENTION VENDEURS :** Les migrations dans le dossier `migrations/` contiennent des données sensibles :
-- Comptes utilisateurs de test avec mots de passe hashés
-- Données clients fictives mais structurées
-- Informations de configuration spécifiques au développement
-
-**Pour la vente du projet :**
-- Utilisez le dossier `migrations/` avec `./init-database.sh`
-- Ou créez le package sécurisé avec `./create-deployment-package.sh`
-- N'incluez PAS le dossier `migrations/` original dans la vente
-
-### Commandes
-```bash
-npm run migrate:status   # Voir le statut
-npm run migrate:up       # Exécuter les migrations
-npm run migrate:down     # Annuler la dernière
-npm run migrate:create   # Créer une nouvelle migration
-```
-
-**Note :** Certaines migrations dépendent d'autres collections. Si des collections sont vides après la première exécution, relancez simplement `npm run migrate:up`.
-
-### Ordre des Dépendances
-
-Les migrations sont exécutées dans cet ordre logique :
-
-1. **Schémas de base** (currencies, languages, settings)
-2. **Données de référence** (restaurants, taxes, catégories)
-3. **Utilisateurs** (base pour tout le reste)
-4. **Produits & Menus** (dépendent des restaurants/catégories)
-5. **Drivers** (dépendent des utilisateurs)
-6. **Commandes** (dépendent de users/restaurants/drivers/products/menus)
-7. **Transactions & Earnings** (dépendent des commandes)
-8. **Support & Notifications** (dépendent des données précédentes)
-9. **Rapports** (dépendent de toutes les données)
-
-## 🛠️ Scripts
-
-```bash
-npm run setup            # Configuration interactive de l'environnement
-npm run test:db          # Test de connexion à la base de données
-npm start                # Démarrage du serveur
-npm run dev              # Mode développement (avec nodemon)
-npm run migrate:status   # Statut des migrations
-npm run migrate:up       # Exécuter les migrations
-npm run migrate:down     # Annuler la dernière migration
-npm run migrate:create   # Créer une nouvelle migration
-
-# Scripts de déploiement sécurisé (pour les vendeurs)
-./init-database.sh       # Initialisation propre (sans données sensibles)
-./create-deployment-package.sh  # Créer le package de déploiement sécurisé
-```
-
-## 🧪 Test de Connexion
-
-```bash
-npm run test:db
-```
-
-Ce script vérifie :
-- ✅ Connexion à MongoDB
-- 📊 Statistiques de la base
-- 📋 Liste des collections
-- 👤 Présence de l'utilisateur admin
-
-## 📁 Structure du Projet
+## 📁 Project Structure
 
 ```
 src/
-├── config/
-│   ├── db.js              # Configuration de la connexion MongoDB
-│   └── i18n.js            # Configuration d'internationalisation
-├── controllers/           # Contrôleurs des routes API
-├── middleware/            # Middlewares personnalisés
-├── models/               # Modèles Mongoose
-├── routes/               # Définition des routes API
-├── utils/                # Utilitaires
-└── server.js             # Point d'entrée de l'application
+├── config/           # Configuration files
+│   ├── db.js         # MongoDB connection
+│   └── i18n.js       # Internationalization setup
+├── controllers/      # Route controllers (10 files)
+├── middleware/       # Custom middleware
+│   ├── authMiddleware.js
+│   └── responseHandler.js
+├── models/          # Mongoose schemas (32 files)
+│   ├── User.js, Restaurant.js, Order.js, etc.
+├── routes/          # API routes (16 files)
+│   ├── authRoutes.js, userRoutes.js, etc.
+├── utils/           # Helper functions
+└── server.js        # Express server setup
 
-migrations/               # Migrations de base de données
-scripts/                  # Scripts utilitaires
-config-template.env       # Template de configuration
-render.yaml              # Configuration de déploiement Render
+migrations/          # Database migrations
+scripts/             # Utility scripts
+uploads/             # File storage
+locales/             # i18n files (en, fr)
+__tests__/           # Test files
+render.yaml          # Deployment config
 ```
 
-## 🔧 Dépannage
+## 🔧 Troubleshooting
 
-### Problèmes de Connexion MongoDB
+### Common Issues
 
-1. **Vérifiez que MongoDB est démarré**
-   ```bash
-   sudo systemctl status mongod
-   # ou sur macOS
-   brew services list | grep mongodb
-   ```
-
-2. **Testez la connexion manuellement**
-   ```bash
-   mongosh "votre-mongo-uri"
-   # ou avec mongo (ancienne version)
-   mongo "votre-mongo-uri"
-   ```
-
-3. **Utilisez le script de test intégré**
-   ```bash
-   npm run test:db
-   ```
-
-4. **Vérifiez les variables d'environnement**
-   - Assurez-vous que le fichier `.env` existe
-   - Vérifiez que les credentials sont corrects
-   - Pour MongoDB Atlas, assurez-vous que l'IP est autorisée
-
-### Problèmes de Migrations
-
-Si des collections sont vides après `npm run migrate:up`, relancez simplement la commande :
+**Database Connection**
 ```bash
-npm run migrate:up  # Les migrations manquées s'exécuteront
+# Test connection
+npm run test:db
+
+# Check MongoDB status
+sudo systemctl status mongod  # Linux
+brew services list | grep mongodb  # macOS
 ```
 
-Pour les problèmes plus complexes :
+**Migration Issues**
 ```bash
-npm run migrate:status   # Voir quelles migrations ont été exécutées
-npm run migrate:down     # Annuler la dernière migration si nécessaire
+# Check status
+npm run migrate:status
+
+# Re-run if collections are empty
+npm run migrate:up
 ```
 
-### Erreurs Courantes
+**Server Issues**
+- Check `.env` file exists and has correct values
+- Ensure PORT is not in use
+- Check CORS_ORIGINS for frontend URLs
 
-- **"User not found"** : Vérifiez que les migrations ont été exécutées et que l'utilisateur admin existe
-- **"Connection refused"** : MongoDB n'est pas démarré ou l'URL est incorrecte
-- **"Authentication failed"** : Credentials incorrects dans la configuration
-- **"BSON version error"** : Problème de version de migrate-mongo (essayez `npm update migrate-mongo`)
+## 🔒 Security Best Practices
 
-## 🔒 Sécurité
+- Never commit `.env` files with real credentials
+- Use strong, unique JWT secrets for each environment
+- Implement proper input validation and sanitization
+- Use HTTPS in production
+- Regularly update dependencies for security patches
+- Implement rate limiting for API endpoints
 
-- **Ne commitez jamais** le fichier `.env` avec des mots de passe réels
-- Utilisez des variables d'environnement différentes pour chaque environnement
-- Changez la clé JWT en production
-- Utilisez des mots de passe forts pour MongoDB
-- Restreignez l'accès IP sur MongoDB Atlas
+## 📚 API Reference
 
-## 🔧 Dépannage
-
-### Problèmes de Connexion MongoDB
-
-1. **Vérifiez que MongoDB est démarré**
-   ```bash
-   sudo systemctl status mongod
-   ```
-
-2. **Testez la connexion manuellement**
-   ```bash
-   mongosh "votre-mongo-uri"
-   ```
-
-3. **Vérifiez les variables d'environnement**
-   ```bash
-   npm run test:db
-   ```
-
-### Problèmes de Migrations
-
-1. **Vérifiez le statut**
-   ```bash
-   npm run migrate:status
-   ```
-
-2. **Réinitialisez si nécessaire**
-   ```bash
-   # Supprimer la base de données
-   # Puis relancer les migrations
-   npm run migrate:up
-   ```
-
-## 📚 API Documentation
-
-### Authentification
+### Base URL
 ```
-POST /api/auth/login
-POST /api/auth/signup
+http://localhost:5000/api
 ```
 
-### Utilisateurs
+### Authentication
+Most endpoints require JWT authentication:
 ```
-GET    /api/users
-POST   /api/users
-GET    /api/users/:id
-PUT    /api/users/:id
-DELETE /api/users/:id
+Authorization: Bearer <your-jwt-token>
 ```
 
-### Restaurants
+### Core Endpoints
+
+#### Authentication
 ```
-GET    /api/resource/restaurants
-POST   /api/resource/restaurants
-GET    /api/resource/restaurants/:id
-PUT    /api/resource/restaurants/:id
-DELETE /api/resource/restaurants/:id
+POST /api/auth/signup    # User registration
+POST /api/auth/login     # User login
 ```
 
-## 🚀 Déploiement
+#### Users
+```
+GET  /api/users          # Get users (admin)
+POST /api/users          # Create user (admin)
+GET  /api/users/:id      # Get user profile
+PUT  /api/users/:id      # Update user
+```
 
-### Render (Configuration Incluse)
+#### Restaurants
+```
+GET  /api/restaurant/restaurants     # List restaurants
+POST /api/restaurant/restaurants     # Create restaurant
+GET  /api/restaurant/restaurants/:id # Get restaurant
+PUT  /api/restaurant/restaurants/:id # Update restaurant
+GET  /api/restaurant/products        # Get products
+POST /api/restaurant/products        # Add product
+```
 
-Le fichier `render.yaml` contient la configuration pour déployer automatiquement sur Render :
+#### Orders
+```
+GET  /api/orders         # User orders
+POST /api/orders         # Create order
+GET  /api/orders/:id     # Order details
+PUT  /api/orders/:id     # Update order status
+```
 
-1. Connectez votre repository GitHub à Render
-2. Render détectera automatiquement le fichier `render.yaml`
-3. Configurez les variables d'environnement dans le dashboard Render
-4. Le déploiement se fera automatiquement
+#### Cart
+```
+GET  /api/cart           # Get cart
+POST /api/cart           # Add to cart
+PUT  /api/cart/:id       # Update item
+DELETE /api/cart/:id     # Remove item
+DELETE /api/cart         # Clear cart
+```
 
-### Variables d'Environnement pour le Déploiement
+#### Drivers
+```
+GET  /api/drivers        # List drivers
+POST /api/drivers        # Register driver
+GET  /api/drivers/:id    # Driver profile
+PUT  /api/drivers/:id    # Update driver
+```
 
+### Additional Endpoints
+```
+GET  /api/settings       # App settings
+GET  /api/languages      # Available languages
+GET  /api/currencies     # Currency list
+GET  /api/categories     # Product categories
+```
+
+### Real-time Features
+- **Socket.io** integration for live order tracking
+- **Driver location** updates in real-time
+- **Order status** notifications
+- **Restaurant notifications** for new orders
+
+### Response Format
+All API responses follow a consistent structure:
+```json
+{
+  "success": true,
+  "data": { ... },
+  "message": "Operation completed"
+}
+```
+
+## 🚀 Deployment
+
+### Render
+The project includes `render.yaml` for easy Render deployment:
+1. Connect GitHub repo to Render
+2. Render auto-detects configuration
+3. Set environment variables in Render dashboard
+4. Deploy automatically
+
+### Environment Variables (Production)
 ```env
 NODE_ENV=production
-MONGO_URI=votre-mongo-uri-production
-JWT_SECRET=votre-cle-jwt-production
+MONGO_URI=your-production-mongo-uri
+JWT_SECRET=your-production-jwt-secret
+CORS_ORIGINS=https://your-frontend-domain.com
 ```
 
-### Autres Plateformes
+## 🧪 Testing
 
-Pour Heroku, Railway, ou autres plateformes :
-1. Copiez `config-template.env` vers `.env`
-2. Ajustez les variables selon votre fournisseur de base de données
-3. Configurez les variables d'environnement dans le dashboard de la plateforme
+```bash
+# Run all tests
+npm test
 
-## 🤝 Contribution
+# Run with coverage
+npm test -- --coverage
 
-1. Fork le projet
-2. Créez une branche (`git checkout -b feature/nouvelle-fonctionnalite`)
-3. Committez vos changements (`git commit -am 'Ajout d'une nouvelle fonctionnalité'`)
-4. Pushez vers la branche (`git push origin feature/nouvelle-fonctionnalite`)
-5. Créez une Pull Request
+# Run migration tests
+npm run test:migrations
+```
 
-## 📝 Licence
+Uses Vitest + MongoDB Memory Server for isolated testing.
+- **Migration Tests**: Ensure database migrations work correctly
 
-Ce projet est sous licence MIT.
+### Writing Tests
+
+Tests are located in the `__tests__/` directory. Example test structure:
+
+```javascript
+const request = require('supertest');
+const app = require('../src/server');
+
+describe('Authentication API', () => {
+  it('should register a new user', async () => {
+    const response = await request(app)
+      .post('/api/auth/signup')
+      .send({
+        email: 'test@example.com',
+        password: 'password123',
+        name: 'Test User'
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('token');
+  });
+});
+```
+
+## 🌐 Internationalization
+
+The application supports multiple languages:
+- English (default)
+- French
+
+Language can be set via:
+- Cookie: `lang=en` or `lang=fr`
+- Query parameter: `?lang=en`
+- Header: `Accept-Language: en`
+
+## 🤝 Contributing
+
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/new-feature`)
+3. Commit your changes (`git commit -am 'Add new feature'`)
+4. Push to the branch (`git push origin feature/new-feature`)
+5. Create a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License.
+
+## 💡 Development Best Practices
+
+### Code Quality
+- Use ESLint for code linting (`npm run lint`)
+- Follow consistent naming conventions
+- Add proper error handling for all routes
+- Use meaningful commit messages
+
+### Security
+- Never commit sensitive data (passwords, API keys)
+- Use environment variables for configuration
+- Implement proper input validation
+- Keep dependencies updated
+- Use HTTPS in production
+
+### Database
+- Run migrations before starting the application
+- Backup your database regularly
+- Monitor database performance
+- Use indexes for frequently queried fields
+
+### API Design
+- Follow RESTful conventions
+- Use consistent response formats
+- Implement proper HTTP status codes
+- Document all endpoints
+- Version your API when making breaking changes
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Commit Convention
+
+```
+feat: add new feature
+fix: bug fix
+docs: documentation update
+style: code style changes
+refactor: code refactoring
+test: add tests
+chore: maintenance tasks
+```
+
+## 📝 License
+
+MIT License
+
+---
+
+**Built with ❤️ for food delivery applications**

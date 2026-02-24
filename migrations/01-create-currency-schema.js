@@ -7,8 +7,7 @@ module.exports = {
     }
     await db.createCollection('currencies');
     await db.collection('currencies').createIndex({ code: 1 }, { unique: true });
-
-    // Only include basic currencies needed for the app to function
+    
     const basicCurrencies = [
       { code: 'USD', exchangeRate: 1, name: 'United States Dollar', symbol: '$' },
       { code: 'EUR', exchangeRate: 0.85, name: 'Euro', symbol: '€' },
