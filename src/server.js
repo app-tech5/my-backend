@@ -28,10 +28,20 @@ dotenv.config();
 connectDB();
 const app = express();
 app.use(i18n.init);
+// Configuration CORS depuis les variables d'environnement
+const corsOrigins = process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(',').map(origin => origin.trim())
+  : ['http://localhost:3000'];
+
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: '*' } });
+const io = new Server(server, {
+  cors: {
+    origin: corsOrigins,
+    credentials: true
+  }
+});
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://good-foods.digitaldienste.fr'],
+  origin: corsOrigins,
   credentials: true
 }));
 app.use(express.json());
@@ -51,4 +61,6 @@ app.use("/api/upload", uploadRoutes);
 app.use("/api/uploads", express.static("uploads"));
 app.use('/api', cleanupRouter);
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {});
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
