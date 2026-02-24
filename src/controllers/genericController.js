@@ -1,6 +1,7 @@
 const getDefaultValue = require("../utils/getDefaultValue");
 const loadModels = require("../utils/loadModels");
 const populateFields = require("../utils/populateFields");
+const i18n = require('../config/i18n');
 loadModels();
 const genericController = (Model) => {
   return {
@@ -9,7 +10,7 @@ const genericController = (Model) => {
         let query = {};
         if (Model.modelName === 'Order') {
           if (!req.user || !req.user.id) {
-            return res.status(401).json({ message: 'Authentication required' });
+            return res.status(401).json({ message: i18n.__('authentication_required') });
           }
           query.user = req.user.id;
         }
@@ -37,10 +38,10 @@ const genericController = (Model) => {
           };
           const currentOrder = await Model.findById(req.params.id);
           if (!currentOrder) {
-            return res.status(404).json({ message: "Order not found" });
+            return res.status(404).json({ message: i18n.__("order_not_found") });
           }
           if (currentOrder.user.toString() !== req.user.id) {
-            return res.status(403).json({ message: "You can only modify your own orders" });
+            return res.status(403).json({ message: i18n.__("you_can_only_modify_your_own_orders") });
           }
           if (req.body.status && req.body.status !== currentOrder.status) {
             const currentStatus = currentOrder.status;
@@ -57,7 +58,7 @@ const genericController = (Model) => {
           req.body,
           { new: true }
         );
-        if (!updatedItem) return res.status(404).json({ message: "Not Found" });
+        if (!updatedItem) return res.status(404).json({ message: i18n.__("not_found") });
         res.json(updatedItem);
       } catch (error) {
         console.error(`❌ ${Model.modelName} update error:`, error);
@@ -81,8 +82,8 @@ const genericController = (Model) => {
         );
         res.json(defaultFields);
       } catch (error) {
-        console.error("Error fetching default fields:", error);
-        res.status(500).json({ error: "Internal server error" });
+        console.error(i18n.__("error_fetching_default_fields"), error);
+        res.status(500).json({ error: i18n.__("internal_server_error") });
       }
     },
     getSchema: async (req, res) => {

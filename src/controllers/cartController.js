@@ -91,7 +91,7 @@ const cartController = {
         lastModified: cart.lastModified
       });
     } catch (error) {
-      console.error("Error adding item to cart:", error);
+      console.error(i18n.__("error_adding_item_to_cart"), error);
       res.status(500).json({ error: error.message });
     }
   },
@@ -116,7 +116,7 @@ const cartController = {
         lastModified: cart.lastModified
       });
     } catch (error) {
-      console.error("Error removing item from cart:", error);
+      console.error(i18n.__("error_removing_item_from_cart"), error);
       res.status(500).json({ error: error.message });
     }
   },
@@ -142,7 +142,7 @@ const cartController = {
         lastModified: cart.lastModified
       });
     } catch (error) {
-      console.error("Error updating item in cart:", error);
+      console.error(i18n.__("error_updating_item_in_cart"), error);
       res.status(500).json({ error: error.message });
     }
   },
@@ -167,7 +167,7 @@ const cartController = {
         lastModified: cart.lastModified
       });
     } catch (error) {
-      console.error("Error clearing restaurant from cart:", error);
+      console.error(i18n.__("error_clearing_restaurant_from_cart"), error);
       res.status(500).json({ error: error.message });
     }
   },
@@ -191,7 +191,7 @@ const cartController = {
         lastModified: cart.lastModified
       });
     } catch (error) {
-      console.error("Error clearing cart:", error);
+      console.error(i18n.__("error_clearing_cart"), error);
       res.status(500).json({ error: error.message });
     }
   },
@@ -263,7 +263,7 @@ const cartController = {
         lastModified: cart.lastModified
       });
     } catch (error) {
-      console.error("Error syncing cart:", error);
+      console.error(i18n.__("error_syncing_cart"), error);
       res.status(500).json({ error: error.message });
     }
   }

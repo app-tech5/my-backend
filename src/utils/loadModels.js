@@ -3,15 +3,12 @@ const path = require('path');
 const mongoose = require('mongoose');
 const i18n = require('../config/i18n');
 function loadModels() {
-  const modelsDir = path.join(__dirname, '../models'); 
-  console.log('Chargement des modèles depuis le dossier models...');
+  const modelsDir = path.join(__dirname, '../models');
   fs.readdirSync(modelsDir).forEach(file => {
-    if (file.endsWith('.js')) { 
+    if (file.endsWith('.js')) {
       const modelPath = path.join(modelsDir, file);
-      console.log(`Chargement du modèle : ${file}`);
-      require(modelPath); 
+      require(modelPath);
     }
   });
-  console.log('Modèles chargés :', Object.keys(mongoose.models));
 }
 module.exports = loadModels;
