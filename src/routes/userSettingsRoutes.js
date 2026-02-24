@@ -36,7 +36,7 @@ router.get('/', async (req, res) => {
       data: userSettings
     });
   } catch (error) {
-    console.error('Erreur récupération paramètres utilisateur:', error);
+    console.error(i18n.__('user_settings_retrieval_error'), error);
     res.status(500).json({
       success: false,
       message: res.__('server_error')
@@ -84,7 +84,7 @@ router.put('/', async (req, res) => {
       data: userSettings
     });
   } catch (error) {
-    console.error('Erreur mise à jour paramètres utilisateur:', error);
+    console.error(i18n.__('user_settings_update_error'), error);
     res.status(500).json({
       success: false,
       message: res.__('server_error')
@@ -112,7 +112,7 @@ router.patch('/notifications', async (req, res) => {
       data: userSettings.notifications
     });
   } catch (error) {
-    console.error('Erreur mise à jour notifications:', error);
+    console.error(i18n.__('notifications_update_error'), error);
     res.status(500).json({
       success: false,
       message: res.__('server_error')
@@ -140,7 +140,7 @@ router.patch('/restaurant', async (req, res) => {
       data: userSettings.restaurantSettings
     });
   } catch (error) {
-    console.error('Erreur mise à jour paramètres restaurant:', error);
+    console.error(i18n.__('restaurant_settings_update_error'), error);
     res.status(500).json({
       success: false,
       message: res.__('server_error')

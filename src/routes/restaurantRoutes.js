@@ -28,7 +28,7 @@ const requireRestaurant = async (req, res, next) => {
     req.restaurant = restaurant;
     next();
   } catch (error) {
-    console.error('Erreur middleware restaurant:', error);
+    console.error(i18n.__('restaurant_middleware_error'), error);
     res.status(500).json({
       success: false,
       message: res.__('server_error')
@@ -44,7 +44,7 @@ router.get('/profile', async (req, res) => {
       data: req.restaurant
     });
   } catch (error) {
-    console.error('Erreur récupération profil restaurant:', error);
+    console.error(i18n.__('restaurant_profile_retrieval_error'), error);
     res.status(500).json({
       success: false,
       message: res.__('server_error')
@@ -94,7 +94,7 @@ router.put('/profile', async (req, res) => {
       data: updatedRestaurant
     });
   } catch (error) {
-    console.error('Erreur mise à jour profil restaurant:', error);
+    console.error(i18n.__('restaurant_profile_update_error'), error);
     res.status(500).json({
       success: false,
       message: res.__('server_error')
@@ -127,7 +127,7 @@ router.get('/stats', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Erreur récupération stats restaurant:', error);
+    console.error(i18n.__('restaurant_stats_retrieval_error'), error);
     res.status(500).json({
       success: false,
       message: res.__('server_error')
@@ -196,7 +196,7 @@ router.get('/analytics', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Erreur récupération analytics restaurant:', error);
+    console.error(i18n.__('restaurant_analytics_retrieval_error'), error);
     res.status(500).json({
       success: false,
       message: res.__('server_error')
@@ -220,7 +220,7 @@ router.get('/orders', async (req, res) => {
       data: orders
     });
   } catch (error) {
-    console.error('Erreur récupération commandes restaurant:', error);
+    console.error(i18n.__('restaurant_orders_retrieval_error'), error);
     res.status(500).json({
       success: false,
       message: res.__('server_error')
@@ -251,7 +251,7 @@ router.post('/orders/:orderId/accept', async (req, res) => {
       data: order
     });
   } catch (error) {
-    console.error('Erreur acceptation commande:', error);
+    console.error(i18n.__('order_acceptance_error'), error);
     res.status(500).json({
       success: false,
       message: res.__('server_error')
@@ -282,7 +282,7 @@ router.post('/orders/:orderId/prepare', async (req, res) => {
       data: order
     });
   } catch (error) {
-    console.error('Erreur démarrage préparation:', error);
+    console.error(i18n.__('order_preparation_start_error'), error);
     res.status(500).json({
       success: false,
       message: res.__('server_error')
@@ -313,7 +313,7 @@ router.post('/orders/:orderId/ready', async (req, res) => {
       data: order
     });
   } catch (error) {
-    console.error('Erreur marquage commande prête:', error);
+    console.error(i18n.__('order_ready_marking_error'), error);
     res.status(500).json({
       success: false,
       message: res.__('server_error')
@@ -350,7 +350,7 @@ router.put('/orders/:orderId/status', async (req, res) => {
       data: order
     });
   } catch (error) {
-    console.error('Erreur changement statut commande:', error);
+    console.error(i18n.__('order_status_change_error'), error);
     res.status(500).json({
       success: false,
       message: res.__('server_error')
@@ -368,7 +368,7 @@ router.get('/menu', async (req, res) => {
       data: menuItems
     });
   } catch (error) {
-    console.error('Erreur récupération menu restaurant:', error);
+    console.error(i18n.__('restaurant_menu_retrieval_error'), error);
     res.status(500).json({
       success: false,
       message: res.__('server_error')
@@ -404,7 +404,7 @@ router.post('/menu', async (req, res) => {
       data: populatedItem
     });
   } catch (error) {
-    console.error('Erreur ajout élément menu:', error);
+    console.error(i18n.__('menu_item_addition_error'), error);
     res.status(500).json({
       success: false,
       message: res.__('server_error')
@@ -434,7 +434,7 @@ router.put('/menu/:itemId', async (req, res) => {
       data: updatedItem
     });
   } catch (error) {
-    console.error('Erreur modification élément menu:', error);
+    console.error(i18n.__('menu_item_modification_error'), error);
     res.status(500).json({
       success: false,
       message: res.__('server_error')
@@ -458,7 +458,7 @@ router.delete('/menu/:itemId', async (req, res) => {
       message: res.__('menu_item_deleted_successfully')
     });
   } catch (error) {
-    console.error('Erreur suppression élément menu:', error);
+    console.error(i18n.__('menu_item_deletion_error'), error);
     res.status(500).json({
       success: false,
       message: res.__('server_error')
@@ -494,7 +494,7 @@ router.patch('/menu/:itemId/availability', async (req, res) => {
       data: updatedItem
     });
   } catch (error) {
-    console.error('Erreur changement disponibilité:', error);
+    console.error(i18n.__('availability_change_error'), error);
     res.status(500).json({
       success: false,
       message: res.__('server_error')

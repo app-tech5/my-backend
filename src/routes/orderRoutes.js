@@ -23,7 +23,7 @@ const requireRestaurant = async (req, res, next) => {
     req.restaurant = restaurant;
     next();
   } catch (error) {
-    console.error('Erreur middleware restaurant:', error);
+    console.error(i18n.__('restaurant_middleware_error'), error);
     res.status(500).json({
       success: false,
       message: res.__('server_error')
@@ -48,7 +48,7 @@ router.get('/restaurant', requireRestaurant, async (req, res) => {
       data: orders
     });
   } catch (error) {
-    console.error('Erreur récupération commandes restaurant:', error);
+    console.error(i18n.__('restaurant_orders_retrieval_error'), error);
     res.status(500).json({
       success: false,
       message: res.__('server_error')
@@ -79,7 +79,7 @@ router.post('/restaurant/:orderId/accept', requireRestaurant, async (req, res) =
       data: order
     });
   } catch (error) {
-    console.error('Erreur acceptation commande:', error);
+    console.error(i18n.__('order_acceptance_error'), error);
     res.status(500).json({
       success: false,
       message: res.__('server_error')
@@ -110,7 +110,7 @@ router.post('/restaurant/:orderId/prepare', requireRestaurant, async (req, res) 
       data: order
     });
   } catch (error) {
-    console.error('Erreur démarrage préparation:', error);
+    console.error(i18n.__('order_preparation_start_error'), error);
     res.status(500).json({
       success: false,
       message: res.__('server_error')
@@ -141,7 +141,7 @@ router.post('/restaurant/:orderId/ready', requireRestaurant, async (req, res) =>
       data: order
     });
   } catch (error) {
-    console.error('Erreur marquage commande prête:', error);
+    console.error(i18n.__('order_ready_marking_error'), error);
     res.status(500).json({
       success: false,
       message: res.__('server_error')
@@ -178,7 +178,7 @@ router.put('/restaurant/:orderId/status', requireRestaurant, async (req, res) =>
       data: order
     });
   } catch (error) {
-    console.error('Erreur changement statut commande:', error);
+    console.error(i18n.__('order_status_change_error'), error);
     res.status(500).json({
       success: false,
       message: res.__('server_error')

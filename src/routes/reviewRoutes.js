@@ -23,7 +23,7 @@ const requireRestaurant = async (req, res, next) => {
     req.restaurant = restaurant;
     next();
   } catch (error) {
-    console.error('Erreur middleware restaurant:', error);
+    console.error(i18n.__('restaurant_middleware_error'), error);
     res.status(500).json({
       success: false,
       message: res.__('server_error')
@@ -61,7 +61,7 @@ router.get('/reviews', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Erreur récupération avis:', error);
+    console.error(i18n.__('reviews_retrieval_error'), error);
     res.status(500).json({
       success: false,
       message: res.__('server_error')
@@ -101,7 +101,7 @@ router.post('/reviews/:reviewId/reply', async (req, res) => {
       data: review
     });
   } catch (error) {
-    console.error('Erreur ajout réponse:', error);
+    console.error(i18n.__('reply_addition_error'), error);
     res.status(500).json({
       success: false,
       message: res.__('server_error')

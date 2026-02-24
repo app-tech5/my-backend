@@ -54,7 +54,7 @@ router.put('/me', async (req, res) => {
         delete userWithoutPassword.password;
         res.json(userWithoutPassword);
     } catch (error) {
-        console.error('Update error:', error);
+        console.error(i18n.__('update_error'), error);
         res.status(400).json({ 
             message: res.__("update_error"),
             error: error.message 
@@ -84,7 +84,7 @@ router.post('/favorites/:restaurantId', async (req, res) => {
             message: res.__("restaurant_added_to_favorites")
         });
     } catch (error) {
-        console.error('Add to favorites error:', error);
+        console.error(i18n.__('add_to_favorites_error'), error);
         res.status(500).json({ message: res.__("server_error") });
     }
 });
@@ -104,7 +104,7 @@ router.delete('/favorites/:restaurantId', async (req, res) => {
             message: res.__("restaurant_removed_from_favorites")
         });
     } catch (error) {
-        console.error('Remove from favorites error:', error);
+        console.error(i18n.__('remove_from_favorites_error'), error);
         res.status(500).json({ message: res.__("server_error") });
     }
 });
@@ -119,7 +119,7 @@ router.get('/favorites', async (req, res) => {
             favorites: user.favorites
         });
     } catch (error) {
-        console.error('Get favorites error:', error);
+        console.error(i18n.__('get_favorites_error'), error);
         res.status(500).json({ message: res.__("server_error") });
     }
 });
@@ -149,7 +149,7 @@ router.get('/:userId/addresses', async (req, res) => {
         }
         res.json(addresses);
     } catch (error) {
-        console.error('Get addresses error:', error);
+        console.error(i18n.__('get_addresses_error'), error);
         res.status(500).json({ message: res.__('server_error') });
     }
 });
@@ -163,7 +163,7 @@ router.get('/:userId/payment-methods', async (req, res) => {
         const paymentMethods = await PaymentMethod.find({ user: userId, isActive: true });
         res.json(paymentMethods);
     } catch (error) {
-        console.error('Get payment methods error:', error);
+        console.error(i18n.__('get_payment_methods_error'), error);
         res.status(500).json({ message: res.__('server_error') });
     }
 });
@@ -192,7 +192,7 @@ router.post('/:userId/payment-methods', async (req, res) => {
             message: res.__('payment_method_added_successfully')
         });
     } catch (error) {
-        console.error('Add payment method error:', error);
+        console.error(i18n.__('add_payment_method_error'), error);
         res.status(500).json({ message: res.__('server_error') });
     }
 });
@@ -215,7 +215,7 @@ router.delete('/:userId/payment-methods/:paymentMethodId', async (req, res) => {
             message: res.__('payment_method_deleted_successfully')
         });
     } catch (error) {
-        console.error('Delete payment method error:', error);
+        console.error(i18n.__('delete_payment_method_error'), error);
         res.status(500).json({ message: res.__('server_error') });
     }
 });
@@ -244,7 +244,7 @@ router.put('/:userId/payment-methods/:paymentMethodId/default', async (req, res)
             message: res.__('payment_method_set_as_default_successfully')
         });
     } catch (error) {
-        console.error('Set default payment method error:', error);
+        console.error(i18n.__('set_default_payment_method_error'), error);
         res.status(500).json({ message: res.__('server_error') });
     }
 });

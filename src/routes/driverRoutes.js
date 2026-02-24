@@ -31,7 +31,7 @@ router.get('/profile', authenticateToken, async (req, res) => {
     }
     res.json(driver);
   } catch (error) {
-    console.error('🔴 Erreur lors de la récupération du profil driver:', error);
+    console.error(i18n.__('driver_profile_retrieval_error'), error);
     res.status(500).json({ message: res.__('server_error') });
   }
 });
@@ -65,7 +65,7 @@ router.post('/', authenticateToken, async (req, res) => {
     await newDriver.populate('userId', 'name email phone');
     res.status(201).json(newDriver);
   } catch (error) {
-    console.error('🔴 Erreur lors de la création du profil driver:', error);
+    console.error(i18n.__('driver_profile_creation_error'), error);
     res.status(500).json({ message: res.__('server_error') });
   }
 });
@@ -83,7 +83,7 @@ router.put('/profile', authenticateToken, async (req, res) => {
     }
     res.json(driver);
   } catch (error) {
-    console.error('🔴 Erreur lors de la mise à jour du profil driver:', error);
+    console.error(i18n.__('driver_profile_update_error'), error);
     res.status(500).json({ message: res.__('server_error') });
   }
 });
@@ -107,7 +107,7 @@ router.put('/status', authenticateToken, async (req, res) => {
     }
     res.json(driver);
   } catch (error) {
-    console.error('🔴 Erreur lors de la mise à jour du statut driver:', error);
+    console.error(i18n.__('driver_status_update_error'), error);
     res.status(500).json({ message: res.__('server_error') });
   }
 });

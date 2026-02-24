@@ -224,7 +224,7 @@ const cartController = {
             cart.items[existingItemIndex].totalPrice = cart.items[existingItemIndex].quantity * (cart.items[existingItemIndex].price || 0);
           } else {
             if (!localItem.name || !localItem.image || !localItem.price) {
-              console.warn('Skipping invalid item in sync:', localItem);
+              console.warn(i18n.__('invalid_item_sync_skip'), localItem);
               return; 
             }
             const itemId = localItem.id || localItem._id || localItem.uniqueKey || `item_${Date.now()}_${Math.random()}`;

@@ -49,6 +49,10 @@ module.exports = [
         {
           selector: 'CallExpression[callee.property.name="json"] > ObjectExpression > Property[key.name="error"] > Literal',
           message: 'Les messages d\'erreur dans les réponses JSON devraient être traduits avec res.__(key)'
+        },
+        {
+          selector: 'CallExpression[callee.object.name="console"][callee.property.name=/^(log|error|warn)$/][arguments.0.type="Literal"]',
+          message: 'Les messages de console devraient être traduits avec i18n.__(key) (logs en anglais)'
         }
       ],
       'i18next/no-literal-string-in-jsx': 'off', // Pas nécessaire pour un backend Node.js
