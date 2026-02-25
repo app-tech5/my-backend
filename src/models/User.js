@@ -15,7 +15,7 @@ const UserSchema = new mongoose.Schema(
       },
       role: { 
         type: String, 
-        enum: ['customer', 'restaurant', 'delivery'], 
+        enum: ['customer', 'restaurant', 'delivery', 'admin'], 
         default: 'customer' 
       },
       favorites: [{ 
