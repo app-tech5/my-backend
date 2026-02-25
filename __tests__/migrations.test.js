@@ -50,7 +50,7 @@ describe('Database Migrations Tests', () => {
           stdio: 'pipe' 
         });
       } catch (error) {
-        console.error('Migration failed:', error.message);
+        console.error(`Migration failed: ${error.message}`);
         throw error;
       }
       

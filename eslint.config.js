@@ -38,7 +38,7 @@ module.exports = [
     rules: {
       'no-comments/disallowComments': 'error',
       'no-multiple-empty-lines': ['error', { max: 1, maxEOF: 1 }],
-      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
       'no-restricted-syntax': [
         'warn',
         {

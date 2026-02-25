@@ -55,9 +55,32 @@ router.put('/me', async (req, res) => {
         res.json(userWithoutPassword);
     } catch (error) {
         console.error(i18n.__('update_error'), error);
-        res.status(400).json({ 
+        res.status(400).json({
             message: res.__("update_error"),
-            error: error.message 
+            error: error.message
+        });
+    }
+});
+router.delete('/me', async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ message: res.__("user_not_found") });
+        }
+
+        await PaymentMethod.deleteMany({ user: req.user.id });
+        await User.findByIdAndDelete(req.user.id);
+        res.clearCookie("token", { httpOnly: true, secure: false, sameSite: "Strict" });
+
+        res.json({
+            success: true,
+            message: res.__("account_deleted_successfully")
+        });
+    } catch (error) {
+        console.error(i18n.__('delete_account_error'), error);
+        res.status(500).json({
+            message: res.__("server_error"),
+            error: error.message
         });
     }
 });
@@ -257,6 +280,28 @@ router.get('/:id', async (req, res) => {
         res.json(user);
     } catch (error) {
         res.status(500).json({ message: res.__("server_error") });
+    }
+});
+router.delete('/:id', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({ message: res.__("user_not_found") });
+        }
+
+        await PaymentMethod.deleteMany({ user: req.params.id });
+        await User.findByIdAndDelete(req.params.id);
+
+        res.json({
+            success: true,
+            message: res.__("user_deleted_successfully")
+        });
+    } catch (error) {
+        console.error(i18n.__('delete_user_error'), error);
+        res.status(500).json({
+            message: res.__("server_error"),
+            error: error.message
+        });
     }
 });
 module.exports = router;
