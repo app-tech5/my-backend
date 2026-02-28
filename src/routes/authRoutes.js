@@ -7,10 +7,20 @@ const router = express.Router();
 router.use(i18n.init);
 router.post('/signup', async (req, res) => {
     try {
-        const { email, password, name, phone, address, lat, lng } = req.body;
+        const { email, password, name, phone, address, lat, lng, role } = req.body;
+        console.log('Signup request received:', { email, name, role }); // Debug log
+
         if (!email || !password || !name) {
             return res.status(400).json({errorType: "email", message: res.__("email_password_name_required") });
         }
+
+        if (role === 'admin') {
+            const existingAdmin = await User.findOne({ role: 'admin' });
+            if (existingAdmin) {
+                return res.status(400).json({errorType: "email", message: res.__("admin_already_exists") });
+            }
+        }
+
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({errorType: "email", message: res.__("email_already_in_use") });
@@ -23,7 +33,8 @@ router.post('/signup', async (req, res) => {
             phone: phone || '',
             address: address || '',
             lat: lat || 0,
-            lng: lng || 0
+            lng: lng || 0,
+            role: role || 'customer'
         });
         await newUser.save();
         const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '7d' });

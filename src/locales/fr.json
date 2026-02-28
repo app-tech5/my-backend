@@ -2,6 +2,7 @@
   "email_and_password_required": "Email et mot de passe requis",
   "email_password_name_required": "Email, password et name sont requis",
   "email_already_in_use": "Email déjà utilisé",
+  "admin_already_exists": "Un compte administrateur existe déjà. Un seul compte administrateur est autorisé.",
   "passwords_do_not_match": "Les mots de passe ne correspondent pas",
   "user_registered_successfully": "Utilisateur inscrit avec succès",
   "server_error": "Erreur serveur",
