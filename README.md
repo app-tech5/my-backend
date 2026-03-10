@@ -49,7 +49,6 @@ A complete Node.js backend for a food delivery application built with Express.js
 
 1. **Clone and install dependencies**
 ```bash
-git clone <your-repo-url>
 cd my-backend
 npm install
 ```
