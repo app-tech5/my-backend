@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const SettingSchema = new mongoose.Schema({
-    _id: { type: String, required: true }, 
     appName: { type: String, required: true },
     currency: {
       type: mongoose.Schema.Types.ObjectId,
