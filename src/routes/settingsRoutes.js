@@ -5,10 +5,9 @@ const i18n = require('../config/i18n');
 router.use(i18n.init);
 router.get("/", async (req, res) => {
     try {
-        const settings = await Settings.findById("app_settings");
+        const settings = await Settings.findOne();
         if (!settings) {
             const defaultSettings = new Settings({
-                _id: "app_settings", 
                 appName: "Mon App",
                 currency: {
                     value: "EUR",
@@ -43,7 +42,7 @@ router.get("/", async (req, res) => {
 });
 router.put('/', async (req, res) => {
     try {
-        const updatedSetting = await Settings.findByIdAndUpdate({}, req.body, { new: true });
+        const updatedSetting = await Settings.findOneAndUpdate({}, req.body, { new: true });
         res.json(updatedSetting);
     } catch (error) {
         res.status(500).json({ message: res.__('server_error'), error });

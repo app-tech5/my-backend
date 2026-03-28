@@ -7,8 +7,8 @@ const LanguageSchema = new mongoose.Schema({
 }, { timestamps: true });
 LanguageSchema.post('findOneAndUpdate', async function(doc) {
     if (doc && doc.isDefault) {
-        await Setting.findByIdAndUpdate(
-            "app_settings", 
+        await Setting.findOneAndUpdate(
+            {},
             { $set: { language: { code: doc.code, name: doc.name, isDefault: doc.isDefault } } }
         );
     }
