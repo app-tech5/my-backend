@@ -6,6 +6,9 @@ const convertToModelName = (collectionName) => {
   if (collectionName === 'deliverysettings') {
     return 'DeliverySetting';
   }
+  if (collectionName === 'app_settings') {
+    return 'AppSetting';
+  }
   return (
     pluralize.singular(collectionName).charAt(0).toUpperCase() +
     pluralize.singular(collectionName).slice(1)
