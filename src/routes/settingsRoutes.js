@@ -20,6 +20,7 @@ router.get("/", async (req, res) => {
                     isDefault: true,
                     name: "Français"
                 },
+                logoUrl: '',
                 createdAt: new Date(),
             });
             await defaultSettings.save();

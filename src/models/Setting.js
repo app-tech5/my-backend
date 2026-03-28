@@ -11,7 +11,7 @@ const SettingSchema = new mongoose.Schema({
         isDefault: { type: Boolean, required: true, default: false },
         name: { type: String, required: true },
     },
-    image_url: { type: String },
+    logoUrl: { type: String, default: '' },
   }, { timestamps: true } );
 
 const currencyPopulate = {
