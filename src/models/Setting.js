@@ -13,4 +13,22 @@ const SettingSchema = new mongoose.Schema({
     },
     image_url: { type: String },
   }, { timestamps: true } );
+
+const currencyPopulate = {
+  path: "currency",
+  select: "code name symbol exchangeRate",
+};
+
+SettingSchema.pre("findOne", function () {
+  this.populate(currencyPopulate);
+});
+
+SettingSchema.pre("find", function () {
+  this.populate(currencyPopulate);
+});
+
+SettingSchema.pre("findOneAndUpdate", function () {
+  this.populate(currencyPopulate);
+});
+
 module.exports = mongoose.model('Setting', SettingSchema);
