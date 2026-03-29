@@ -16,7 +16,7 @@ function getModelsWithImageOrDocumentsField() {
   for (const modelName of Object.keys(mongoose.models)) {
     const model = mongoose.models[modelName];
     const schema = model.schema;
-    if (schema.paths.image || schema.paths.documents) {
+    if (schema.paths.image || schema.paths.documents || schema.paths.logoUrl) {
       modelsWithFields.push(model);
     }
   }

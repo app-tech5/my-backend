@@ -12,11 +12,19 @@ async function deleteOrphanedFiles() {
     const usedFiles = new Set(); 
     for (const model of models) {
       const documents = await model.find({
-        $or: [{ image: { $exists: true } }, { documents: { $exists: true } }]
+        $or: [
+          { image: { $exists: true } },
+          { documents: { $exists: true } },
+          { logoUrl: { $exists: true } },
+        ],
       });
       documents.forEach(doc => {
         if (doc.image) {
           const filename = path.basename(doc.image);
+          usedFiles.add(filename);
+        }
+        if (doc.logoUrl) {
+          const filename = path.basename(doc.logoUrl);
           usedFiles.add(filename);
         }
         if (Array.isArray(doc.documents)) {
