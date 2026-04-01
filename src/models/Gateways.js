@@ -33,12 +33,6 @@ const gatewaySchema = new Schema({
     default: {}
   },
 
-  // Paramètres monétaires
-  currency: {
-    supported: [{ type: String, uppercase: true }], // ex: ['XAF', 'USD', 'EUR']
-    default: { type: String, default: 'XAF' }
-  },
-
   // Gestion des frais (internes à la plateforme)
   fees: {
     percentage: { type: Number, default: 0 }, // ex: 2.5 pour 2.5%
