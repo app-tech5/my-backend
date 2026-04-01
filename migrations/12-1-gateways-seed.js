@@ -23,7 +23,6 @@ const gateways = [
   {
     identifier: 'stripe',
     name: 'Stripe',
-    type: 'card',
     credentials: {
       publishableKey: 'pk_test_51ODemo_StripePublishableKeyForTestingPurposes',
       secretKey:      'sk_test_51ODemo_StripeSecretKeyForTestingPurposesOnly',
@@ -49,7 +48,6 @@ const gateways = [
   {
     identifier: 'paypal',
     name: 'PayPal',
-    type: 'wallet',
     credentials: {
       clientId:     'ADemo_PayPal_ClientId_ForSandboxTestingPurposesOnly',
       clientSecret: 'EDemo_PayPal_ClientSecret_ForSandboxTestingPurposesOnly',
@@ -75,7 +73,6 @@ const gateways = [
   {
     identifier: 'flutterwave',
     name: 'Flutterwave',
-    type: 'mobile_money',
     credentials: {
       publicKey:     'FLWPUBK_TEST-demo_flutterwave_public_key_for_testing',
       secretKey:     'FLWSECK_TEST-demo_flutterwave_secret_key_for_testing',
@@ -101,7 +98,6 @@ const gateways = [
   {
     identifier: 'paystack',
     name: 'Paystack',
-    type: 'card',
     credentials: {
       publicKey: 'pk_test_demo_paystack_public_key_for_testing_purposes',
       secretKey: 'sk_test_demo_paystack_secret_key_for_testing_purposes',
@@ -126,7 +122,6 @@ const gateways = [
   {
     identifier: 'orange-pay',
     name: 'OrangePay',
-    type: 'mobile_money',
     credentials: {
       merchantId:   'OM_DEMO_MERCHANT_001',
       apiKey:       'demo_orange_api_key_for_testing_purposes_only',
@@ -153,7 +148,6 @@ const gateways = [
   {
     identifier: 'razorpay',
     name: 'Razorpay',
-    type: 'card',
     credentials: {
       keyId:     'rzp_test_demo_razorpay_key_id_for_testing',
       keySecret: 'demo_razorpay_key_secret_for_testing_purposes',
@@ -178,7 +172,6 @@ const gateways = [
   {
     identifier: 'cash-on-delivery',
     name: 'Cash on Delivery',
-    type: 'wallet',
     credentials: {
       enabled: 'true',
     },
@@ -202,7 +195,6 @@ const gateways = [
   {
     identifier: 'internal-wallet',
     name: 'Internal Wallet',
-    type: 'wallet',
     credentials: {
       platformSecret: 'demo_internal_wallet_platform_secret_key_for_testing',
     },
