@@ -18,7 +18,7 @@ const gatewaySchema = new Schema({
   
   credentials: {
     type: Map,
-    of: String,
+    of: Schema.Types.Mixed,
     default: {}
   },
   
@@ -27,10 +27,9 @@ const gatewaySchema = new Schema({
     fixed: { type: Number, default: 0 }      
   },
   
-  status: {
-    type: String,
-    enum: ['active', 'inactive', 'maintenance', 'sandbox'],
-    default: 'inactive'
+  active: {
+    type: Boolean,
+    default: false
   },
   
   capabilities: {

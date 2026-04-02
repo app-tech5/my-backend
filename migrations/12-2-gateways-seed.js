@@ -29,7 +29,7 @@ const gateways = [
       webhookSecret:  'whsec_demo_stripe_webhook_signing_secret_test',
     },
     fees: { percentage: 2.9, fixed: 30 },
-    status: 'inactive',
+    active: true,
     capabilities: {
       canRefund: true,
       canWithdraw: true,
@@ -54,7 +54,7 @@ const gateways = [
       mode:         'sandbox',
     },
     fees: { percentage: 3.49, fixed: 49 },
-    status: 'inactive',
+    active: true,
     capabilities: {
       canRefund: true,
       canWithdraw: true,
@@ -79,7 +79,7 @@ const gateways = [
       encryptionKey: 'FLWENCK_TEST_demo_flutterwave_encryption_key',
     },
     fees: { percentage: 1.4, fixed: 0 },
-    status: 'inactive',
+    active: true,
     capabilities: {
       canRefund: true,
       canWithdraw: true,
@@ -103,7 +103,7 @@ const gateways = [
       secretKey: 'sk_test_demo_paystack_secret_key_for_testing_purposes',
     },
     fees: { percentage: 1.5, fixed: 0 },
-    status: 'inactive',
+    active: true,
     capabilities: {
       canRefund: true,
       canWithdraw: true,
@@ -129,7 +129,7 @@ const gateways = [
       clientSecret: 'demo_orange_client_secret',
     },
     fees: { percentage: 1.0, fixed: 0 },
-    status: 'inactive',
+    active: true,
     capabilities: {
       canRefund: false,
       canWithdraw: false,
@@ -153,7 +153,7 @@ const gateways = [
       keySecret: 'demo_razorpay_key_secret_for_testing_purposes',
     },
     fees: { percentage: 2.0, fixed: 0 },
-    status: 'inactive',
+    active: true,
     capabilities: {
       canRefund: true,
       canWithdraw: true,
@@ -173,10 +173,10 @@ const gateways = [
     identifier: 'cash-on-delivery',
     name: 'Cash on Delivery',
     credentials: {
-      enabled: 'true',
+      enabled: true,
     },
     fees: { percentage: 0, fixed: 0 },
-    status: 'inactive',
+    active: true,
     capabilities: {
       canRefund: false,
       canWithdraw: false,
@@ -199,7 +199,7 @@ const gateways = [
       platformSecret: 'demo_internal_wallet_platform_secret_key_for_testing',
     },
     fees: { percentage: 0, fixed: 0 },
-    status: 'inactive',
+    active: true,
     capabilities: {
       canRefund: true,
       canWithdraw: false,
