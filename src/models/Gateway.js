@@ -62,6 +62,22 @@ const gatewaySchema = new Schema({
 
 gatewaySchema.index({ identifier: 1 });
 
+gatewaySchema.pre(/^find/, function () {
+  const role = this.options?.role;
+
+  if (role === 'admin') return;
+
+  this.select(
+    '-credentials.secretKey ' +
+    '-credentials.clientSecret ' +
+    '-credentials.webhookSecret ' +
+    '-credentials.encryptionKey ' +
+    '-credentials.platformSecret ' +
+    '-webhook.secret ' + 
+    '-credentials.keySecret'
+);
+});
+
 const Gateway = mongoose.model('Gateway', gatewaySchema);
 
 module.exports = Gateway;

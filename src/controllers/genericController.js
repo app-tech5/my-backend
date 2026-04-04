@@ -14,7 +14,7 @@ const genericController = (Model) => {
           }
           query.user = req.user.id;
         }
-        const items = await Model.find(query).setOptions({ queryParams: req.query });
+        const items = await Model.find(query).setOptions({ queryParams: req.query, role: req.user?.type });
         res.json(items);
       } catch (error) {
         res.status(500).json({ error: error.message });
