@@ -41,6 +41,7 @@ const UserSchema = new mongoose.Schema(
         asRestaurant: { type: Number },
         asDelivery: { type: Number }
       },
+      stripeCustomerId: { type: String, default: '' },
       deviceToken: { type: String, default: '' } 
     },
     { timestamps: true }

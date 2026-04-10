@@ -50,6 +50,7 @@
     "react-date-picker": "^11.0.0",
     "reflect-metadata": "^0.2.2",
     "socket.io": "^4.8.1",
+    "stripe": "^17.7.0",
     "typeorm": "^0.3.20",
     "vitest": "^3.2.4"
   },
