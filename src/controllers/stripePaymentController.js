@@ -36,12 +36,6 @@ const stripePaymentController = {
       customer: stripeCustomerId,
     });
 
-    await stripe.customers.update(stripeCustomerId, {
-      invoice_settings: {
-        default_payment_method: paymentMethodId,
-      },
-    });
-
     return res.status(200).json({
       stripeCustomerId,
       paymentMethodId,
