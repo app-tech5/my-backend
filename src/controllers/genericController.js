@@ -29,6 +29,12 @@ const genericController = (Model) => {
       }
     },
     create: async (req, res) => {
+      try {
+        const newItem = await Model.create(req.body);
+        res.status(201).json(newItem);
+      } catch (error) {
+        res.status(500).json({ error: error.message });
+      }
     },
     update: async (req, res) => {
       try {
@@ -66,6 +72,13 @@ const genericController = (Model) => {
       }
     },
     delete: async (req, res) => {
+      try {
+        const deletedItem = await Model.findByIdAndDelete(req.params.id);
+        if (!deletedItem) return res.status(404).json({ message: i18n.__("not_found") });
+        res.json({ message: i18n.__("deleted_successfully") });
+      } catch (error) {
+        res.status(500).json({ error: error.message });
+      }
     },
     getDefaultFields: async (req, res) => {
       try {

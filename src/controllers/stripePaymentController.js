@@ -1,7 +1,5 @@
-const Stripe = require('stripe');
 const User = require('../models/User');
-
-const stripe = new Stripe('sk_test_51TIcAILenxtQOhEhGELACfIVrHZVNG7WwUO0YxXKecYqIvX0JZx10vpEgT8QMD0pVvaFj9O2NTGxtq712ZaxTF6i001wWeZeez');
+const { stripe, attachPaymentMethodToUser, detachPaymentMethod } = require('../services/stripeCustomerService');
 
 const stripePaymentController = {
   attachPaymentMethodToCustomer: async (req, res) => {
@@ -20,25 +18,23 @@ const stripePaymentController = {
       });
     }
 
-    let stripeCustomerId = user.stripeCustomerId;
-    if (!stripeCustomerId) {
-      const customer = await stripe.customers.create({
-        email: user.email || undefined,
-        name: user.name || undefined,
-        metadata: { userId: String(user._id) },
-      });
-      stripeCustomerId = customer.id;
-      user.stripeCustomerId = stripeCustomerId;
-      await user.save();
-    }
-
-    await stripe.paymentMethods.attach(paymentMethodId, {
-      customer: stripeCustomerId,
-    });
+    const stripeCustomerId = await attachPaymentMethodToUser(req.user?.id, paymentMethodId);
 
     return res.status(200).json({
       stripeCustomerId,
       paymentMethodId,
+    });
+  },
+  removePaymentMethod: async (req, res) => {
+    const { paymentMethodId } = req.body || {};
+    if (!paymentMethodId || typeof paymentMethodId !== 'string') {
+      return res.status(400).json({
+        message: 'paymentMethodId is required',
+      });
+    }
+    await detachPaymentMethod(paymentMethodId);
+    return res.status(200).json({
+      message: 'paymentMethod removed successfully',
     });
   },
 
