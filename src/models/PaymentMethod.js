@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const i18n = require('../config/i18n');
 const paymentMethodSchema = new Schema({
+  id: {
+    type: String,
+    required: true
+  },
   user: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -31,26 +35,11 @@ const paymentMethodSchema = new Schema({
     },
     cardBrand: {
       type: String,
+      // require c'est pour 
       required: function() { 
         return ['credit_card', 'debit_card'].includes(this.methodType); 
       },
       enum: ['visa', 'mastercard', 'amex', 'discover', 'jcb', 'diners', 'unionpay', 'other']
-    },
-    expiryMonth: {
-      type: Number,
-      required: function() { 
-        return ['credit_card', 'debit_card'].includes(this.methodType); 
-      },
-      min: 1,
-      max: 12
-    },
-    expiryYear: {
-      type: Number,
-      required: function() { 
-        return ['credit_card', 'debit_card'].includes(this.methodType); 
-      },
-      min: new Date().getFullYear(),
-      max: new Date().getFullYear() + 20
     },
     cardholderName: {
       type: String,
@@ -105,7 +94,7 @@ const paymentMethodSchema = new Schema({
   toJSON: {
     virtuals: true,
     transform: function(doc, ret) {
-      delete ret.cardDetails;
+      // delete ret.cardDetails;
       delete ret.paypalEmail;
       delete ret.walletToken;
       return ret;

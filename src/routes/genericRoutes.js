@@ -26,6 +26,9 @@ router.get("/:model/schema", (req, res) =>
 router.get("/:model", (req, res) =>
   genericController(req.Model).getAll(req, res)
 );
+router.get("/:model/byUserId", (req, res) =>
+  genericController(req.Model).getByUserId(req, res)
+);
 router.get("/:model/:id", (req, res) =>
   genericController(req.Model).getById(req, res)
 );

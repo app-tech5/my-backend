@@ -28,6 +28,14 @@ const genericController = (Model) => {
         res.status(500).json({ error: error.message });
       }
     },
+    getByUserId: async (req, res) => {
+      try {
+        const item = await Model.find({ user: req.user.id });
+        res.json(item);
+      } catch (error) {
+        res.status(500).json({ error: error.message });
+      }
+    },
     create: async (req, res) => {
       try {
         const newItem = await Model.create(req.body);
