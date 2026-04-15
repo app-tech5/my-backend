@@ -35,10 +35,10 @@ const orderSchema = new mongoose.Schema(
                   ],
                 variants: [
                   {
-                    name: { type: String, required: true },
-                    price: { type: Number, required: true },
-                    extra: { type: Number, required: true },
-                    size: { type: String, required: true },
+                    name: { type: String },
+                    price: { type: Number },
+                    extra: { type: Number },
+                    size: { type: String },
                   }
                 ],
                 total: { type: Number, required: true } 
