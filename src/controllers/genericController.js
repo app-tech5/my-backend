@@ -12,6 +12,8 @@ const genericController = (Model) => {
           if (!req.user || !req.user.id) {
             return res.status(401).json({ message: i18n.__('authentication_required') });
           }
+          // ne filtrer par user que pour les clients (role customer)
+          if (req.user.type === 'customer') 
           query.user = req.user.id;
         }
         const items = await Model.find(query).setOptions({ queryParams: req.query, role: req.user?.type });

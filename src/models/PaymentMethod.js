@@ -64,9 +64,9 @@ const paymentMethodSchema = new Schema({
   },
   walletToken: {
     type: String,
-    required: function() { 
-      return ['apple_pay', 'google_pay'].includes(this.methodType); 
-    }
+    // required: function() { 
+    //   return ['apple_pay', 'google_pay'].includes(this.methodType); 
+    // }
   },
   createdAt: {
     type: Date,
