@@ -128,4 +128,10 @@ orderSchema.post('findOneAndUpdate', async function (doc) {
       }
   }
 });
+orderSchema.pre('find', async function (next) {
+  if (this.options.authUser?.type === 'customer' || this.options.authUser?.type === 'restaurant' || this.options.authUser?.type === 'delivery') {
+    this.where({ user: this.options.authUser.id });
+  }
+  next();
+});
 module.exports = mongoose.model("Order", orderSchema);

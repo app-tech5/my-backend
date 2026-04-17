@@ -7,16 +7,7 @@ const genericController = (Model) => {
   return {
     getAll: async (req, res) => {
       try {
-        let query = {};
-        if (Model.modelName === 'Order') {
-          if (!req.user || !req.user.id) {
-            return res.status(401).json({ message: i18n.__('authentication_required') });
-          }
-          // ne filtrer par user que pour les clients (role customer)
-          if (req.user.type === 'customer') 
-          query.user = req.user.id;
-        }
-        const items = await Model.find(query).setOptions({ queryParams: req.query, role: req.user?.type });
+        const items = await Model.find().setOptions({ queryParams: req.query, role: req.user?.type, authUser: req.user });
         res.json(items);
       } catch (error) {
         res.status(500).json({ error: error.message });
