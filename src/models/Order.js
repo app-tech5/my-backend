@@ -117,16 +117,30 @@ orderSchema.post('findOne', function (order) {
     order.totalPrice = order.items.reduce((a,v) => a + v.total, 0) + order.delivery.deliveryFee + order.tax.amount;
 });
 orderSchema.pre('findOneAndUpdate', async function (next) {
-  this.previousOrder = await this.model.findOne(this.getQuery()); 
-  if (this.previousOrder?.status !== "delivered")
+  this.previousOrder = await this.model.findOne(this.getQuery());
   next();
 });
 orderSchema.post('findOneAndUpdate', async function (doc) {
-  if (doc?.status === "delivered" && this.previousOrder.status !== "delivered") {
-      if (this.previousOrder.status !== "delivered") {
-          await Driver.findByIdAndUpdate(doc.driver, { $inc: { totalDeliveries: 1 } });
-      }
+  if (!doc || !this.previousOrder) return;
+
+  const previousStatus = this.previousOrder.status;
+  const currentStatus = doc.status;
+
+  if (currentStatus === "delivered" && previousStatus !== "delivered") {
+    await Driver.findByIdAndUpdate(doc.driver, { $inc: { totalDeliveries: 1 } });
   }
+
+  if (currentStatus === previousStatus) return;
+
+  const io = global.io;
+  if (!io) return;
+
+  const orderIdStr = String(doc._id);
+  io.to(`order:${orderIdStr}`).emit('order-status-updated', {
+    orderId: orderIdStr,
+    status: currentStatus,
+    updatedAt: doc.updatedAt,
+  });
 });
 orderSchema.pre('find', async function (next) {
   if (this.options.authUser?.type === 'customer' || this.options.authUser?.type === 'restaurant' || this.options.authUser?.type === 'delivery') {

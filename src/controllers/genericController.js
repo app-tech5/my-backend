@@ -47,18 +47,18 @@ const genericController = (Model) => {
           if (!currentOrder) {
             return res.status(404).json({ message: i18n.__("order_not_found") });
           }
-          if (currentOrder.user.toString() !== req.user.id) {
-            return res.status(403).json({ message: i18n.__("you_can_only_modify_your_own_orders") });
-          }
-          if (req.body.status && req.body.status !== currentOrder.status) {
-            const currentStatus = currentOrder.status;
-            const newStatus = req.body.status;
-            if (allowedStatusUpdates[currentStatus] && !allowedStatusUpdates[currentStatus].includes(newStatus)) {
-              return res.status(400).json({
-                message: `Cannot change order status from ${currentStatus} to ${newStatus}`
-              });
-            }
-          }
+          // if (currentOrder.user.toString() !== req.user.id) {
+          //   return res.status(403).json({ message: i18n.__("you_can_only_modify_your_own_orders") });
+          // }
+          // if (req.body.status && req.body.status !== currentOrder.status) {
+          //   const currentStatus = currentOrder.status;
+          //   const newStatus = req.body.status;
+          //   if (allowedStatusUpdates[currentStatus] && !allowedStatusUpdates[currentStatus].includes(newStatus)) {
+          //     return res.status(400).json({
+          //       message: `Cannot change order status from ${currentStatus} to ${newStatus}`
+          //     });
+          //   }
+          // }
         }
         const updatedItem = await Model.findByIdAndUpdate(
           req.params.id,

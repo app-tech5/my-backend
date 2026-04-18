@@ -41,6 +41,21 @@ const io = new Server(server, {
     credentials: true
   }
 });
+
+global.io = io;
+
+io.on('connection', (socket) => {
+  socket.on('joinOrderRoom', (orderId) => {
+    if (!orderId) return;
+    socket.join(`order:${orderId}`);
+  });
+
+  socket.on('leaveOrderRoom', (orderId) => {
+    if (!orderId) return;
+    socket.leave(`order:${orderId}`);
+  });
+});
+
 app.use(cors({
   origin: corsOrigins,
   credentials: true
