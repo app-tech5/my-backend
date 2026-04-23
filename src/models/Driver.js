@@ -64,6 +64,12 @@ DriverSchema.pre("findOne", function () {
 });
 DriverSchema.post("findOne", function (doc) {
 });
+DriverSchema.pre("find", function () {
+  this.populate({
+    path: "userId",
+    select: "name email phone image value label", 
+  });
+});
 DriverSchema.pre("validate", function (next) {
   next();
 });
