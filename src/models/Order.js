@@ -121,12 +121,14 @@ orderSchema.pre('findOneAndUpdate', async function (next) {
   if (this.options.authUser?.type === 'delivery') {
     
       try { 
-        const driver =await Driver.findOne({ userId: this.options.authUser.id });
-        this.getUpdate().driver = driver._id;
+        if (!this.previousOrder.driver)  {
+          const driver =await Driver.findOne({ userId: this.options.authUser.id });
+          this.getUpdate().driver = driver._id;
+        }
       } catch (error) {
         console.error('Error finding driver:', error);
       }
-    }
+    } 
   next();
 });
 orderSchema.post('findOneAndUpdate', async function (doc) {
