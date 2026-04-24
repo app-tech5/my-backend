@@ -23,7 +23,7 @@ const genericController = (Model) => {
     },
     getByUserId: async (req, res) => {
       try {
-        const item = await Model.find({ user: req.user.id });
+        const item = await Model.find({$or: [{user: req.user.id}, {userId: req.user.id}]});
         res.json(item);
       } catch (error) {
         res.status(500).json({ error: error.message });
@@ -64,7 +64,8 @@ const genericController = (Model) => {
           req.params.id,
           req.body,
           { new: true }
-        );
+        ).setOptions({ role: req.user?.type, authUser: req.user });
+
         if (!updatedItem) return res.status(404).json({ message: i18n.__("not_found") });
         res.json(updatedItem);
       } catch (error) {

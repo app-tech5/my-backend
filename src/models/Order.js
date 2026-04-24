@@ -118,6 +118,15 @@ orderSchema.post('findOne', function (order) {
 });
 orderSchema.pre('findOneAndUpdate', async function (next) {
   this.previousOrder = await this.model.findOne(this.getQuery());
+  if (this.options.authUser?.type === 'delivery') {
+    
+      try { 
+        const driver =await Driver.findOne({ userId: this.options.authUser.id });
+        this.getUpdate().driver = driver._id;
+      } catch (error) {
+        console.error('Error finding driver:', error);
+      }
+    }
   next();
 });
 orderSchema.post('findOneAndUpdate', async function (doc) {
@@ -126,20 +135,17 @@ orderSchema.post('findOneAndUpdate', async function (doc) {
   const previousStatus = this.previousOrder.status;
   const currentStatus = doc.status;
 
-  if (currentStatus === "delivered" && previousStatus !== "delivered") {
-    await Driver.findByIdAndUpdate(doc.driver, { $inc: { totalDeliveries: 1 } });
-  }
+  // if (currentStatus === "delivered" && previousStatus !== "delivered") {
+  //   await Driver.findByIdAndUpdate(doc.driver, { $inc: { totalDeliveries: 1 } });
+  // }
 
   if (currentStatus === previousStatus) return;
 
   const io = global.io;
   if (!io) return;
 
-  const orderIdStr = String(doc._id);
-  io.to(`order:${orderIdStr}`).emit('order-status-updated', {
-    orderId: orderIdStr,
-    status: currentStatus,
-    updatedAt: doc.updatedAt,
+   io.to(`orders`).emit('order-updated', {
+    order: doc,
   });
 });
 orderSchema.pre('find', async function (next) {
