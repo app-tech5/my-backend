@@ -80,7 +80,7 @@ orderSchema.pre("findOne", function () {
         select: "name image price"
     }).populate({
       path: "driver",
-      select: "userId vehicle", 
+      select: "userId vehicle location",
       populate: {
           path: "userId",
           model: "User",
