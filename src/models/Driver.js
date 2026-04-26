@@ -53,7 +53,9 @@ DriverSchema.pre("save", function (next) {
 });
 DriverSchema.pre("findOneAndUpdate", function (next) {
     const update = this.getUpdate();
-    transformUsersField(update);
+    if (update?.users) {
+      transformUsersField(update);
+    }
     next();
   });
 DriverSchema.pre("findOne", function () {
