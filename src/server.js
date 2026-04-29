@@ -45,13 +45,20 @@ const io = new Server(server, {
 global.io = io;
 
 io.on('connection', (socket) => {
-  socket.on('joinOrderRoom', () => {
+
+  socket.on('joinOrderRoom', (userId) => {
      
-    socket.join(`orders`);
+    socket.join(`orders-${userId}`);
   });
 
-  socket.on('leaveOrderRoom', () => {
-    socket.leave(`order`);
+  socket.on('joinOrderTrackingRoom', (orderId) => {
+     
+    socket.join(`order-${orderId}`);
+  });
+  
+  socket.on('leaveOrderTrackingRoom', (orderId) => {
+    if (!orderId) return;
+    socket.leave(`order-${orderId}`);
   });
 });
 

@@ -63,7 +63,9 @@ const genericController = (Model) => {
         const updatedItem = await Model.findByIdAndUpdate(
           req.params.id,
           req.body,
-          { new: true }
+          { new: true,
+            runValidators: true
+          }
         ).setOptions({ role: req.user?.type, authUser: req.user });
 
         if (!updatedItem) return res.status(404).json({ message: i18n.__("not_found") });

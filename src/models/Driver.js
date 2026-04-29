@@ -6,6 +6,7 @@ const DriverSchema = new Schema(
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true,
         default: new mongoose.Types.ObjectId()
      }, 
+    currentOrder: { type: Schema.Types.ObjectId, ref: "Order", default: null },
     licenseNumber: { type: String, required: true, unique: true, default: "" }, 
     users: { type: Object, default: { value: "", label: "" } },
     vehicle: {
@@ -58,6 +59,13 @@ DriverSchema.pre("findOneAndUpdate", function (next) {
     }
     next();
   });
+DriverSchema.post("findOneAndUpdate", function (doc) {
+  if(doc.currentOrder) {
+    global.io.to(`order-${doc.currentOrder}`).emit('driver-location-updated', {
+      location: doc.location,
+    });
+  }
+});
 DriverSchema.pre("findOne", function () {
   this.populate({
     path: "userId",
