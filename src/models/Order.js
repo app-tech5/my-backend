@@ -161,7 +161,7 @@ orderSchema.pre('find', async function (next) {
     this.where({ $or: [{ driver: driver?._id }, { status: "pending" }] });
   }
   if (this.options.authUser?.type === 'restaurant') {
-    this.where({ restaurant: this.options.authUser.id });
+    this.where({ restaurant: this.options.authUser.restaurant });
   }
   next();
 });
