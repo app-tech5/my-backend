@@ -34,9 +34,11 @@ const notificationSchema = new Schema({
     type: String,
     required: true,
     enum: [
-      'order_status', 
-      'promotion', 
-      'system', 
+      'order_status',
+      'order',
+      'review',
+      'promotion',
+      'system',
       'delivery_update',
       'new_restaurant',
       'payment',
@@ -56,7 +58,17 @@ const notificationSchema = new Schema({
     required: function() {
       return ['order_status', 'delivery_update', 'payment'].includes(this.type);
     },
-    enum: ['Order', 'Payment', 'Delivery']
+    enum: ['Order', 'Payment', 'Delivery', 'Review']
+  },
+  action: {
+    type: String,
+    trim: true,
+    maxlength: 100,
+    required: false
+  },
+  actionData: {
+    type: Schema.Types.Mixed,
+    required: false
   },
   isRead: {
     type: Boolean,
@@ -104,13 +116,32 @@ const notificationSchema = new Schema({
   toJSON: { virtuals: true },
   toObject: { virtuals: true }
 });
-notificationSchema.pre("find", function () {
-    this.populate(
-      {
-        path: "user",
-        select: "name", 
-      });
-})
+notificationSchema.pre('find', function (next) {
+  if (this.options?.authUser?.id) {
+    this.where({ user: this.options.authUser.id });
+  }
+  this.populate({ path: 'user', select: 'name' });
+  next();
+});
+notificationSchema.pre('findOne', function (next) {
+  if (this.options?.authUser?.id) {
+    this.where({ user: this.options.authUser.id });
+  }
+  this.populate({ path: 'user', select: 'name' });
+  next();
+});
+notificationSchema.pre('findOneAndUpdate', function (next) {
+  if (this.options?.authUser?.id) {
+    this.where({ user: this.options.authUser.id });
+  }
+  next();
+});
+notificationSchema.pre('findOneAndDelete', function (next) {
+  if (this.options?.authUser?.id) {
+    this.where({ user: this.options.authUser.id });
+  }
+  next();
+});
 notificationSchema.index({ user: 1, isRead: 1, createdAt: -1 });
 notificationSchema.index({ type: 1, createdAt: -1 });
 notificationSchema.methods.markAsRead = function() {

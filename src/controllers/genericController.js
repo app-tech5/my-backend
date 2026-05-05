@@ -15,7 +15,10 @@ const genericController = (Model) => {
     },
     getById: async (req, res) => {
       try {
-        const item = await Model.findById(req.params.id);
+        const item = await Model.findById(req.params.id).setOptions({
+          role: req.user?.type,
+          authUser: req.user,
+        });
         res.json(item);
       } catch (error) {
         res.status(500).json({ error: error.message });
@@ -77,7 +80,10 @@ const genericController = (Model) => {
     },
     delete: async (req, res) => {
       try {
-        const deletedItem = await Model.findByIdAndDelete(req.params.id);
+        const deletedItem = await Model.findByIdAndDelete(req.params.id).setOptions({
+          role: req.user?.type,
+          authUser: req.user,
+        });
         if (!deletedItem) return res.status(404).json({ message: i18n.__("not_found") });
         res.json({ message: i18n.__("deleted_successfully") });
       } catch (error) {
