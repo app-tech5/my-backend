@@ -61,5 +61,11 @@
   "preparation_started": "Préparation démarrée",
   "order_ready_for_pickup": "Commande prête pour le retrait",
   "invalid_status": "Statut invalide",
-  "order_not_found": "Commande non trouvée"
+  "order_not_found": "Commande non trouvée",
+  "new_order_received_title": "Nouvelle commande",
+  "new_order_received_message": "Vous avez recu une nouvelle commande #%s.",
+  "new_order_notification_creation_error": "Erreur creation notification nouvelle commande:",
+  "fcm_not_configured": "FCM non configure",
+  "fcm_init_error": "Erreur initialisation FCM:",
+  "fcm_send_error": "Erreur envoi FCM:"
 }

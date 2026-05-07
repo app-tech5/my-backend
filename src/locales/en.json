@@ -185,5 +185,11 @@
 	"mongodb_connection_error": "MongoDB connection error",
 	"mongodb_connection_successful": "MongoDB connection successful",
 	"mongo_uri_required": "MONGO_URI environment variable is required",
-	"user_deleted_successfully": "user_deleted_successfully"
+	"user_deleted_successfully": "user_deleted_successfully",
+	"new_order_received_title": "New order",
+	"new_order_received_message": "You received a new order #%s.",
+	"new_order_notification_creation_error": "New order notification creation error:",
+	"fcm_not_configured": "FCM not configured",
+	"fcm_init_error": "FCM initialization error:",
+	"fcm_send_error": "FCM send error:"
 }

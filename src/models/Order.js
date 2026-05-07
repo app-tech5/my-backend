@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 const autopopulate = require('mongoose-autopopulate');
 const Driver = require("./Driver");
+const User = require("./User");
+const Notification = require("./Notification");
+const i18n = require("../config/i18n");
+const { sendPushToDevice } = require("../services/fcm");
 const orderSchema = new mongoose.Schema(
   {
     user: {
@@ -150,6 +154,44 @@ orderSchema.post('findOneAndUpdate', async function (doc) {
   io.to(`orders-${driver.userId.id}`).emit('order-updated', {
     order: doc,
   });
+});
+orderSchema.post('save', async function (doc) {
+  //if (!doc?.isNew) return;
+  try {
+    const restaurantId = doc.restaurant?._id ?? doc.restaurant;
+    if (!restaurantId) return;
+
+    const restaurantUser = await User.findOne({ restaurant: restaurantId, role: 'restaurant' }).select('_id deviceToken');
+    if (!restaurantUser?._id) return;
+
+    const notificationTitle = i18n.__('new_order_received_title');
+    const notificationMessage = i18n.__('new_order_received_message', doc._id);
+
+    await Notification.create({
+      user: restaurantUser._id,
+      title: notificationTitle,
+      message: notificationMessage,
+      type: 'order',
+      relatedEntity: doc._id,
+      relatedEntityModel: 'Order',
+      action: 'view_order',
+      actionData: { orderId: String(doc._id) },
+      priority: 'high',
+      createdBy: 'system',
+    });
+
+    await sendPushToDevice({
+      token: restaurantUser.deviceToken,
+      title: notificationTitle,
+      body: notificationMessage,
+      data: {
+        type: 'order',
+        orderId: String(doc._id),
+      },
+    });
+  } catch (error) {
+    console.error(i18n.__('new_order_notification_creation_error'), error);
+  }
 });
 orderSchema.pre('find', async function (next) {
   if (this.options.authUser?.type === 'customer') {
