@@ -34,19 +34,36 @@ async function sendPushToDevice({ token, title, body, data = {} }) {
   }
 
   try {
-    const payloadData = Object.entries(data).reduce((acc, [key, value]) => {
+    const merged = {
+      ...(typeof data === 'object' && data !== null ? data : {}),
+      ...(title != null && title !== '' ? { title: String(title) } : {}),
+      ...(body != null && body !== '' ? { body: String(body) } : {}),
+    };
+
+    const payloadData = Object.entries(merged).reduce((acc, [key, value]) => {
       if (value === undefined || value === null) return acc;
       acc[key] = String(value);
       return acc;
     }, {});
 
+    // Data-only so the client `setBackgroundMessageHandler` runs (display + local notification on the app).
     await admin.messaging(app).send({
       token,
-      notification: {
-        title,
-        body,
-      },
       data: payloadData,
+      android: {
+        priority: 'high',
+      },
+      apns: {
+        headers: {
+          'apns-push-type': 'background',
+          'apns-priority': '5',
+        },
+        payload: {
+          aps: {
+            'content-available': 1,
+          },
+        },
+      },
     });
     return { sent: true };
   } catch (error) {
