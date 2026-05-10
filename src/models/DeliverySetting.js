@@ -1,10 +1,27 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
+
+/**
+ * Réglages de livraison par restaurant — à utiliser avec `GET/PATCH` génériques :
+ * `GET /resource/deliverysettings?type=:restaurantId` (filtre comme `Product`).
+ */
 const deliverySettingsSchema = new Schema({
+  restaurant: {
+    type: Schema.Types.ObjectId,
+    ref: 'Restaurant',
+  },
+  isPickupEnabled: {
+    type: Boolean,
+    default: true,
+  },
+  freeDeliveryEnabled: {
+    type: Boolean,
+    default: false,
+  },
   isDeliveryEnabled: {
     type: Boolean,
     default: true,
-    required: true
+    required: true,
   },
   deliveryPreparationTime: { 
     type: Number,
@@ -89,5 +106,16 @@ const deliverySettingsSchema = new Schema({
     ref: 'User'
   }
 }, { timestamps: true });
+
+deliverySettingsSchema.index({ restaurant: 1 }, { unique: true, sparse: true });
+
+deliverySettingsSchema.pre('find', function filterByRestaurantFromQuery(next) {
+  const { queryParams } = this.options || {};
+  if (queryParams?.type) {
+    this.where({ restaurant: queryParams.type });
+  }
+  next();
+});
+
 const DeliverySettings = mongoose.model('DeliverySetting', deliverySettingsSchema);
 module.exports = DeliverySettings;

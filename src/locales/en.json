@@ -188,6 +188,8 @@
 	"user_deleted_successfully": "user_deleted_successfully",
 	"new_order_received_title": "New order",
 	"new_order_received_message": "You received a new order #%s.",
+	"order_cancelled_title": "Order cancelled",
+	"order_cancelled_message": "Order #%s was cancelled.",
 	"new_order_notification_creation_error": "New order notification creation error:",
 	"fcm_not_configured": "FCM not configured",
 	"fcm_init_error": "FCM initialization error:",

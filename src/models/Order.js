@@ -5,6 +5,58 @@ const User = require("./User");
 const Notification = require("./Notification");
 const i18n = require("../config/i18n");
 const { sendPushToDevice } = require("../services/fcm");
+
+async function notifyRestaurantAboutOrder(doc, kind) {
+  const restaurantId = doc.restaurant?._id ?? doc.restaurant;
+  if (!restaurantId) return;
+
+  const restaurantUser = await User.findOne({ restaurant: restaurantId, role: 'restaurant' }).select('_id deviceToken');
+  if (!restaurantUser?._id) return;
+
+  const orderIdStr = String(doc._id);
+  let notificationTitle;
+  let notificationMessage;
+  let notificationType;
+  let pushDataType;
+
+  if (kind === 'new') {
+    notificationTitle = i18n.__('new_order_received_title');
+    notificationMessage = i18n.__('new_order_received_message', orderIdStr);
+    notificationType = 'order';
+    pushDataType = 'order';
+  } else if (kind === 'cancelled') {
+    notificationTitle = i18n.__('order_cancelled_title');
+    notificationMessage = i18n.__('order_cancelled_message', orderIdStr);
+    notificationType = 'order_status';
+    pushDataType = 'order_cancelled';
+  } else {
+    return;
+  }
+
+  await Notification.create({
+    user: restaurantUser._id,
+    title: notificationTitle,
+    message: notificationMessage,
+    type: notificationType,
+    relatedEntity: doc._id,
+    relatedEntityModel: 'Order',
+    action: 'view_order',
+    actionData: { orderId: orderIdStr },
+    priority: 'high',
+    createdBy: 'system',
+  });
+
+  await sendPushToDevice({
+    token: restaurantUser.deviceToken,
+    title: notificationTitle,
+    body: notificationMessage,
+    data: {
+      type: pushDataType,
+      orderId: orderIdStr,
+    },
+  });
+}
+
 const orderSchema = new mongoose.Schema(
   {
     user: {
@@ -149,46 +201,20 @@ orderSchema.post('findOneAndUpdate', async function (doc) {
   io.to(`orders-${doc.user.id}`).emit('order-updated', {
     order: doc,
   });
-  const driver = await Driver.findOne({ _id: doc.driver._id });
-  // const driverId = String(doc.driver._id);
-  io.to(`orders-${driver.userId.id}`).emit('order-updated', {
-    order: doc,
-  });
+  if(doc.driver) {
+    const driver = await Driver.findOne({ _id: doc.driver._id });
+    // const driverId = String(doc.driver._id);
+    io.to(`orders-${driver.userId.id}`).emit('order-updated', {
+      order: doc,
+    });
+  }
+  if(doc.status === 'cancelled') {
+    // await notifyRestaurantAboutOrder(doc, 'cancelled');
+  }
 });
 orderSchema.post('save', async function (doc) {
-  //if (!doc?.isNew) return;
   try {
-    const restaurantId = doc.restaurant?._id ?? doc.restaurant;
-    if (!restaurantId) return;
-
-    const restaurantUser = await User.findOne({ restaurant: restaurantId, role: 'restaurant' }).select('_id deviceToken');
-    if (!restaurantUser?._id) return;
-
-    const notificationTitle = i18n.__('new_order_received_title');
-    const notificationMessage = i18n.__('new_order_received_message', doc._id);
-
-    await Notification.create({
-      user: restaurantUser._id,
-      title: notificationTitle,
-      message: notificationMessage,
-      type: 'order',
-      relatedEntity: doc._id,
-      relatedEntityModel: 'Order',
-      action: 'view_order',
-      actionData: { orderId: String(doc._id) },
-      priority: 'high',
-      createdBy: 'system',
-    });
-
-    await sendPushToDevice({
-      token: restaurantUser.deviceToken,
-      title: notificationTitle,
-      body: notificationMessage,
-      data: {
-        type: 'order',
-        orderId: String(doc._id),
-      },
-    });
+    await notifyRestaurantAboutOrder(doc, 'new');
   } catch (error) {
     console.error(i18n.__('new_order_notification_creation_error'), error);
   }

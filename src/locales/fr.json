@@ -64,6 +64,8 @@
   "order_not_found": "Commande non trouvée",
   "new_order_received_title": "Nouvelle commande",
   "new_order_received_message": "Vous avez recu une nouvelle commande #%s.",
+  "order_cancelled_title": "Commande annulée",
+  "order_cancelled_message": "La commande #%s a été annulée.",
   "new_order_notification_creation_error": "Erreur creation notification nouvelle commande:",
   "fcm_not_configured": "FCM non configure",
   "fcm_init_error": "Erreur initialisation FCM:",
