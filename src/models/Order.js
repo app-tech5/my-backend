@@ -5,6 +5,7 @@ const User = require("./User");
 const Notification = require("./Notification");
 const i18n = require("../config/i18n");
 const { sendPushToDevice } = require("../services/fcm");
+const Restaurant = require("./Restaurant");
 
 async function notifyRestaurantAboutOrder(doc, kind) {
   const restaurantId = doc.restaurant?._id ?? doc.restaurant;
@@ -229,7 +230,8 @@ orderSchema.pre('find', async function (next) {
     this.where({ $or: [{ driver: driver?._id }, { status: "pending" }] });
   }
   if (this.options.authUser?.type === 'restaurant') {
-    this.where({ restaurant: this.options.authUser.restaurant });
+    const restaurant = await Restaurant.findOne({ users: { value: this.options.authUser.id } });
+    this.where({ restaurant: restaurant?._id });
   }
   next();
 });

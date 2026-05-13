@@ -23,8 +23,9 @@ SettingSchema.pre("findOne", function () {
   this.populate(currencyPopulate);
 });
 
-SettingSchema.pre("find", function () {
+SettingSchema.pre("find", function (next) {
   this.populate(currencyPopulate);
+  next()
 });
 
 SettingSchema.pre("findOneAndUpdate", function () {
