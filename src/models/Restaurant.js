@@ -8,7 +8,7 @@ const restaurantSchema = new mongoose.Schema({
     enum: ["delivery", "pickup"], 
     default: "pending" 
   },
-  url: { type: String, required: true, default: "" },
+  url: { type: String, default: "" },
   display_phone: { type: String, required: true, default: "" },
   phone: { type: String, required: true, default: "" },
   price: { type: String, required: true, default: "", select: false },
