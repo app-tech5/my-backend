@@ -40,7 +40,7 @@ const restaurantSchema = new mongoose.Schema({
     label: { type: String },
   },
   address: { type: String, default: "" },
-  collectTime: { type: Number, default: 0 },
+  collectTime: { type: Number, default: 20 },
   openingTime: { type: String, default: "09:00" },
   closingTime: { type: String, default: "21:00" },
   createdAt: { type: Date, default: Date.now },
