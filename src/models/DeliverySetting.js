@@ -1,14 +1,18 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-
+const autopopulate = require('mongoose-autopopulate');
 /**
  * Réglages de livraison par restaurant — à utiliser avec `GET/PATCH` génériques :
  * `GET /resource/deliverysettings?type=:restaurantId` (filtre comme `Product`).
  */
 const deliverySettingsSchema = new Schema({
+  // ajoute autopopulate pour le restaurant
   restaurant: {
     type: Schema.Types.ObjectId,
     ref: 'Restaurant',
+    autopopulate: {
+      select: 'name address phone image'
+    }
   },
   isPickupEnabled: {
     type: Boolean,
@@ -106,6 +110,8 @@ const deliverySettingsSchema = new Schema({
     ref: 'User'
   }
 }, { timestamps: true });
+
+deliverySettingsSchema.plugin(autopopulate);
 
 deliverySettingsSchema.index({ restaurant: 1 }, { unique: true, sparse: true });
 
