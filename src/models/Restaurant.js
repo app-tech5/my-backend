@@ -25,7 +25,7 @@ const restaurantSchema = new mongoose.Schema({
   ],
   is_closed: { type: Boolean, required: true, default: false },
   isAvailableForDelivery: { type: Boolean, default: false },
-  isActivated: { type: Boolean, default: true },
+  isActivated: { type: Boolean, default: false },
   image_url: { type: String, default: "" },
   theme: { type: String, default: "default" },
   country: { type: String, default: "" },
@@ -54,7 +54,7 @@ const restaurantSchema = new mongoose.Schema({
       label:"",
     }
   },
-  commission_rate: { type: Number, default: 0 },
+  commission_rate: { type: Number, default: 15 },
   reward: { type: String, default: "" },
 });
 restaurantSchema.pre("find", function (next) {
