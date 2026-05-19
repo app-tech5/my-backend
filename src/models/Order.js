@@ -69,7 +69,7 @@ const orderSchema = new mongoose.Schema(
     restaurant: {
       type: mongoose.Schema.Types.ObjectId, ref: "Restaurant", required: true,
       autopopulate: {
-        select: "name phone image address"
+        select: "name phone image address isActivated"
       }
     },
     driver: {
@@ -202,20 +202,22 @@ orderSchema.post('findOneAndUpdate', async function (doc) {
   io.to(`orders-${doc.user.id}`).emit('order-updated', {
     order: doc,
   });
-  if(doc.driver) {
+  if (doc.driver) {
     const driver = await Driver.findOne({ _id: doc.driver._id });
     // const driverId = String(doc.driver._id);
     io.to(`orders-${driver.userId.id}`).emit('order-updated', {
       order: doc,
     });
   }
-  if(doc.status === 'cancelled') {
+  if (doc.status === 'cancelled') {
     // await notifyRestaurantAboutOrder(doc, 'cancelled');
   }
 });
 orderSchema.post('save', async function (doc) {
   try {
-    await notifyRestaurantAboutOrder(doc, 'new');
+    if (doc.restaurant.isActivated) {
+      await notifyRestaurantAboutOrder(doc, 'new');
+    }
   } catch (error) {
     console.error(i18n.__('new_order_notification_creation_error'), error);
   }
