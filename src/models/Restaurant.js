@@ -81,24 +81,24 @@ restaurantSchema.post('findOneAndUpdate', async function (doc) {
     restaurant: doc,
   });
 
-  // try {
-  //   if (!doc?.isActivated || this.previousRestaurant?.isActivated) return;
-  //   const restaurantId = String(doc._id);
-  //   await notifyResource({
-  //     userFilter: { restaurant: doc._id, role: 'restaurant' },
-  //     titleKey: 'restaurant_activated_title',
-  //     messageKey: 'restaurant_activated_message',
-  //     messageArgs: [doc.name || restaurantId],
-  //     type: 'new_restaurant',
-  //     relatedEntity: doc._id,
-  //     relatedEntityModel: 'Restaurant',
-  //     action: 'view_restaurant',
-  //     actionData: { restaurantId },
-  //     pushData: { type: 'restaurant_activated', restaurantId },
-  //   });
-  // } catch (error) {
-  //   console.error(i18n.__('restaurant_activation_notification_error'), error);
-  // }
+  try {
+    if (!doc?.isActivated || this.previousRestaurant?.isActivated) return;
+    const restaurantId = String(doc._id);
+    await notifyResource({
+      userFilter: { restaurant: doc._id, role: 'restaurant' },
+      titleKey: 'restaurant_activated_title',
+      messageKey: 'restaurant_activated_message',
+      messageArgs: [doc.name || restaurantId],
+      type: 'new_restaurant',
+      relatedEntity: doc._id,
+      relatedEntityModel: 'Restaurant',
+      action: 'view_restaurant',
+      actionData: { restaurantId },
+      pushData: { type: 'restaurant_activated', restaurantId },
+    });
+  } catch (error) {
+    console.error(i18n.__('restaurant_activation_notification_error'), error);
+  }
 });
 const Restaurant = mongoose.model('Restaurant', restaurantSchema);
 module.exports = Restaurant;
