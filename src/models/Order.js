@@ -1,62 +1,9 @@
 const mongoose = require("mongoose");
 const autopopulate = require('mongoose-autopopulate');
 const Driver = require("./Driver");
-const User = require("./User");
-const Notification = require("./Notification");
 const i18n = require("../config/i18n");
-const { sendPushToDevice } = require("../services/fcm");
+const { notifyResource } = require("../services/notifyResource");
 const Restaurant = require("./Restaurant");
-
-async function notifyRestaurantAboutOrder(doc, kind) {
-  const restaurantId = doc.restaurant?._id ?? doc.restaurant;
-  if (!restaurantId) return;
-
-  const restaurantUser = await User.findOne({ restaurant: restaurantId, role: 'restaurant' }).select('_id deviceToken');
-  if (!restaurantUser?._id) return;
-
-  const orderIdStr = String(doc._id);
-  let notificationTitle;
-  let notificationMessage;
-  let notificationType;
-  let pushDataType;
-
-  if (kind === 'new') {
-    notificationTitle = i18n.__('new_order_received_title');
-    notificationMessage = i18n.__('new_order_received_message', orderIdStr);
-    notificationType = 'order';
-    pushDataType = 'order';
-  } else if (kind === 'cancelled') {
-    notificationTitle = i18n.__('order_cancelled_title');
-    notificationMessage = i18n.__('order_cancelled_message', orderIdStr);
-    notificationType = 'order_status';
-    pushDataType = 'order_cancelled';
-  } else {
-    return;
-  }
-
-  await Notification.create({
-    user: restaurantUser._id,
-    title: notificationTitle,
-    message: notificationMessage,
-    type: notificationType,
-    relatedEntity: doc._id,
-    relatedEntityModel: 'Order',
-    action: 'view_order',
-    actionData: { orderId: orderIdStr },
-    priority: 'high',
-    createdBy: 'system',
-  });
-
-  await sendPushToDevice({
-    token: restaurantUser.deviceToken,
-    title: notificationTitle,
-    body: notificationMessage,
-    data: {
-      type: pushDataType,
-      orderId: orderIdStr,
-    },
-  });
-}
 
 const orderSchema = new mongoose.Schema(
   {
@@ -210,13 +157,26 @@ orderSchema.post('findOneAndUpdate', async function (doc) {
     });
   }
   if (doc.status === 'cancelled') {
-    // await notifyRestaurantAboutOrder(doc, 'cancelled');
+    // await notifyResource({ userFilter: { restaurant: doc.restaurant?._id ?? doc.restaurant, role: 'restaurant' }, titleKey: 'order_cancelled_title', messageKey: 'order_cancelled_message', messageArgs: [String(doc._id)], type: 'order_status', relatedEntity: doc._id, relatedEntityModel: 'Order', action: 'view_order', actionData: { orderId: String(doc._id) }, pushData: { type: 'order_cancelled', orderId: String(doc._id) } });
   }
 });
 orderSchema.post('save', async function (doc) {
   try {
     if (doc.restaurant.isActivated) {
-      await notifyRestaurantAboutOrder(doc, 'new');
+      const restaurantId = doc.restaurant?._id ?? doc.restaurant;
+      const orderId = String(doc._id);
+      await notifyResource({
+        userFilter: { restaurant: restaurantId, role: 'restaurant' },
+        titleKey: 'new_order_received_title',
+        messageKey: 'new_order_received_message',
+        messageArgs: [orderId],
+        type: 'order',
+        relatedEntity: doc._id,
+        relatedEntityModel: 'Order',
+        action: 'view_order',
+        actionData: { orderId },
+        pushData: { type: 'order', orderId },
+      });
     }
   } catch (error) {
     console.error(i18n.__('new_order_notification_creation_error'), error);

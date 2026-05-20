@@ -191,6 +191,9 @@
 	"order_cancelled_title": "Order cancelled",
 	"order_cancelled_message": "Order #%s was cancelled.",
 	"new_order_notification_creation_error": "New order notification creation error:",
+	"restaurant_activated_title": "Restaurant activated",
+	"restaurant_activated_message": "Your restaurant %s is now live.",
+	"restaurant_activation_notification_error": "Restaurant activation notification error:",
 	"fcm_not_configured": "FCM not configured",
 	"fcm_init_error": "FCM initialization error:",
 	"fcm_send_error": "FCM send error:"

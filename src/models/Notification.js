@@ -58,7 +58,7 @@ const notificationSchema = new Schema({
     required: function() {
       return ['order_status', 'delivery_update', 'payment'].includes(this.type);
     },
-    enum: ['Order', 'Payment', 'Delivery', 'Review']
+    enum: ['Order', 'Payment', 'Delivery', 'Review', 'Restaurant']
   },
   action: {
     type: String,
