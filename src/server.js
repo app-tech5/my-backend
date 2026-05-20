@@ -51,6 +51,10 @@ io.on('connection', (socket) => {
     socket.join(`orders-${userId}`);
   });
 
+  socket.on('joinRestaurantRoom', (restaurantId) => {
+    socket.join(`restaurant-${restaurantId}`);
+  });
+
   socket.on('joinOrderTrackingRoom', (orderId) => {
      
     socket.join(`order-${orderId}`);
