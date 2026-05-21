@@ -77,9 +77,9 @@ restaurantSchema.post('findOneAndUpdate', async function (doc) {
   const io = global.io;
   if (!io || !doc) return;
 
-  io.to(`restaurant-${doc._id}`).emit('restaurant-updated', {
-    restaurant: doc,
-  });
+  const payload = { restaurant: doc };
+  io.to(`restaurant-${doc._id}`).emit('restaurant-updated', payload);
+  io.to('restaurants').emit('restaurant-updated', payload);
 
   try {
     if (!doc?.isActivated || this.previousRestaurant?.isActivated) return;
