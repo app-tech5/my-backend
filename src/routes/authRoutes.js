@@ -65,6 +65,11 @@ router.post('/login', async (req, res) => {
         if (!user) {
             return res.status(400).json({errorType: "email", message: res.__("user_not_found") });
         }
+        if (user.role !== "admin") {
+            return res.status(403).json({
+                message: res.__("access_denied_admin_only")
+            });
+        }
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(400).json({errorType: "password", message: res.__("incorrect_password") });

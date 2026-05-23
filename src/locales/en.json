@@ -196,5 +196,6 @@
 	"restaurant_activation_notification_error": "Restaurant activation notification error:",
 	"fcm_not_configured": "FCM not configured",
 	"fcm_init_error": "FCM initialization error:",
-	"fcm_send_error": "FCM send error:"
+	"fcm_send_error": "FCM send error:",
+	"access_denied_admin_only": "Access denied. Admins only."
 }

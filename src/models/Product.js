@@ -13,7 +13,7 @@ const ProductSchema = new mongoose.Schema({
     required: true,
     default: new mongoose.Types.ObjectId()
   }, 
-  categories: { type: Object, default: { value: "", label: "" } },
+  // categories: { type: Object, default: { value: "", label: "" } },
   restaurant: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Restaurant",
