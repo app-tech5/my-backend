@@ -55,7 +55,7 @@ router.post('/signup', async (req, res) => {
         res.status(500).json({ message: res.__("server_error") });
     }
 });
-router.post('/login', async (req, res) => {
+const loginUser = async (req, res, allowedRole, accessDeniedKey) => {
     try {
         const { email, password } = req.body;
         if (!email || !password) {
@@ -65,20 +65,25 @@ router.post('/login', async (req, res) => {
         if (!user) {
             return res.status(400).json({errorType: "email", message: res.__("user_not_found") });
         }
-        if (user.role !== "admin") {
+        if (user.role !== allowedRole) {
             return res.status(403).json({
-                message: res.__("access_denied_admin_only")
+                message: res.__(accessDeniedKey)
             });
+        }
+        if (user.isActive === false) {
+            return res.status(403).json({ message: res.__("account_disabled") });
         }
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(400).json({errorType: "password", message: res.__("incorrect_password") });
         }
-        const token = jwt.sign({ id: user._id, type: user.role, restaurant: user.restaurant, isDemo: user.isDemo }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        const token = jwt.sign({ id: user._id, type: user.role, restaurant: user.restaurant, isDemo: user.isDemo, isActive: user.isActive }, process.env.JWT_SECRET, { expiresIn: '7d' });
         res.cookie('token', token, { httpOnly: true, secure: false, sameSite: 'Strict' });
         return res.json({ message: res.__("login_successful"), token, user });
     } catch (error) {
         res.status(500).json({ message: res.__("server_error") });
     }
-});
+};
+router.post('/login', (req, res) => loginUser(req, res, "admin", "access_denied_admin_only"));
+router.post('/delivery-login', (req, res) => loginUser(req, res, "delivery", "access_denied"));
 module.exports = router;

@@ -13,6 +13,9 @@ const authMiddleware = (req, res, next) => {
   }
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET); 
+    if (decoded.isActive === false) {
+      return res.status(403).json({ message: i18n.__("account_disabled") });
+    }
     req.user = decoded; 
     next();
   } catch (error) {
