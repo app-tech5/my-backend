@@ -150,6 +150,7 @@
 	"set_default_payment_method_error": "Set default payment method error:",
 	"not_found": "Not Found",
 	"deleted_successfully": "Deleted successfully",
+	"demo_mode_action_not_available": "This action is not available in demo mode.",
 	"you_can_only_modify_your_own_orders": "You can only modify your own orders",
 	"error_fetching_default_fields": "Error fetching default fields:",
 	"internal_server_error": "Internal server error",

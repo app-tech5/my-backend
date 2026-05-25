@@ -38,6 +38,7 @@ const genericController = (Model) => {
     },
     create: async (req, res) => {
       try {
+        if (req.user?.isDemo) return res.status(403).json({ message: i18n.__("demo_mode_action_not_available") });
         const newItem = await Model.create(req.body);
         res.status(201).json(newItem);
       } catch (error) {
@@ -46,6 +47,7 @@ const genericController = (Model) => {
     },
     update: async (req, res) => {
       try {
+        if (req.user?.isDemo) return res.status(403).json({ message: i18n.__("demo_mode_action_not_available") });
         if (Model.modelName === 'Order') {
           const allowedStatusUpdates = {
             'pending': ['cancelled'],
@@ -85,6 +87,7 @@ const genericController = (Model) => {
     },
     delete: async (req, res) => {
       try {
+        if (req.user?.isDemo) return res.status(403).json({ message: i18n.__("demo_mode_action_not_available") });
         const deletedItem = await Model.findByIdAndDelete(req.params.id).setOptions({
           role: req.user?.type,
           authUser: req.user,

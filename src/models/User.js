@@ -42,7 +42,11 @@ const UserSchema = new mongoose.Schema(
         asDelivery: { type: Number }
       },
       stripeCustomerId: { type: String, default: '' },
-      deviceToken: { type: String, default: '' } 
+      deviceToken: { type: String, default: '' },
+      isDemo: {
+        type: Boolean,
+        default: false,
+      },
     },
     { timestamps: true }
   );

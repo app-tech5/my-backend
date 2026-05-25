@@ -72,5 +72,6 @@
   "restaurant_activation_notification_error": "Erreur notification activation restaurant:",
   "fcm_not_configured": "FCM non configure",
   "fcm_init_error": "Erreur initialisation FCM:",
-  "fcm_send_error": "Erreur envoi FCM:"
+  "fcm_send_error": "Erreur envoi FCM:",
+  "demo_mode_action_not_available": "Cette action n'est pas disponible en mode démo."
 }

@@ -74,7 +74,7 @@ router.post('/login', async (req, res) => {
         if (!isMatch) {
             return res.status(400).json({errorType: "password", message: res.__("incorrect_password") });
         }
-        const token = jwt.sign({ id: user._id, type: user.role, restaurant: user.restaurant }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        const token = jwt.sign({ id: user._id, type: user.role, restaurant: user.restaurant, isDemo: user.isDemo }, process.env.JWT_SECRET, { expiresIn: '7d' });
         res.cookie('token', token, { httpOnly: true, secure: false, sameSite: 'Strict' });
         return res.json({ message: res.__("login_successful"), token, user });
     } catch (error) {
