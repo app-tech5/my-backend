@@ -68,4 +68,15 @@ UserSchema.pre("find", async function (next) {
   }
   next();
 });
+UserSchema.pre("findOneAndUpdate", async function (next) {
+  this.previousUser = await this.model.findOne(this.getQuery());
+  next();
+});
+UserSchema.post("findOneAndUpdate", async function (doc) {
+  const io = global.io;
+  if (!io || !doc) return;
+  if (doc.isActive === false && this.previousUser?.isActive !== false) {
+    io.to(`user-${doc._id}`).emit("user-disabled");
+  }
+});
 module.exports = mongoose.model("User", UserSchema);
