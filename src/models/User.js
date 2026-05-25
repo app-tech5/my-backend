@@ -10,8 +10,8 @@ const UserSchema = new mongoose.Schema(
       image: { type: String, default: '' },
       address: { type: String, default: '' },
       location: {
-        latitude: { type: Number, default: null },
-        longitude: { type: Number, default: null }
+        latitude: { type: Number},
+        longitude: { type: Number}
       },
       role: { 
         type: String, 

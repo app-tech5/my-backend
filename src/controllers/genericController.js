@@ -7,7 +7,11 @@ const genericController = (Model) => {
   return {
     getAll: async (req, res) => {
       try {
-        const items = await Model.find().setOptions({ queryParams: req.query, role: req.user?.type, authUser: req.user });
+        const items = await Model.find(
+          {
+            role: { $ne: 'admin' }
+          }
+        ).setOptions({ queryParams: req.query, role: req.user?.type, authUser: req.user });
         res.json(items);
       } catch (error) {
         res.status(500).json({ error: error.message });
@@ -26,7 +30,7 @@ const genericController = (Model) => {
     },
     getByUserId: async (req, res) => {
       try {
-        const item = await Model.find({$or: [{user: req.user.id}, {userId: req.user.id}]});
+        const item = await Model.find({ $or: [{ user: req.user.id }, { userId: req.user.id }] });
         res.json(item);
       } catch (error) {
         res.status(500).json({ error: error.message });
@@ -44,7 +48,7 @@ const genericController = (Model) => {
       try {
         if (Model.modelName === 'Order') {
           const allowedStatusUpdates = {
-            'pending': ['cancelled'], 
+            'pending': ['cancelled'],
           };
           const currentOrder = await Model.findById(req.params.id);
           if (!currentOrder) {
@@ -66,7 +70,8 @@ const genericController = (Model) => {
         const updatedItem = await Model.findByIdAndUpdate(
           req.params.id,
           req.body,
-          { new: true,
+          {
+            new: true,
             runValidators: true
           }
         ).setOptions({ role: req.user?.type, authUser: req.user });
@@ -110,27 +115,27 @@ const genericController = (Model) => {
       }
     },
     getSchema: async (req, res) => {
-        try {
-          const schema = Model.schema;
-          const simplifiedSchema = {};
-          Object.entries(schema.paths).forEach(([path, schemaType]) => {
-            if (["_id", "__v", "createdAt", "updatedAt"].includes(path)) return;
-            if (schemaType.schema) {
-              const subSchema = {};
-              Object.entries(schemaType.schema.paths).forEach(([subPath, subType]) => {
-                subSchema[subPath] = subType.defaultValue;
-              });
-              simplifiedSchema[path] = [subSchema];
-            } else {
-              simplifiedSchema[path] = schemaType.defaultValue;
-            }
-          });
-          res.json(simplifiedSchema);
-        } catch (error) {
-          res.status(500).json({ error: error.message });
-        }
+      try {
+        const schema = Model.schema;
+        const simplifiedSchema = {};
+        Object.entries(schema.paths).forEach(([path, schemaType]) => {
+          if (["_id", "__v", "createdAt", "updatedAt"].includes(path)) return;
+          if (schemaType.schema) {
+            const subSchema = {};
+            Object.entries(schemaType.schema.paths).forEach(([subPath, subType]) => {
+              subSchema[subPath] = subType.defaultValue;
+            });
+            simplifiedSchema[path] = [subSchema];
+          } else {
+            simplifiedSchema[path] = schemaType.defaultValue;
+          }
+        });
+        res.json(simplifiedSchema);
+      } catch (error) {
+        res.status(500).json({ error: error.message });
       }
-      ,
+    }
+    ,
   };
 };
 module.exports = genericController;
