@@ -40,6 +40,11 @@ const DriverSchema = new Schema(
   },
   { id: false, timestamps: true }
 );
+DriverSchema.virtual("image").get(function () {
+  return this.userId?.image || "";
+});
+DriverSchema.set("toJSON", { virtuals: true });
+DriverSchema.set("toObject", { virtuals: true });
 function transformUsersField(doc) {
   doc.userId = doc.users.value;
   doc.users = {
