@@ -58,10 +58,11 @@ router.post('/signup', async (req, res) => {
 const loginUser = async (req, res, allowedRole, accessDeniedKey) => {
     try {
         const { email, password } = req.body;
-        if (!email || !password) {
+        const normalizedEmail = typeof email === 'string' ? email.trim() : email;
+        if (!normalizedEmail || !password) {
             return res.status(400).json({ message: res.__("email_and_password_required") });
         }
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email: normalizedEmail });
         if (!user) {
             return res.status(400).json({errorType: "email", message: res.__("user_not_found") });
         }
@@ -85,5 +86,6 @@ const loginUser = async (req, res, allowedRole, accessDeniedKey) => {
     }
 };
 router.post('/login', (req, res) => loginUser(req, res, "admin", "access_denied_admin_only"));
+router.post('/customer-login', (req, res) => loginUser(req, res, "customer", "access_denied"));
 router.post('/delivery-login', (req, res) => loginUser(req, res, "delivery", "access_denied"));
 module.exports = router;
