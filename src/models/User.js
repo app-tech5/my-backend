@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 const convertToModelName = require("../utils/convertToModelName");
 const UserSchema = new mongoose.Schema(
     {
@@ -68,8 +69,13 @@ UserSchema.pre("find", async function (next) {
   }
   next();
 });
+UserSchema.pre("save", async function (next) {
+  if (this.isModified("password") && this.password) this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
 UserSchema.pre("findOneAndUpdate", async function (next) {
   this.previousUser = await this.model.findOne(this.getQuery());
+  if (this.getUpdate()?.password) this.getUpdate().password = await bcrypt.hash(this.getUpdate().password, 10);
   next();
 });
 UserSchema.post("findOneAndUpdate", async function (doc) {

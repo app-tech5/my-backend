@@ -24,7 +24,7 @@ const ProductSchema = new mongoose.Schema({
   availability: { type: Boolean, required: true, default: false },
   preparation_time: { type: Number, required: true, default: 0 }, 
   tags: { type: [String], required: true, select: false, default: [] },
-  ingredients: { type: [String], required: true, default: [] },
+  ingredients: { type: [String], default: [] },
   discount: {
     type: Object,
     default: {

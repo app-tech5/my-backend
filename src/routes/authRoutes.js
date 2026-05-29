@@ -7,7 +7,7 @@ const router = express.Router();
 router.use(i18n.init);
 router.post('/signup', async (req, res) => {
     try {
-        const { email, password, name, phone, address, lat, lng, role } = req.body;
+        const { email, password, name, phone, address, lat, lng, role, location } = req.body;
         console.log('Signup request received:', { email, name, role }); // Debug log
 
         if (!email || !password || !name) {
@@ -25,15 +25,16 @@ router.post('/signup', async (req, res) => {
         if (existingUser) {
             return res.status(400).json({errorType: "email", message: res.__("email_already_in_use") });
         }
-        const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new User({
             email,
-            password: hashedPassword,
+            password,
             name,
             phone: phone || '',
             address: address || '',
-            lat: lat || 0,
-            lng: lng || 0,
+            location: location || {
+                latitude: Number(lat) || 0,
+                longitude: Number(lng) || 0,
+            },
             role: role || 'customer'
         });
         await newUser.save();
@@ -47,8 +48,8 @@ router.post('/signup', async (req, res) => {
                 name: newUser.name,
                 phone: newUser.phone,
                 address: newUser.address,
-                lat: newUser.lat,
-                lng: newUser.lng
+                lat: newUser.location?.latitude || 0,
+                lng: newUser.location?.longitude || 0
             }
         });
     } catch (error) {
