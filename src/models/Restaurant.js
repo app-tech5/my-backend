@@ -6,10 +6,10 @@ const restaurantSchema = new mongoose.Schema({
   distance: { type: Number, required: true, default: 0 },
   rating: { type: Number, required: true, default: 0 },
   review_count: { type: Number, required: true, default: 0 },
-  serviceModes: { 
-    type: String, 
-    enum: ["delivery", "pickup"], 
-    default: "pending" 
+  serviceModes: {
+    type: String,
+    enum: ["delivery", "pickup"],
+    default: "pending"
   },
   display_phone: { type: String, required: true, default: "" },
   phone: { type: String, required: true, default: "" },
@@ -38,7 +38,7 @@ const restaurantSchema = new mongoose.Schema({
   longitude: { type: String, default: "" },
   image: { type: String, default: "" },
   users: {
-    value: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true},
+    value: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     label: { type: String },
   },
   address: { type: String, default: "" },
@@ -48,18 +48,42 @@ const restaurantSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   tax: {
     type: Object,
-    default:{
+    default: {
       id: { type: String },
-      location:"",
-      rate:"0.00",
-      name:"TVA",
-      value: { type: mongoose.Schema.Types.ObjectId, ref: "Tax", required: true},
-      label:"",
+      location: "",
+      rate: "0.00",
+      name: "TVA",
+      value: { type: mongoose.Schema.Types.ObjectId, ref: "Tax", required: true },
+      label: "",
     }
   },
   commission_rate: { type: Number, default: 15 },
   reward: { type: String, default: "" },
 });
+restaurantSchema.pre("save", async function (next) {
+  if (this.tax?.value) {
+    return next();
+  }
+  try {
+    const Tax = mongoose.model("Tax");
+    const defaultTax = await Tax.findOne().sort({ createdAt: 1 });
+    if (!defaultTax) {
+      return next();
+    }
+    this.tax = {
+      id: String(defaultTax._id),
+      location: defaultTax.location || "",
+      rate: String(defaultTax.rate ?? "0.00"),
+      name: defaultTax.name || "TVA",
+      value: defaultTax._id,
+      label: defaultTax.name || "",
+    };
+  } catch (error) {
+    console.error("Restaurant default tax assignment failed:", error);
+  }
+  next();
+});
+
 restaurantSchema.pre("find", function (next) {
   this.populate([
     { path: "serviceModes.value", model: "ServiceMode" },
@@ -70,6 +94,12 @@ restaurantSchema.pre("find", function (next) {
   next();
 });
 restaurantSchema.pre('findOneAndUpdate', async function (next) {
+  const update = this.getUpdate();
+  const t = update.$set?.tax ?? update.tax;
+  if (t?.value && !t.name) {
+    const d = await mongoose.model('Tax').findOne({ _id: t.value }).lean();
+    Object.assign(t, { id: String(t.value), name: d?.name, rate: String(d?.rate ?? 0), location: d?.location || '' });
+  }
   this.previousRestaurant = await this.model.findOne(this.getQuery());
   next();
 });

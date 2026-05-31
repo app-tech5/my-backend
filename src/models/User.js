@@ -2,55 +2,62 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const convertToModelName = require("../utils/convertToModelName");
 const UserSchema = new mongoose.Schema(
-    {
-      email: { type: String, required: true, unique: true, default: "" },
-      password: { type: String, required: true, 
-        default: ''},
-      name: { type: String, default: '' },
-      phone: { type: String, default: '' },
-      image: { type: String, default: '' },
-      address: { type: String, default: '' },
-      location: {
-        latitude: { type: Number},
-        longitude: { type: Number}
-      },
-      role: { 
-        type: String, 
-        enum: ['customer', 'restaurant', 'delivery', 'admin'], 
-        default: 'customer' 
-      },
-      favorites: [{ 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Restaurant' 
-      }],
-      orders: [{ 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Order' 
-      }],
-      restaurant: { 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Restaurant' 
-      },
-      deliveryZones: [{ type: String }],
-      isActive: { type: Boolean, default: true },
-      paymentMethods: [{
-        type: { type: String, enum: ['card', 'paypal', 'cash'] },
-        details: mongoose.Schema.Types.Mixed
-      }],
-      ratings: {
-        asCustomer: { type: Number},
-        asRestaurant: { type: Number },
-        asDelivery: { type: Number }
-      },
-      stripeCustomerId: { type: String, default: '' },
-      deviceToken: { type: String, default: '' },
-      isDemo: {
-        type: Boolean,
-        default: false,
-      },
+  {
+    email: { type: String, required: true, unique: true, default: "" },
+    password: {
+      type: String, required: true,
+      default: ''
     },
-    { timestamps: true }
-  );
+    name: { type: String, default: '' },
+    phone: { type: String, default: '' },
+    image: { type: String, default: '' },
+    address: {
+      type: String, default: '',
+      required: function () {
+        return this.role === 'customer';
+      }
+    },
+    location: {
+      latitude: { type: Number },
+      longitude: { type: Number }
+    },
+    role: {
+      type: String,
+      enum: ['customer', 'restaurant', 'delivery', 'admin'],
+      default: 'customer'
+    },
+    favorites: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Restaurant'
+    }],
+    orders: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Order'
+    }],
+    restaurant: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Restaurant'
+    },
+    deliveryZones: [{ type: String }],
+    isActive: { type: Boolean, default: true },
+    paymentMethods: [{
+      type: { type: String, enum: ['card', 'paypal', 'cash'] },
+      details: mongoose.Schema.Types.Mixed
+    }],
+    ratings: {
+      asCustomer: { type: Number },
+      asRestaurant: { type: Number },
+      asDelivery: { type: Number }
+    },
+    stripeCustomerId: { type: String, default: '' },
+    deviceToken: { type: String, default: '' },
+    isDemo: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  { timestamps: true }
+);
 UserSchema.virtual("value").get(function () {
   return this._id;
 });
