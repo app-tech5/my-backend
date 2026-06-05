@@ -1,46 +1,48 @@
 const express = require("express");
-const multer = require("multer");
-const path = require("path");
 const dotenv = require("dotenv");
 const crypto = require("crypto");
+const uploadRateLimit = require('../middleware/uploadRateLimit');
+const uploadDiskQuota = require('../middleware/uploadDiskQuota');
+const {
+  privateUpload,
+  publicUpload,
+  memoryUpload,
+  runUpload,
+} = require('../utils/uploadValidation');
+const { buildPublicFileUrl } = require('../utils/publicUpload');
 
 dotenv.config();
 
 const router = express.Router();
 
-/* ---------------- LOCAL UPLOAD ---------------- */
-
-const storage = multer.diskStorage({
-  destination: "./uploads/",
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
-});
-
-const upload = multer({ storage });
-
-router.post("/", upload.single("image"), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: "No file uploaded" });
+router.post(
+  "/",
+  uploadRateLimit,
+  uploadDiskQuota,
+  runUpload(privateUpload.single("image")),
+  (req, res) => {
+    const url = `${req.protocol}://${req.get("host")}/api/uploads/${req.file.filename}`;
+    res.json({ url });
   }
+);
 
-  const url = `${req.protocol}://${req.get("host")}/api/uploads/${req.file.filename}`;
-
-  res.json({ url });
-});
-
-/* ---------------- IMGBB RELAY ---------------- */
-
-const uploadMemory = multer({ storage: multer.memoryStorage() });
+router.post(
+  '/public',
+  uploadRateLimit,
+  uploadDiskQuota,
+  runUpload(publicUpload.single('image')),
+  (req, res) => {
+    const url = buildPublicFileUrl(req, req.body.folder, req.file.filename);
+    res.json({ url });
+  }
+);
 
 router.post(
   "/get-imgbb-link",
-  uploadMemory.single("image"),
+  uploadRateLimit,
+  uploadDiskQuota,
+  runUpload(memoryUpload.single("image")),
   async (req, res) => {
-    if (!req.file) {
-      return res.status(400).json({ error: "No file uploaded" });
-    }
-
     try {
       const postData = new URLSearchParams({
         image: req.file.buffer.toString("base64"),
@@ -70,16 +72,10 @@ router.post(
   }
 );
 
-/* ---------------- CLOUDINARY SIGNATURE ---------------- */
-
 router.get("/cloudinary-signature", (req, res) => {
   try {
     const timestamp = Math.round(Date.now() / 1000);
-
-    // paramètres à signer
     const paramsToSign = `timestamp=${timestamp}${process.env.CLOUDINARY_API_SECRET}`;
-
-    // génération signature SHA1
     const signature = crypto
       .createHash("sha1")
       .update(paramsToSign)

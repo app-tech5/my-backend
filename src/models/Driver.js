@@ -45,7 +45,14 @@ DriverSchema.virtual("image").get(function () {
 });
 DriverSchema.set("toJSON", { virtuals: true });
 DriverSchema.set("toObject", { virtuals: true });
+
+const USER_ID_POPULATE = {
+  path: "userId",
+  select: "name email phone image value label",
+};
+
 function transformUsersField(doc) {
+  if (!doc?.users?.value) return;
   doc.userId = doc.users.value;
   doc.users = {
     value: doc.users.value,
@@ -58,12 +65,13 @@ DriverSchema.pre("save", function (next) {
   next();
 });
 DriverSchema.pre("findOneAndUpdate", function (next) {
-    const update = this.getUpdate();
-    if (update?.users) {
-      transformUsersField(update);
-    }
-    next();
-  });
+  this.populate(USER_ID_POPULATE);
+  const update = this.getUpdate();
+  if (update?.users) {
+    transformUsersField(update);
+  }
+  next();
+});
 DriverSchema.post("findOneAndUpdate", function (doc) {
   if(doc.currentOrder) {
     global.io.to(`order-${doc.currentOrder}`).emit('driver-location-updated', {
@@ -72,18 +80,12 @@ DriverSchema.post("findOneAndUpdate", function (doc) {
   }
 });
 DriverSchema.pre("findOne", function () {
-  this.populate({
-    path: "userId",
-    select: "name email phone image value label", 
-  });
+  this.populate(USER_ID_POPULATE);
 });
 DriverSchema.post("findOne", function (doc) {
 });
 DriverSchema.pre("find", function () {
-  this.populate({
-    path: "userId",
-    select: "name email phone image value label", 
-  });
+  this.populate(USER_ID_POPULATE);
 });
 DriverSchema.pre("validate", function (next) {
   next();

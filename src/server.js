@@ -24,6 +24,7 @@ const authMiddleware = require('./middleware/authMiddleware');
 const genericRoutes = require("./routes/genericRoutes");
 const stripePaymentRoutes = require("./routes/stripePaymentRoutes");
 const fs = require('fs');
+const path = require('path');
 const https = require('https');
 dotenv.config();
 connectDB();
@@ -81,6 +82,10 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 app.use("/api/auth", authRoutes);
+app.use("/api/public", (req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  next();
+}, express.static(path.join(__dirname, "../public")));
 app.use("/api", authMiddleware);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/drivers', driverRoutes);
@@ -93,9 +98,14 @@ app.use("/api/user-settings", userSettingsRoutes);
 app.use("/api/resource", genericRoutes);
 app.use("/api/payments", stripePaymentRoutes);
 app.use("/api/upload", uploadRoutes);
-app.use("/api/uploads", express.static("uploads"));
+app.use("/api/uploads", (req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  next();
+}, express.static("uploads"));
 app.use('/api', cleanupRouter);
+const startCleanupCron = require('./jobs/cleanupCron');
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.info(`Server running on port ${PORT}`);
+  startCleanupCron();
 });

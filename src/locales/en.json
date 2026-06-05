@@ -200,5 +200,9 @@
 	"fcm_not_configured": "FCM not configured",
 	"fcm_init_error": "FCM initialization error:",
 	"fcm_send_error": "FCM send error:",
-	"access_denied_admin_only": "Access denied. Admins only."
+	"access_denied_admin_only": "Access denied. Admins only.",
+	"invalid_file_type": "Invalid file type. Allowed: JPG, PNG, WEBP, PDF.",
+	"upload_file_too_large": "File is too large.",
+	"upload_rate_limit": "Too many uploads. Please try again later.",
+	"upload_disk_quota_exceeded": "Upload storage limit reached."
 }

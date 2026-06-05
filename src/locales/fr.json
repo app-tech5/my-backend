@@ -75,5 +75,9 @@
   "fcm_not_configured": "FCM non configure",
   "fcm_init_error": "Erreur initialisation FCM:",
   "fcm_send_error": "Erreur envoi FCM:",
-  "demo_mode_action_not_available": "Cette action n'est pas disponible en mode démo."
+  "demo_mode_action_not_available": "Cette action n'est pas disponible en mode démo.",
+  "invalid_file_type": "Type de fichier invalide. Autorisés : JPG, PNG, WEBP, PDF.",
+  "upload_file_too_large": "Fichier trop volumineux.",
+  "upload_rate_limit": "Trop d'envois. Réessayez plus tard.",
+  "upload_disk_quota_exceeded": "Limite de stockage des uploads atteinte."
 }
