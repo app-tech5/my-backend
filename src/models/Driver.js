@@ -51,6 +51,8 @@ const USER_ID_POPULATE = {
   select: "name email phone image value label",
 };
 
+const ONLINE_STATUSES = ["available", "busy", "on_delivery"];
+
 function transformUsersField(doc) {
   if (!doc?.users?.value) return;
   doc.userId = doc.users.value;
@@ -64,13 +66,22 @@ DriverSchema.pre("save", function (next) {
   transformUsersField(this);
   next();
 });
-DriverSchema.pre("findOneAndUpdate", function (next) {
+DriverSchema.pre("findOneAndUpdate", async function () {
   this.populate(USER_ID_POPULATE);
   const update = this.getUpdate();
   if (update?.users) {
     transformUsersField(update);
   }
-  next();
+
+  const nextStatus = update?.status ?? update?.$set?.status;
+  if (!nextStatus || nextStatus === "offline" || !ONLINE_STATUSES.includes(nextStatus)) {
+    return;
+  }
+
+  const doc = await this.model.findOne(this.getQuery()).select("isApproved").lean();
+  if (doc && !doc.isApproved) {
+    throw new Error("driver_not_approved");
+  }
 });
 DriverSchema.post("findOneAndUpdate", function (doc) {
   if(doc.currentOrder) {

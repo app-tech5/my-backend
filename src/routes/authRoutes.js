@@ -89,4 +89,10 @@ const loginUser = async (req, res, allowedRole, accessDeniedKey) => {
 router.post('/login', (req, res) => loginUser(req, res, "admin", "access_denied_admin_only"));
 router.post('/customer-login', (req, res) => loginUser(req, res, "customer", "access_denied"));
 router.post('/delivery-login', (req, res) => loginUser(req, res, "delivery", "access_denied"));
+router.post('/restaurant-login', (req, res) => loginUser(req, res, "restaurant", "access_denied"));
+
+router.use((req, res) => {
+  res.status(404).json({ message: res.__('not_found') });
+});
+
 module.exports = router;
