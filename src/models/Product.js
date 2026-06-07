@@ -23,7 +23,7 @@ const ProductSchema = new mongoose.Schema({
   restaurants: { type: Object, default: { value: "", label: "" } },
   availability: { type: Boolean, required: true, default: false },
   preparation_time: { type: Number, required: true, default: 0 }, 
-  tags: { type: [String], required: true, select: false, default: [] },
+  tags: { type: [String], required: true, default: [] },
   ingredients: { type: [String], default: [] },
   discount: {
     type: Object,
