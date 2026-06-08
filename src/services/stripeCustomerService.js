@@ -1,7 +1,7 @@
 const Stripe = require('stripe');
 const User = require('../models/User');
 
-const stripe = new Stripe('sk_test_51TIcAILenxtQOhEhGELACfIVrHZVNG7WwUO0YxXKecYqIvX0JZx10vpEgT8QMD0pVvaFj9O2NTGxtq712ZaxTF6i001wWeZeez');
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 async function getUserOrThrow(userId) {
   const user = await User.findById(userId);

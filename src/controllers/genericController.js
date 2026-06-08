@@ -121,8 +121,10 @@ const genericController = (Model) => {
       try {
         const schema = Model.schema;
         const simplifiedSchema = {};
-        Object.entries(schema.paths).forEach(([path, schemaType]) => {
+        Object.keys(schema.tree).forEach((path) => {
           if (["_id", "__v", "createdAt", "updatedAt"].includes(path)) return;
+          const schemaType = schema.paths[path];
+          if (!schemaType) return;
           if (schemaType.schema) {
             const subSchema = {};
             Object.entries(schemaType.schema.paths).forEach(([subPath, subType]) => {
