@@ -30,7 +30,18 @@ const genericController = (Model) => {
     },
     getByUserId: async (req, res) => {
       try {
-        const item = await Model.find({ $or: [{ user: req.user.id }, { userId: req.user.id }] });
+        const query = Model.find({
+          $or: [{ user: req.user.id }, { userId: req.user.id }],
+        });
+        const item = await query;
+
+        if (Model.modelName === 'Transaction') {
+          return res.json({
+            transactions: item,
+            balance: query._walletBalance ?? 0,
+          });
+        }
+
         res.json(item);
       } catch (error) {
         res.status(500).json({ error: error.message });

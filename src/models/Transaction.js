@@ -12,7 +12,8 @@ const transactionSchema = new mongoose.Schema({
       'delivery_fee',        
       'tip',                
       'refund',             
-      'adjustment'          
+      'adjustment',
+      'customer_top_up'          
     ],
     required: true
   },
@@ -103,5 +104,35 @@ const transactionSchema = new mongoose.Schema({
 addPopulateMiddleware(transactionSchema, [
     { path: "user", select: "name image" },
 ])
+
+transactionSchema.post('find', function (docs) {
+  const filter = this.getFilter();
+  const isByUserId = filter.$or?.some((condition) => condition.user || condition.userId);
+
+  if (!isByUserId || !Array.isArray(docs)) return;
+
+  this._walletBalance = docs.reduce((acc, doc) => {
+    if (doc.status !== 'completed') return acc;
+    const amount = Number(doc.amount) || 0;
+
+    if (
+      doc.transaction_type === 'customer_top_up' ||
+      doc.transaction_type === 'refund' ||
+      doc.transaction_type === 'adjustment'
+    ) {
+      return acc + amount;
+    }
+
+    if (
+      doc.transaction_type === 'customer_payment' &&
+      doc.payment_method === 'platform_credit'
+    ) {
+      return acc - amount;
+    }
+
+    return acc;
+  }, 0);
+});
+
 const Transaction = mongoose.model('Transaction', transactionSchema);
 module.exports = Transaction;
