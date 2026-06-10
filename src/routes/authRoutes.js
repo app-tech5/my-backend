@@ -14,6 +14,10 @@ router.post('/signup', async (req, res) => {
             return res.status(400).json({errorType: "email", message: res.__("email_password_name_required") });
         }
 
+        if (process.env.DEMO_MODE === 'true') {
+            return res.status(403).json({ message: res.__("demo_mode_action_not_available") });
+        }
+
         if (role === 'admin') {
             const existingAdmin = await User.findOne({ role: 'admin' });
             if (existingAdmin) {

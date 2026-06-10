@@ -1,8 +1,13 @@
 const User = require('../models/User');
+const i18n = require('../config/i18n');
 const { stripe, attachPaymentMethodToUser, detachPaymentMethod } = require('../services/stripeCustomerService');
 
 const stripePaymentController = {
   attachPaymentMethodToCustomer: async (req, res) => {
+    if (req.user?.isDemo) {
+      return res.status(403).json({ message: i18n.__('demo_mode_action_not_available') });
+    }
+
     const { paymentMethodId } = req.body || {};
 
     if (!paymentMethodId || typeof paymentMethodId !== 'string') {
@@ -26,6 +31,10 @@ const stripePaymentController = {
     });
   },
   removePaymentMethod: async (req, res) => {
+    if (req.user?.isDemo) {
+      return res.status(403).json({ message: i18n.__('demo_mode_action_not_available') });
+    }
+
     const { paymentMethodId } = req.body || {};
     if (!paymentMethodId || typeof paymentMethodId !== 'string') {
       return res.status(400).json({
