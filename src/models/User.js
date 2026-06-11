@@ -1,6 +1,21 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const convertToModelName = require("../utils/convertToModelName");
+const i18n = require("../config/i18n");
+
+const PROFILE_FIELDS = ['name', 'phone', 'address', 'image', 'location'];
+
+const isProfileUpdatePayload = (update = {}) => {
+  if (PROFILE_FIELDS.some((field) => update[field] != null)) return true;
+  if (update.$set && PROFILE_FIELDS.some((field) => update.$set[field] != null)) return true;
+  return false;
+};
+
+const createDemoProfileUpdateError = () => {
+  const err = new Error(i18n.__('demo_mode_action_not_available'));
+  err.statusCode = 403;
+  return err;
+};
 const UserSchema = new mongoose.Schema(
   {
     email: { type: String, required: true, unique: true, default: "" },
@@ -77,10 +92,19 @@ UserSchema.pre("find", async function (next) {
   next();
 });
 UserSchema.pre("save", async function (next) {
+  if (
+    process.env.DEMO_MODE === 'true' &&
+    PROFILE_FIELDS.some((field) => this.isModified(field))
+  ) {
+    return next(createDemoProfileUpdateError());
+  }
   if (this.isModified("password") && this.password) this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 UserSchema.pre("findOneAndUpdate", async function (next) {
+  if (process.env.DEMO_MODE === 'true' && isProfileUpdatePayload(this.getUpdate())) {
+    return next(createDemoProfileUpdateError());
+  }
   this.previousUser = await this.model.findOne(this.getQuery());
   if (this.getUpdate()?.password) this.getUpdate().password = await bcrypt.hash(this.getUpdate().password, 10);
   next();

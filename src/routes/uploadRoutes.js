@@ -15,8 +15,16 @@ dotenv.config();
 
 const router = express.Router();
 
+const blockDemoUpload = (req, res, next) => {
+  if (process.env.DEMO_MODE === 'true') {
+    return res.status(403).json({ message: res.__('demo_mode_action_not_available') });
+  }
+  next();
+};
+
 router.post(
   "/",
+  blockDemoUpload,
   uploadRateLimit,
   uploadDiskQuota,
   runUpload(privateUpload.single("image")),
@@ -28,6 +36,7 @@ router.post(
 
 router.post(
   '/public',
+  blockDemoUpload,
   uploadRateLimit,
   uploadDiskQuota,
   runUpload(publicUpload.single('image')),
@@ -39,6 +48,7 @@ router.post(
 
 router.post(
   "/get-imgbb-link",
+  blockDemoUpload,
   uploadRateLimit,
   uploadDiskQuota,
   runUpload(memoryUpload.single("image")),
@@ -72,7 +82,7 @@ router.post(
   }
 );
 
-router.get("/cloudinary-signature", (req, res) => {
+router.get("/cloudinary-signature", blockDemoUpload, (req, res) => {
   try {
     const timestamp = Math.round(Date.now() / 1000);
     const paramsToSign = `timestamp=${timestamp}${process.env.CLOUDINARY_API_SECRET}`;

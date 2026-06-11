@@ -126,7 +126,20 @@ orderSchema.post('findOne', function (order) {
   order.tax.amount = order.tax.rate * order.subtotal;
   order.totalPrice = order.items.reduce((a, v) => a + v.total, 0) + order.delivery.deliveryFee + order.tax.amount;
 });
+const getNextStatusFromUpdate = (update = {}) => {
+  if (update.status != null) return update.status;
+  if (update.$set?.status != null) return update.$set.status;
+  return null;
+};
+
 orderSchema.pre('findOneAndUpdate', async function (next) {
+  const nextStatus = getNextStatusFromUpdate(this.getUpdate());
+  if (process.env.DEMO_MODE === 'true' && nextStatus === 'cancelled') {
+    const err = new Error(i18n.__('demo_mode_action_not_available'));
+    err.statusCode = 403;
+    return next(err);
+  }
+
   this.previousOrder = await this.model.findOne(this.getQuery());
   if (this.options.authUser?.type === 'delivery') {
 
