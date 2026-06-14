@@ -14,7 +14,7 @@ const paymentMethodSchema = new Schema({
   methodType: {
     type: String,
     required: true,
-    enum: ['credit_card', 'debit_card', 'paypal', 'apple_pay', 'google_pay', 'bank_transfer', 'cash_on_delivery'],
+    enum: ['credit_card', 'debit_card', 'paypal', 'apple_pay', 'google_pay', 'bank_transfer', 'cash_on_delivery', 'platform_credit'],
     default: 'credit_card'
   },
   isDefault: {
@@ -110,17 +110,57 @@ paymentMethodSchema.pre(/^find/, function(next) {
     });
     next();
   });
+const isDefaultTruthyUpdate = (update = {}) =>
+  update.isDefault === true || update.$set?.isDefault === true;
+
 paymentMethodSchema.pre('save', async function(next) {
-  if (this.isDefault) {
-    try {
+  try {
+    if (this.isNew) {
+      const hasDefault = await this.constructor.exists({
+        user: this.user,
+        isDefault: true,
+        isActive: true,
+      });
+      if (!hasDefault) {
+        this.isDefault = true;
+      }
+    }
+
+    if (this.isDefault) {
       await this.constructor.updateMany(
         { user: this.user, _id: { $ne: this._id } },
         { $set: { isDefault: false } }
       );
+    }
+  } catch (err) {
+    return next(err);
+  }
+  next();
+});
+
+paymentMethodSchema.pre('findOneAndUpdate', async function(next) {
+  const update = this.getUpdate();
+
+  if (process.env.DEMO_MODE === 'true' && isDefaultTruthyUpdate(update)) {
+    const err = new Error(i18n.__('demo_mode_action_not_available'));
+    err.statusCode = 403;
+    return next(err);
+  }
+
+  if (isDefaultTruthyUpdate(update)) {
+    try {
+      const doc = await this.model.findOne(this.getQuery());
+      if (doc?.user) {
+        await this.model.updateMany(
+          { user: doc.user, _id: { $ne: doc._id } },
+          { $set: { isDefault: false } }
+        );
+      }
     } catch (err) {
       return next(err);
     }
   }
+
   next();
 });
 paymentMethodSchema.methods.getMaskedDetails = function() {

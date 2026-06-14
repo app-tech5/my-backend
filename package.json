@@ -17,7 +17,8 @@
     "migrate:create": "migrate-mongo create",
     "test:migrations": "vitest run __tests__/migrations.test.js",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "sync:mongo:vps": "node scripts/sync-mongo-vps.js"
   },
   "keywords": [],
   "author": "",

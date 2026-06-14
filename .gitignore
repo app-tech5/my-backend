@@ -94,6 +94,9 @@ build/
 tmp/
 temp/
 
+# VPS mongo sync backups (local copies)
+backups/vps-before-sync-*/
+
 # Deployment security - Exclude original migrations with sensitive data
 run-migrations-ordered.sh
 
