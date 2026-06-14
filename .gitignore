@@ -94,7 +94,8 @@ build/
 tmp/
 temp/
 
-# VPS mongo sync backups (local copies)
+# VPS mongo sync backups (mongodump — ne pas committer)
+backups/vps*/
 backups/vps-before-sync-*/
 
 # Deployment security - Exclude original migrations with sensitive data
