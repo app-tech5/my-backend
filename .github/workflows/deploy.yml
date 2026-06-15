@@ -13,7 +13,27 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to VPS
+      - uses: actions/checkout@v4
+
+      - name: Sync code to VPS
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          rsync -avz \
+            --exclude node_modules \
+            --exclude .git \
+            --exclude backups \
+            --exclude .env \
+            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
+            ./ "${VPS_USER}@${VPS_HOST}:${VPS_APP_PATH}/"
+
+      - name: Install, migrate and restart
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -25,8 +45,6 @@ jobs:
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
             cd "${{ env.VPS_APP_PATH }}"
-            git fetch origin features-online
-            git reset --hard origin/features-online
             npm ci --omit=dev
             npm run migrate:up
             pm2 restart "${{ env.VPS_PM2_NAME }}"
