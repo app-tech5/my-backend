@@ -24,7 +24,8 @@ jobs:
           envs: STRIPE_SECRET_KEY
           script_stop: true
           script: |
-            set -euo pipefail
+            set -eo pipefail
+            set -x
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
             cd "${{ env.VPS_APP_PATH }}"
@@ -32,18 +33,37 @@ jobs:
             sync_env() {
               key="$1"
               value="$2"
-              [ -n "$value" ] || return 0
+              echo "[sync_env] key=${key} value_length=${#value}"
+              [ -n "$value" ] || { echo "[sync_env] skip (empty value)"; return 0; }
               touch .env
               if grep -q "^${key}=" .env; then
                 sed -i "s|^${key}=.*|${key}=${value}|" .env
+                echo "[sync_env] updated existing ${key}"
               else
                 echo "${key}=${value}" >> .env
+                echo "[sync_env] appended ${key}"
               fi
             }
 
+            echo "=== 1/5 git fetch ==="
             git fetch origin features-online
+
+            echo "=== 2/5 git reset ==="
             git reset --hard origin/features-online
-            sync_env STRIPE_SECRET_KEY "$STRIPE_SECRET_KEY"
+
+            echo "=== 3/5 sync STRIPE_SECRET_KEY ==="
+            if [ -z "${STRIPE_SECRET_KEY:-}" ]; then
+              echo "[warn] STRIPE_SECRET_KEY not set in GitHub Secrets"
+            else
+              echo "[info] STRIPE_SECRET_KEY received (length=${#STRIPE_SECRET_KEY})"
+            fi
+            sync_env STRIPE_SECRET_KEY "${STRIPE_SECRET_KEY:-}" || { echo "[error] sync_env failed with exit $?"; exit 1; }
+
+            echo "=== 4/5 npm ci + migrate ==="
             npm ci
             npm run migrate:up
+
+            echo "=== 5/5 pm2 restart ==="
             pm2 restart "${{ env.VPS_PM2_NAME }}"
+
+            echo "=== deploy done ==="
