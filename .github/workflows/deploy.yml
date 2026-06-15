@@ -45,6 +45,6 @@ jobs:
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
             cd "${{ env.VPS_APP_PATH }}"
-            npm ci --omit=dev
+            npm ci
             npm run migrate:up
             pm2 restart "${{ env.VPS_PM2_NAME }}"
