@@ -12,7 +12,7 @@ A complete Node.js backend for a food delivery application built with Express.js
 - **🚚 Delivery System** - Real-time driver tracking and delivery management
 - **💳 Payment Integration** - Multiple payment methods and transaction handling
 - **⭐ Reviews & Ratings** - Customer reviews and rating system
-- **📍 Geolocation** - Location-based services for delivery and restaurant discovery
+- **📍 Geolocation** - Location-based services for delivery and restaurant discovery 
 
 ### Technical Features
 - **🔄 Real-time Updates** - Socket.io for live order tracking and notifications
