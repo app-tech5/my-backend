@@ -10,13 +10,13 @@ const orderSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId, ref: "User", required: true,
       autopopulate: {
-        select: "name phone image address"
+        select: "name phone image address location"
       }
     },
     restaurant: {
       type: mongoose.Schema.Types.ObjectId, ref: "Restaurant", required: true,
       autopopulate: {
-        select: "name phone image address isActivated"
+        select: "name phone image address isActivated latitude longitude"
       }
     },
     driver: {
