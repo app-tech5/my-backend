@@ -48,7 +48,7 @@ describe('Database Migrations Tests', () => {
 
     const changelog = await db.collection('changelog').find({}).toArray();
     expect(changelog.length).toBeGreaterThan(0);
-  }, { timeout: 120000 });
+  }, 120000);
 
   test('should seed payment gateways on a fresh database', async () => {
     runMigrateUp();
@@ -57,7 +57,7 @@ describe('Database Migrations Tests', () => {
     expect(gateways.length).toBe(8);
     expect(gateways.map((g) => g.identifier)).toContain('stripe');
     expect(gateways.map((g) => g.identifier)).toContain('cash-on-delivery');
-  }, { timeout: 120000 });
+  }, 120000);
 
   test('should record each migration in the changelog', async () => {
     runMigrateUp();
@@ -68,7 +68,7 @@ describe('Database Migrations Tests', () => {
     expect(fileNames.some((name) => name.includes('12-3-gateways-seed'))).toBe(true);
     expect(fileNames.some((name) => name.includes('19-users-backfill-paris-locations'))).toBe(true);
     expect(fileNames.some((name) => name.includes('22-users-fix-bad-paris-locations-from-migration-19'))).toBe(true);
-  }, { timeout: 120000 });
+  }, 120000);
 
   test('should NOT create sensitive collections on a fresh database', async () => {
     runMigrateUp();
@@ -80,5 +80,5 @@ describe('Database Migrations Tests', () => {
     expect(collectionNames).not.toContain('restaurants');
     expect(collectionNames).not.toContain('orders');
     expect(collectionNames).not.toContain('drivers');
-  }, { timeout: 120000 });
+  }, 120000);
 });
