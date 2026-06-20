@@ -8,6 +8,9 @@ module.exports = [
       'uploads/**',
       'backups/**',
       '*.log',
+      'migrations/**',
+      'migrationsG/**',
+      'scripts/**',
     ],
   },
   {
