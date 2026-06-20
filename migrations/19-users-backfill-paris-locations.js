@@ -74,7 +74,7 @@ function createSeededRandom(seed) {
   let state = seed >>> 0;
   return () => {
     state = (state * 1103515245 + 12345) >>> 0;
-    return state / 0x7fffffff;
+    return state / 4294967296;
   };
 }
 
