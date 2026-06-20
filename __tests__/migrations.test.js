@@ -18,7 +18,7 @@ describe('Database Migrations Tests', () => {
     client = new MongoClient(mongoUri);
     await client.connect();
     db = client.db(dbName);
-  }, { timeout: 120000 });
+  }, 120000);
 
   afterAll(async () => {
     if (client) {
@@ -27,7 +27,7 @@ describe('Database Migrations Tests', () => {
     if (mongoServer) {
       await mongoServer.stop();
     }
-  }, { timeout: 120000 });
+  }, 120000);
 
   beforeEach(async () => {
     await db.dropDatabase();
