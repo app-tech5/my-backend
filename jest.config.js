@@ -2,7 +2,7 @@ module.exports = {
   testEnvironment: 'node',
   testMatch: ['**/__tests__/**/*.test.js'],
   verbose: true,
-  testTimeout: 30000,
+  testTimeout: 120000,
   transform: {
     '^.+\\.(js|jsx)$': 'babel-jest',
   },

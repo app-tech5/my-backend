@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "vitest",
-    "test:ci": "vitest run",
+    "test": "jest",
+    "test:ci": "jest --ci --forceExit",
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "setup": "node scripts/setup.js",
@@ -16,7 +16,7 @@
     "migrate:up": "migrate-mongo up",
     "migrate:down": "migrate-mongo down",
     "migrate:create": "migrate-mongo create",
-    "test:migrations": "vitest run __tests__/migrations.test.js",
+    "test:migrations": "jest __tests__/migrations.test.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "sync:mongo:vps": "node scripts/sync-mongo-vps.js"
@@ -53,8 +53,7 @@
     "reflect-metadata": "^0.2.2",
     "socket.io": "^4.8.1",
     "stripe": "^17.7.0",
-    "typeorm": "^0.3.20",
-    "vitest": "^3.2.4"
+    "typeorm": "^0.3.20"
   },
   "devDependencies": {
     "migrate-mongo": "^11.0.0",
