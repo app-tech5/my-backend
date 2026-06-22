@@ -109,6 +109,11 @@ const CustomerSupportSchema = new Schema({
   }
 }, { timestamps: true });
 CustomerSupportSchema.pre("find", function () {
+  const { queryParams } = this.options || {};
+  if (queryParams?.type) {
+    this.where({ type: queryParams.type });
+  }
+
   this.populate([
     {
       path: "user",
