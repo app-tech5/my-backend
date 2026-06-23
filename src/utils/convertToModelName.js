@@ -15,6 +15,9 @@ const convertToModelName = (collectionName) => {
   if (collectionName === 'customersupports') {
     return 'CustomerSupport';
   }
+  if (collectionName === 'paymentmethods') {
+    return 'PaymentMethod';
+  }
   return (
     pluralize.singular(collectionName).charAt(0).toUpperCase() +
     pluralize.singular(collectionName).slice(1)
