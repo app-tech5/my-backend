@@ -65,6 +65,7 @@ const UserSchema = new mongoose.Schema(
       asDelivery: { type: Number }
     },
     stripeCustomerId: { type: String, default: '' },
+    stripeConnectAccountId: { type: String, default: '' },
     deviceToken: { type: String, default: '' },
     isDemo: {
       type: Boolean,

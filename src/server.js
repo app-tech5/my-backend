@@ -97,6 +97,8 @@ app.use("/api/restaurant", restaurantRoutes);
 app.use("/api/user-settings", userSettingsRoutes);
 app.use("/api/resource", genericRoutes);
 app.use("/api/payments", stripePaymentRoutes);
+const stripeConnectRoutes = require("./routes/stripeConnectRoutes");
+app.use("/api/connect", stripeConnectRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/uploads", (req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');

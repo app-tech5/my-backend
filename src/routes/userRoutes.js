@@ -183,7 +183,11 @@ router.get('/:userId/payment-methods', async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: res.__('user_not_found') });
         }
-        const paymentMethods = await PaymentMethod.find({ user: userId, isActive: true });
+        const filter = { user: userId, isActive: true };
+        if (req.query.purpose) {
+            filter.purpose = req.query.purpose;
+        }
+        const paymentMethods = await PaymentMethod.find(filter);
         res.json(paymentMethods);
     } catch (error) {
         console.error(i18n.__('get_payment_methods_error'), error);
@@ -200,7 +204,7 @@ router.post('/:userId/payment-methods', async (req, res) => {
         }
         if (paymentData.isDefault) {
             await PaymentMethod.updateMany(
-                { user: userId },
+                { user: userId, purpose: paymentData.purpose || 'payment' },
                 { $set: { isDefault: false } }
             );
         }
@@ -216,6 +220,43 @@ router.post('/:userId/payment-methods', async (req, res) => {
         });
     } catch (error) {
         console.error(i18n.__('add_payment_method_error'), error);
+        res.status(500).json({ message: res.__('server_error') });
+    }
+});
+router.put('/:userId/payment-methods/:paymentMethodId', async (req, res) => {
+    try {
+        const { userId, paymentMethodId } = req.params;
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: res.__('user_not_found') });
+        }
+
+        const existing = await PaymentMethod.findOne({ _id: paymentMethodId, user: userId });
+        if (!existing) {
+            return res.status(404).json({ message: res.__('payment_method_not_found') });
+        }
+
+        const paymentData = req.body;
+        if (paymentData.isDefault) {
+            await PaymentMethod.updateMany(
+                { user: userId, purpose: paymentData.purpose || existing.purpose || 'payment' },
+                { $set: { isDefault: false } }
+            );
+        }
+
+        const paymentMethod = await PaymentMethod.findOneAndUpdate(
+            { _id: paymentMethodId, user: userId },
+            { $set: paymentData },
+            { new: true, runValidators: true }
+        );
+
+        res.json({
+            success: true,
+            paymentMethod,
+            message: res.__('payment_method_updated_successfully'),
+        });
+    } catch (error) {
+        console.error(i18n.__('update_payment_method_error'), error);
         res.status(500).json({ message: res.__('server_error') });
     }
 });
@@ -249,8 +290,12 @@ router.put('/:userId/payment-methods/:paymentMethodId/default', async (req, res)
         if (!user) {
             return res.status(404).json({ message: res.__('user_not_found') });
         }
+        const existing = await PaymentMethod.findOne({ _id: paymentMethodId, user: userId });
+        if (!existing) {
+            return res.status(404).json({ message: res.__('payment_method_not_found') });
+        }
         await PaymentMethod.updateMany(
-            { user: userId },
+            { user: userId, purpose: existing.purpose || 'payment' },
             { $set: { isDefault: false } }
         );
         const paymentMethod = await PaymentMethod.findOneAndUpdate(
@@ -258,9 +303,6 @@ router.put('/:userId/payment-methods/:paymentMethodId/default', async (req, res)
             { $set: { isDefault: true } },
             { new: true }
         );
-        if (!paymentMethod) {
-            return res.status(404).json({ message: res.__('payment_method_not_found') });
-        }
         res.json({
             success: true,
             paymentMethod,
