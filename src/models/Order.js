@@ -4,6 +4,7 @@ const Driver = require("./Driver");
 const i18n = require("../config/i18n");
 const { notifyResource } = require("../services/notifyResource");
 const Restaurant = require("./Restaurant");
+const { resolveRestaurantIdForAuthUser } = require("../utils/resolveRestaurantIdForAuthUser");
 
 const orderSchema = new mongoose.Schema(
   {
@@ -205,8 +206,12 @@ orderSchema.pre('find', async function (next) {
     this.where({ $or: [{ driver: driver?._id }, { status: "pending" }] });
   }
   if (this.options.authUser?.type === 'restaurant') {
-    const restaurant = await Restaurant.findOne({ users: { value: this.options.authUser.id } });
-    this.where({ restaurant: restaurant?._id });
+    const restaurantId = await resolveRestaurantIdForAuthUser(this.options.authUser);
+    if (restaurantId) {
+      this.where({ restaurant: restaurantId });
+    } else {
+      this.where({ _id: null });
+    }
   }
   next();
 });
