@@ -69,7 +69,7 @@ const driverReportSchema = new Schema({
     note: String,
     admin: {
       type: Schema.Types.ObjectId,
-      ref: 'Admin'
+      ref: 'User'
     },
     createdAt: {
       type: Date,

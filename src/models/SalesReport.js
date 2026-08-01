@@ -77,8 +77,12 @@ salesReportSchema.pre("find", function () {
 salesReportSchema.pre("findOne", function () {
   this.populate([
     {
+      path: "restaurant",
+      select: "name image",
+    },
+    {
       path: "generatedBy",
-      select: "name", 
+      select: "name",
     },
   ]);
 });
