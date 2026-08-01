@@ -102,7 +102,8 @@ const transactionSchema = new mongoose.Schema({
   toObject: { virtuals: true }
 });
 addPopulateMiddleware(transactionSchema, [
-    { path: "user", select: "name image" },
+    { path: "user", select: "name image email role" },
+    { path: "related_order", select: "status totalPrice createdAt" },
 ])
 
 transactionSchema.post('find', function (docs) {

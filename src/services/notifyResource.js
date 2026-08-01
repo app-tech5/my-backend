@@ -26,12 +26,19 @@ async function notifyResource({
   if (!user?._id) return;
 
   const title = i18n.__(titleKey);
-  const message = i18n.__(messageKey, ...messageArgs);
+  // i18n sprintf: ensure placeholders are filled (avoid persisting raw "%s")
+  const message =
+    Array.isArray(messageArgs) && messageArgs.length > 0
+      ? i18n.__(messageKey, ...messageArgs.map(String))
+      : i18n.__(messageKey);
+  const safeMessage = String(message || '').includes('%s') && messageArgs?.[0] != null
+    ? String(message).replace(/%s/g, String(messageArgs[0]))
+    : message;
 
   await Notification.create({
     user: user._id,
     title,
-    message,
+    message: safeMessage,
     type,
     relatedEntity,
     relatedEntityModel,
@@ -44,7 +51,7 @@ async function notifyResource({
   await sendPushToDevice({
     token: user.deviceToken,
     title,
-    body: message,
+    body: safeMessage,
     data: pushData,
   });
 }

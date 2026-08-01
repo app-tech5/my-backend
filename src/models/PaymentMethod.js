@@ -12,7 +12,8 @@ function maskPaypalEmail(email) {
 const paymentMethodSchema = new Schema({
   id: {
     type: String,
-    required: true
+    required: true,
+    default: () => new mongoose.Types.ObjectId().toString(),
   },
   user: {
     type: Schema.Types.ObjectId,

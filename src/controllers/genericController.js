@@ -23,6 +23,9 @@ const genericController = (Model) => {
           role: req.user?.type,
           authUser: req.user,
         });
+        if (!item) {
+          return res.status(404).json({ message: i18n.__("not_found") });
+        }
         res.json(item);
       } catch (error) {
         res.status(500).json({ error: error.message });
@@ -50,7 +53,16 @@ const genericController = (Model) => {
     create: async (req, res) => {
       try {
         if (req.user?.isDemo) return res.status(403).json({ message: i18n.__("demo_mode_action_not_available") });
-        const newItem = await Model.create(req.body);
+        const payload = { ...req.body };
+        if (req.user?.id) {
+          if (Model.schema?.paths?.createdBy && !payload.createdBy) {
+            payload.createdBy = req.user.id;
+          }
+          if (Model.schema?.paths?.created_by && !payload.created_by) {
+            payload.created_by = req.user.id;
+          }
+        }
+        const newItem = await Model.create(payload);
         res.status(201).json(newItem);
       } catch (error) {
         res.status(500).json({ error: error.message });
@@ -143,7 +155,17 @@ const genericController = (Model) => {
             });
             simplifiedSchema[path] = [subSchema];
           } else {
-            simplifiedSchema[path] = schemaType.defaultValue;
+            let val = schemaType.defaultValue;
+            if (val === undefined) {
+              const inst = schemaType.instance || '';
+              if (inst === 'String') val = '';
+              else if (inst === 'Number') val = 0;
+              else if (inst === 'Boolean') val = false;
+              else if (inst === 'Date') val = null;
+              else if (inst === 'ObjectId' || inst === 'ObjectID') val = '';
+              else if (inst === 'Array') val = [];
+            }
+            simplifiedSchema[path] = val;
           }
         });
         res.json(simplifiedSchema);

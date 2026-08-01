@@ -113,13 +113,18 @@ driverReportSchema.index({ driver: 1, status: 1 });
 driverReportSchema.index({ reporter: 1 });
 driverReportSchema.index({ order: 1 });
 driverReportSchema.index({ createdAt: -1 });
-driverReportSchema.pre("find", function () {
-    this.populate(
-      {
-        path: "reporter",
-        select: "name", 
-      })
-  });
+driverReportSchema.pre(["find", "findOne"], function () {
+  this.populate([
+    { path: "reporter", select: "name email image" },
+    {
+      path: "driver",
+      select: "userId",
+      populate: { path: "userId", select: "name phone image" },
+    },
+    { path: "order", select: "status totalPrice createdAt" },
+    { path: "adminNotes.admin", select: "name" },
+  ]);
+});
 driverReportSchema.pre('save', function(next) {
   this.updatedAt = new Date();
   next();

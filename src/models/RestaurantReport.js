@@ -113,17 +113,19 @@ const restaurantReportSchema = new Schema(
 restaurantReportSchema.index({ restaurant: 1, status: 1 });
 restaurantReportSchema.index({ reportedBy: 1, createdAt: -1 });
 restaurantReportSchema.index({ reportType: 1, status: 1 });
-restaurantReportSchema.pre("find", function () {
+restaurantReportSchema.pre(["find", "findOne"], function () {
   this.populate([
     {
       path: "restaurant",
-      select: "name", 
+      select: "name image address city",
     },
     {
       path: "resolvedBy",
       select: "name",
     },
-    { path: "reportedBy", select: "name" },
+    { path: "reportedBy", select: "name email image" },
+    { path: "orderReference", select: "status totalPrice createdAt" },
+    { path: "adminNotes.addedBy", select: "name" },
   ]);
 });
 restaurantReportSchema.pre("save", function (next) {

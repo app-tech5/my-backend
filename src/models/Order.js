@@ -106,26 +106,61 @@ orderSchema.post('findOne', function (order) {
   if (!Array.isArray(order.items)) {
     return;
   }
-  order.items = order.items.map(item => {
-    const itemId = item.item?._id || item.item;
-    const extrasWithoutId = item.toObject().extras.map(extra => {
-      const { _id, ...rest } = extra;
-      return rest;
-    });
-    const updatedItem = {
-      name: item.item?.name || "",
-      image: item.item?.image || "",
-      price: (item.item?.price) || 0,
-      quantity: item.quantity,
-      extras: item.toObject().extras.map(({ productId, ...rest }) => rest),
-      variants: item.variants,
-      total: item.quantity * item.item?.price + item.extras.reduce((a, v) => a + v.price * v.quantity, 0)
+  const previousSubtotal = order.subtotal;
+  const previousTaxAmount = order.tax?.amount;
+  const previousTotal = order.totalPrice;
+
+  order.items = order.items.map((item) => {
+    const raw = typeof item.toObject === "function" ? item.toObject() : item;
+    const populated =
+      raw.item && typeof raw.item === "object" && raw.item.name != null
+        ? raw.item
+        : null;
+    const extras = Array.isArray(raw.extras) ? raw.extras : [];
+    const extrasTotal = extras.reduce(
+      (sum, extra) => sum + Number(extra.price || 0) * Number(extra.quantity || 1),
+      0
+    );
+    const quantity = Number(raw.quantity || 1);
+    const unitPrice = Number(
+      populated?.price ?? raw.price ?? 0
+    );
+    const computedTotal = quantity * unitPrice + extrasTotal;
+    const snapshotTotal = Number(raw.total);
+    const total =
+      Number.isFinite(computedTotal) && computedTotal > 0
+        ? computedTotal
+        : Number.isFinite(snapshotTotal)
+          ? snapshotTotal
+          : 0;
+
+    return {
+      name: populated?.name || raw.name || "Item",
+      image: populated?.image || raw.image || "",
+      price: unitPrice || (quantity ? total / quantity : 0),
+      quantity,
+      extras: extras.map(({ productId, _id, ...rest }) => rest),
+      variants: raw.variants || [],
+      total,
     };
-    return updatedItem;
   });
-  order.subtotal = order.items.reduce((a, v) => a + v.total, 0);
-  order.tax.amount = order.tax.rate * order.subtotal;
-  order.totalPrice = order.items.reduce((a, v) => a + v.total, 0) + order.delivery.deliveryFee + order.tax.amount;
+
+  const itemsSubtotal = order.items.reduce((sum, row) => sum + Number(row.total || 0), 0);
+  if (itemsSubtotal > 0) {
+    order.subtotal = itemsSubtotal;
+    if (order.tax) {
+      order.tax.amount = Number(order.tax.rate || 0) * itemsSubtotal;
+    }
+    order.totalPrice =
+      itemsSubtotal +
+      Number(order.delivery?.deliveryFee || 0) +
+      Number(order.tax?.amount || 0);
+  } else {
+    // Keep persisted totals when line items could not be priced from catalog
+    if (previousSubtotal != null) order.subtotal = previousSubtotal;
+    if (order.tax && previousTaxAmount != null) order.tax.amount = previousTaxAmount;
+    if (previousTotal != null) order.totalPrice = previousTotal;
+  }
 });
 const getNextStatusFromUpdate = (update = {}) => {
   if (update.status != null) return update.status;

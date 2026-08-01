@@ -86,6 +86,11 @@ app.use("/api/public", (req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   next();
 }, express.static(path.join(__dirname, "../public")));
+// Public static uploads must be before auth: <img src> cannot send Bearer tokens.
+app.use("/api/uploads", (req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  next();
+}, express.static(path.join(__dirname, "../uploads")));
 app.use("/api", authMiddleware);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/drivers', driverRoutes);
@@ -100,10 +105,6 @@ app.use("/api/payments", stripePaymentRoutes);
 const stripeConnectRoutes = require("./routes/stripeConnectRoutes");
 app.use("/api/connect", stripeConnectRoutes);
 app.use("/api/upload", uploadRoutes);
-app.use("/api/uploads", (req, res, next) => {
-  res.setHeader('X-Content-Type-Options', 'nosniff');
-  next();
-}, express.static("uploads"));
 app.use('/api', cleanupRouter);
 const startCleanupCron = require('./jobs/cleanupCron');
 const PORT = process.env.PORT || 5000;

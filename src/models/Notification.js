@@ -117,27 +117,27 @@ const notificationSchema = new Schema({
   toObject: { virtuals: true }
 });
 notificationSchema.pre('find', function (next) {
-  if (this.options?.authUser?.id) {
+  if (this.options?.authUser?.id && this.options?.role !== 'admin') {
     this.where({ user: this.options.authUser.id });
   }
   this.populate({ path: 'user', select: 'name' });
   next();
 });
 notificationSchema.pre('findOne', function (next) {
-  if (this.options?.authUser?.id) {
+  if (this.options?.authUser?.id && this.options?.role !== 'admin') {
     this.where({ user: this.options.authUser.id });
   }
   this.populate({ path: 'user', select: 'name' });
   next();
 });
 notificationSchema.pre('findOneAndUpdate', function (next) {
-  if (this.options?.authUser?.id) {
+  if (this.options?.authUser?.id && this.options?.role !== 'admin') {
     this.where({ user: this.options.authUser.id });
   }
   next();
 });
 notificationSchema.pre('findOneAndDelete', function (next) {
-  if (this.options?.authUser?.id) {
+  if (this.options?.authUser?.id && this.options?.role !== 'admin') {
     this.where({ user: this.options.authUser.id });
   }
   next();

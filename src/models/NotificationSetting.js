@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const addPopulateMiddleware = require('../utils/addPopulateMiddleware');
+
 const notificationSettingSchema = new mongoose.Schema({
   userType: { 
     type: String, 
@@ -9,9 +11,9 @@ const notificationSettingSchema = new mongoose.Schema({
   },
   userId: { 
     type: mongoose.Schema.Types.ObjectId, 
-    refPath: 'userType',
+    ref: 'User',
     index: true,
-    default: new mongoose.Types.ObjectId()
+    required: false,
   },
   channels: {
     type: Object,
@@ -57,4 +59,9 @@ const notificationSettingSchema = new mongoose.Schema({
 }, { 
   timestamps: true 
 });
+
+addPopulateMiddleware(notificationSettingSchema, [
+  { path: 'userId', select: 'name email role image' },
+]);
+
 module.exports = mongoose.model('NotificationSetting', notificationSettingSchema);
