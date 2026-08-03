@@ -117,6 +117,8 @@ app.use("/api/connect", stripeConnectRoutes);
 app.use("/api/upload", uploadRoutes);
 const orderChatRoutes = require("./routes/orderChatRoutes");
 app.use("/api/orders/:orderId/chat", orderChatRoutes);
+const subscriptionRoutes = require("./routes/subscriptionRoutes");
+app.use("/api/subscriptions", subscriptionRoutes);
 app.use('/api', cleanupRouter);
 const startCleanupCron = require('./jobs/cleanupCron');
 const PORT = process.env.PORT || 5000;

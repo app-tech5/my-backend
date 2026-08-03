@@ -24,7 +24,6 @@ const SubscriptionSchema = new Schema({
     default: 'USD',
     uppercase: true,
     trim: true,
-    select: false
   },
   billing_cycle: {
     type: String,
@@ -34,6 +33,12 @@ const SubscriptionSchema = new Schema({
   benefits: {  
     type: [String],
     default: []
+  },
+  benefitFlags: {
+    freeDelivery: { type: Boolean, default: false },
+    discountPercent: { type: Number, default: 0, min: 0, max: 100 },
+    reducedCommissionPercent: { type: Number, default: 0, min: 0, max: 100 },
+    prioritySupport: { type: Boolean, default: false },
   },
   is_active: {
     type: Boolean,
