@@ -73,6 +73,16 @@ io.on('connection', (socket) => {
     if (!orderId) return;
     socket.leave(`order-${orderId}`);
   });
+
+  socket.on('joinOrderChatRoom', (orderId) => {
+    if (!orderId) return;
+    socket.join(`order-chat-${orderId}`);
+  });
+
+  socket.on('leaveOrderChatRoom', (orderId) => {
+    if (!orderId) return;
+    socket.leave(`order-chat-${orderId}`);
+  });
 });
 
 app.use(cors({
@@ -105,6 +115,8 @@ app.use("/api/payments", stripePaymentRoutes);
 const stripeConnectRoutes = require("./routes/stripeConnectRoutes");
 app.use("/api/connect", stripeConnectRoutes);
 app.use("/api/upload", uploadRoutes);
+const orderChatRoutes = require("./routes/orderChatRoutes");
+app.use("/api/orders/:orderId/chat", orderChatRoutes);
 app.use('/api', cleanupRouter);
 const startCleanupCron = require('./jobs/cleanupCron');
 const PORT = process.env.PORT || 5000;
