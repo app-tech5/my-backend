@@ -121,7 +121,36 @@ CustomerSupportSchema.pre("find", function () {
     },
     {
       path: "assigned_to",
-      select: "name", 
+      select: "name email", 
+    },
+    {
+      path: "order",
+      select: "status totalPrice restaurant",
+      populate: {
+        path: "restaurant",
+        select: "name",
+      },
+    },
+  ]);
+});
+
+CustomerSupportSchema.pre("findOne", function () {
+  this.populate([
+    {
+      path: "user",
+      select: "name",
+    },
+    {
+      path: "assigned_to",
+      select: "name email",
+    },
+    {
+      path: "order",
+      select: "status totalPrice restaurant",
+      populate: {
+        path: "restaurant",
+        select: "name",
+      },
     },
   ]);
 });
