@@ -121,6 +121,8 @@ const subscriptionRoutes = require("./routes/subscriptionRoutes");
 app.use("/api/subscriptions", subscriptionRoutes);
 const intelligenceRoutes = require("./routes/intelligenceRoutes");
 app.use("/api/intelligence", intelligenceRoutes);
+const logisticsRoutes = require("./routes/logisticsRoutes");
+app.use("/api/logistics", logisticsRoutes);
 app.use('/api', cleanupRouter);
 const startCleanupCron = require('./jobs/cleanupCron');
 const PORT = process.env.PORT || 5000;

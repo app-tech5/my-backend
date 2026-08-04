@@ -99,5 +99,10 @@
   "intelligence_surge_limited_drivers": "Peu de livreurs en ligne",
   "intelligence_surge_weather_rain": "Impact météo (pluie)",
   "intelligence_surge_weather": "Impact météo (%s)",
-  "intelligence_surge_rush_hour": "Heure de pointe"
+  "intelligence_surge_rush_hour": "Heure de pointe",
+  "logistics_batch_failed": "Échec du groupage de commandes",
+  "logistics_pod_failed": "Échec de la preuve de livraison",
+  "logistics_pod_photo_required": "Une photo est requise pour une livraison sans contact",
+  "logistics_pod_proof_required": "Une photo ou une signature est requise pour terminer la livraison",
+  "logistics_pod_geofence_failed": "Vous devez être à moins de %s mètres du point de livraison"
 }

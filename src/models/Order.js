@@ -80,7 +80,21 @@ const orderSchema = new mongoose.Schema(
       address: { type: String },
       estimatedTime: { type: Date },
       deliveryFee: { type: Number },
-    }
+      proofOfDelivery: {
+        photoUrl: { type: String },
+        signatureData: { type: String },
+        contactless: { type: Boolean, default: false },
+        completedAt: { type: Date },
+        completedLocation: {
+          type: { type: String, enum: ["Point"], default: "Point" },
+          coordinates: { type: [Number] },
+        },
+        geofenceMeters: { type: Number },
+        distanceMeters: { type: Number },
+        geofenceOk: { type: Boolean },
+      },
+    },
+    batchId: { type: String, index: true },
   },
   { timestamps: true }
 );

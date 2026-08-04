@@ -83,11 +83,17 @@ DriverSchema.pre("findOneAndUpdate", async function () {
     throw new Error("driver_not_approved");
   }
 });
-DriverSchema.post("findOneAndUpdate", function (doc) {
-  if(doc.currentOrder) {
-    global.io.to(`order-${doc.currentOrder}`).emit('driver-location-updated', {
-      location: doc.location,
-    });
+DriverSchema.post("findOneAndUpdate", async function (doc) {
+  if (!doc) return;
+  try {
+    const { emitDriverLocationToActiveOrders } = require("../services/logisticsService");
+    await emitDriverLocationToActiveOrders(doc);
+  } catch (error) {
+    if (doc.currentOrder && global.io) {
+      global.io.to(`order-${doc.currentOrder}`).emit("driver-location-updated", {
+        location: doc.location,
+      });
+    }
   }
 });
 DriverSchema.pre("findOne", function () {
