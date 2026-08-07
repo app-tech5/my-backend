@@ -67,9 +67,35 @@ const orderSchema = new mongoose.Schema(
       default: "pending"
     },
     payment: {
-      method: { type: String, enum: ["credit_card", "mobile_money", "cash_on_delivery", "paypal", "google_pay", "apple_pay"], required: true },
-      status: { type: String, enum: ["pending", "paid", "failed"], default: "pending" },
-      transactionId: { type: String }
+      method: {
+        type: String,
+        enum: [
+          "credit_card",
+          "mobile_money",
+          "cash_on_delivery",
+          "paypal",
+          "google_pay",
+          "apple_pay",
+          "paystack",
+          "flutterwave",
+          "razorpay",
+          "wallet",
+          "crypto",
+        ],
+        required: true,
+      },
+      status: { type: String, enum: ["pending", "paid", "failed", "refunded"], default: "pending" },
+      transactionId: { type: String },
+      provider: { type: String },
+    },
+    orderSource: {
+      type: String,
+      enum: ["app", "whatsapp", "ussd", "web", "admin"],
+      default: "app",
+    },
+    channelMeta: {
+      type: mongoose.Schema.Types.Mixed,
+      default: {},
     },
     delivery: {
       type: {
@@ -207,20 +233,49 @@ orderSchema.pre('findOneAndUpdate', async function (next) {
 orderSchema.post('findOneAndUpdate', async function (doc) {
 
   const io = global.io;
-  if (!io) return;
+  if (!io || !doc) return;
 
-  io.to(`orders-${doc.user.id}`).emit('order-updated', {
-    order: doc,
-  });
-  if (doc.driver) {
-    const driver = await Driver.findOne({ _id: doc.driver._id });
-    // const driverId = String(doc.driver._id);
-    io.to(`orders-${driver.userId.id}`).emit('order-updated', {
-      order: doc,
-    });
+  try {
+    const userId = doc.user?.id || doc.user?._id || doc.user;
+    if (userId) {
+      io.to(`orders-${userId}`).emit('order-updated', {
+        order: doc,
+      });
+    }
+    if (doc.driver) {
+      const driver = await Driver.findOne({ _id: doc.driver._id || doc.driver });
+      if (driver?.userId) {
+        const driverUserId = driver.userId.id || driver.userId._id || driver.userId;
+        io.to(`orders-${driverUserId}`).emit('order-updated', {
+          order: doc,
+        });
+      }
+    }
+  } catch (e) {
+    console.error('order socket emit error', e.message);
   }
-  if (doc.status === 'cancelled') {
-    // await notifyResource({ userFilter: { restaurant: doc.restaurant?._id ?? doc.restaurant, role: 'restaurant' }, titleKey: 'order_cancelled_title', messageKey: 'order_cancelled_message', messageArgs: [String(doc._id)], type: 'order_status', relatedEntity: doc._id, relatedEntityModel: 'Order', action: 'view_order', actionData: { orderId: String(doc._id) }, pushData: { type: 'order_cancelled', orderId: String(doc._id) } });
+
+  try {
+    const AppSetting = require('./AppSetting');
+    const { refundOrderToWallet, applyOrderCashback } = require('../services/walletLedgerService');
+    const { notifyOrderViaChannels } = require('../services/channelService');
+    const settings = await AppSetting.findOne().lean();
+
+    if (doc.status === 'cancelled' && settings?.walletInstantRefundEnabled !== false) {
+      await refundOrderToWallet(doc, { reason: 'order_cancelled' });
+    }
+    if (doc.status === 'delivered') {
+      await applyOrderCashback(doc);
+    }
+
+    if (settings?.whatsappNotifyOnStatus !== false) {
+      await notifyOrderViaChannels(doc, {
+        title: `Order ${String(doc._id).slice(-6)}`,
+        message: `Status: ${doc.status}`,
+      });
+    }
+  } catch (e) {
+    console.error('order post-update side effects', e.message);
   }
 });
 orderSchema.post('save', async function (doc) {
@@ -251,8 +306,32 @@ orderSchema.pre('find', async function (next) {
   }
   if (this.options.authUser?.type === 'delivery') {
     const driver = await Driver.findOne({ userId: this.options.authUser.id });
-    //this.where({ driver:  driver._id });
-    this.where({ $or: [{ driver: driver?._id }, { status: "pending" }] });
+    const { getActiveBenefits } = require('../services/subscriptionService');
+    const { LIMITS } = require('../constants/logistics');
+    const benefits = await getActiveBenefits(this.options.authUser.id, 'driver');
+    const hasPriority = !!(benefits?.active && benefits?.prioritySupport);
+
+    if (hasPriority) {
+      // Priority members see new pending jobs immediately (+ their assigned ones)
+      this.where({
+        $or: [
+          { driver: driver?._id },
+          { status: 'pending' },
+          { status: 'ready', driver: null },
+        ],
+      });
+    } else {
+      // Others wait a short lead window so priority drivers get first look
+      const leadMs = (LIMITS.PRIORITY_JOB_LEAD_SECONDS || 90) * 1000;
+      const cutoff = new Date(Date.now() - leadMs);
+      this.where({
+        $or: [
+          { driver: driver?._id },
+          { status: 'pending', createdAt: { $lte: cutoff } },
+          { status: 'ready', driver: null },
+        ],
+      });
+    }
   }
   if (this.options.authUser?.type === 'restaurant') {
     const restaurantId = await resolveRestaurantIdForAuthUser(this.options.authUser);

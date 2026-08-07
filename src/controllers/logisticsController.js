@@ -20,6 +20,7 @@ async function batchSuggestions(req, res) {
     const data = await findBatchCandidates({
       orderId,
       driverId,
+      driverUserId: req.user?.id,
     });
     return res.json({
       radiusKm: data.radiusKm,

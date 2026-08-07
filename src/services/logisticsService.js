@@ -56,7 +56,7 @@ async function resolveBatchRadiusKm(restaurantId) {
   return Math.max(0.5, Math.min(radius, 15));
 }
 
-async function findBatchCandidates({ orderId, driverId, radiusKm }) {
+async function findBatchCandidates({ orderId, driverId, radiusKm, driverUserId }) {
   const anchor = await Order.findById(orderId).lean();
   if (!anchor) {
     const err = new Error(i18n.__('order_not_found'));
@@ -74,7 +74,25 @@ async function findBatchCandidates({ orderId, driverId, radiusKm }) {
     return { anchor, candidates: [], radiusKm: 0, batchId: null };
   }
 
-  const radius = radiusKm != null ? toNum(radiusKm) : await resolveBatchRadiusKm(anchor.restaurant);
+  let radius = radiusKm != null ? toNum(radiusKm) : await resolveBatchRadiusKm(anchor.restaurant);
+
+  // Priority-plan drivers search a wider neighborhood for batch adds
+  try {
+    const userId =
+      driverUserId ||
+      (driverId
+        ? (await Driver.findById(driverId).select('userId').lean())?.userId
+        : null);
+    if (userId) {
+      const { getActiveBenefits } = require('./subscriptionService');
+      const benefits = await getActiveBenefits(userId, 'driver');
+      if (benefits?.active && benefits?.prioritySupport) {
+        radius = Math.min(15, radius + (LIMITS.PRIORITY_BATCH_RADIUS_BONUS_KM || 1.5));
+      }
+    }
+  } catch (_) {
+    /* keep base radius */
+  }
 
   const pool = await Order.find({
     _id: { $ne: anchor._id },

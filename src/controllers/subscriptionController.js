@@ -22,7 +22,8 @@ async function getWalletBalance(userId) {
     if (
       doc.transaction_type === 'customer_top_up' ||
       doc.transaction_type === 'refund' ||
-      doc.transaction_type === 'adjustment'
+      doc.transaction_type === 'adjustment' ||
+      doc.transaction_type === 'cashback'
     ) {
       return acc + amount;
     }

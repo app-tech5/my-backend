@@ -38,6 +38,10 @@ const SubscriptionSchema = new Schema({
     freeDelivery: { type: Boolean, default: false },
     discountPercent: { type: Number, default: 0, min: 0, max: 100 },
     reducedCommissionPercent: { type: Number, default: 0, min: 0, max: 100 },
+    /** When true, monthly plan fee replaces per-order commission (SaaS access mode). */
+    waiveCommission: { type: Boolean, default: false },
+    /** Marks the plan as platform-access SaaS (vs marketplace commission discount). */
+    platformAccess: { type: Boolean, default: false },
     prioritySupport: { type: Boolean, default: false },
   },
   is_active: {

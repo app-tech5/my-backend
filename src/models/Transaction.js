@@ -13,7 +13,8 @@ const transactionSchema = new mongoose.Schema({
       'tip',                
       'refund',             
       'adjustment',
-      'customer_top_up'          
+      'customer_top_up',
+      'cashback',
     ],
     required: true
   },
@@ -24,7 +25,7 @@ const transactionSchema = new mongoose.Schema({
   },
   currency: { 
     type: String, 
-    enum: ['USD'],
+    default: 'USD',
     required: true,
     select: false
   },
@@ -119,7 +120,8 @@ transactionSchema.post('find', function (docs) {
     if (
       doc.transaction_type === 'customer_top_up' ||
       doc.transaction_type === 'refund' ||
-      doc.transaction_type === 'adjustment'
+      doc.transaction_type === 'adjustment' ||
+      doc.transaction_type === 'cashback'
     ) {
       return acc + amount;
     }

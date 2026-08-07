@@ -101,6 +101,9 @@ app.use("/api/uploads", (req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   next();
 }, express.static(path.join(__dirname, "../uploads")));
+// Public hybrid-channel webhooks (Meta WhatsApp verify + USSD aggregator)
+const { publicRouter: channelPublicRoutes, protectedRouter: channelProtectedRoutes } = require("./routes/channelRoutes");
+app.use("/api/channels", channelPublicRoutes);
 app.use("/api", authMiddleware);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/drivers', driverRoutes);
@@ -123,6 +126,11 @@ const intelligenceRoutes = require("./routes/intelligenceRoutes");
 app.use("/api/intelligence", intelligenceRoutes);
 const logisticsRoutes = require("./routes/logisticsRoutes");
 app.use("/api/logistics", logisticsRoutes);
+const sponsoredListingRoutes = require("./routes/sponsoredListingRoutes");
+app.use("/api/sponsored", sponsoredListingRoutes);
+const paymentGatewayRoutes = require("./routes/paymentGatewayRoutes");
+app.use("/api/gateways", paymentGatewayRoutes);
+app.use("/api/channels", channelProtectedRoutes);
 app.use('/api', cleanupRouter);
 const startCleanupCron = require('./jobs/cleanupCron');
 const PORT = process.env.PORT || 5000;

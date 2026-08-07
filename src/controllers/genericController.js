@@ -62,10 +62,94 @@ const genericController = (Model) => {
             payload.created_by = req.user.id;
           }
         }
+
+        if (Model.modelName === 'PaymentMethod') {
+          const {
+            assertPaymentMethodAllowed,
+          } = require('../services/paymentEligibilityService');
+          await assertPaymentMethodAllowed(payload.methodType);
+        }
+
+        if (Model.modelName === 'Order') {
+          const {
+            assertPaymentMethodAllowed,
+          } = require('../services/paymentEligibilityService');
+          const { priceOrderForCustomer } = require('../services/orderPricingService');
+
+          await assertPaymentMethodAllowed(payload.payment?.method);
+
+          const items = Array.isArray(payload.items) ? payload.items : [];
+          const itemsSubtotal = items.reduce((sum, it) => {
+            const line =
+              Number(it.total) ||
+              Number(it.price || 0) * Number(it.quantity || 1);
+            return sum + line;
+          }, 0);
+          const baseSubtotal =
+            itemsSubtotal > 0 ? itemsSubtotal : Number(payload.subtotal) || 0;
+          const taxRate =
+            payload.tax?.rate != null
+              ? Number(payload.tax.rate)
+              : 0;
+          const priced = await priceOrderForCustomer({
+            userId: payload.user || req.user?.id,
+            subtotal: baseSubtotal,
+            deliveryFee: Number(payload.delivery?.deliveryFee || 0),
+            taxRate,
+          });
+          payload.subtotal = priced.subtotal;
+          payload.tax = {
+            ...(payload.tax || {}),
+            rate: priced.taxRate,
+            amount: priced.taxAmount,
+          };
+          payload.totalPrice = priced.totalPrice;
+          payload.delivery = {
+            ...(payload.delivery || {}),
+            deliveryFee: priced.deliveryFee,
+          };
+          if (priced.discountAmount > 0 || priced.memberFreeDelivery) {
+            payload.channelMeta = {
+              ...(payload.channelMeta || {}),
+              membership: {
+                discountPercent: priced.discountPercent,
+                discountAmount: priced.discountAmount,
+                freeDelivery: priced.memberFreeDelivery,
+                planName: priced.benefits?.planName,
+              },
+            };
+          }
+        }
+
+        if (Model.modelName === 'AppSetting') {
+          const {
+            syncGatewayFlagsFromAppSettings,
+          } = require('../services/paymentEligibilityService');
+          await syncGatewayFlagsFromAppSettings(payload);
+        }
+
+        if (Model.modelName === 'Gateway') {
+          const AppSetting = require('../models/AppSetting');
+          const id = String(payload.identifier || '').toLowerCase();
+          if (id === 'stripe' && typeof payload.active === 'boolean') {
+            await AppSetting.updateOne({}, { $set: { stripeEnabled: !!payload.active } });
+          }
+          if (
+            (id === 'cash-on-delivery' || id === 'cash_on_delivery') &&
+            typeof payload.active === 'boolean'
+          ) {
+            await AppSetting.updateOne(
+              {},
+              { $set: { cashOnDeliveryEnabled: !!payload.active } }
+            );
+          }
+        }
+
         const newItem = await Model.create(payload);
         res.status(201).json(newItem);
       } catch (error) {
-        res.status(500).json({ error: error.message });
+        const status = error.status || 500;
+        res.status(status).json({ error: error.message, message: error.message });
       }
     },
     update: async (req, res) => {
@@ -92,6 +176,31 @@ const genericController = (Model) => {
           //   }
           // }
         }
+        if (Model.modelName === 'AppSetting') {
+          const {
+            syncGatewayFlagsFromAppSettings,
+          } = require('../services/paymentEligibilityService');
+          await syncGatewayFlagsFromAppSettings(req.body);
+        }
+
+        if (Model.modelName === 'Gateway') {
+          const AppSetting = require('../models/AppSetting');
+          const current = await Model.findById(req.params.id).select('identifier');
+          const id = String(current?.identifier || req.body.identifier || '').toLowerCase();
+          if (id === 'stripe' && typeof req.body.active === 'boolean') {
+            await AppSetting.updateOne({}, { $set: { stripeEnabled: !!req.body.active } });
+          }
+          if (
+            (id === 'cash-on-delivery' || id === 'cash_on_delivery') &&
+            typeof req.body.active === 'boolean'
+          ) {
+            await AppSetting.updateOne(
+              {},
+              { $set: { cashOnDeliveryEnabled: !!req.body.active } }
+            );
+          }
+        }
+
         const updatedItem = await Model.findByIdAndUpdate(
           req.params.id,
           req.body,

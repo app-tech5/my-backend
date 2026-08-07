@@ -48,46 +48,54 @@ const stripePaymentController = {
   },
 
   createPaymentIntent: async (req, res) => {
-    const { amount, currency = 'eur' } = req.body || {};
+    try {
+      const { assertPaymentMethodAllowed } = require('../services/paymentEligibilityService');
+      await assertPaymentMethodAllowed('stripe');
 
-    if (
-      amount === undefined ||
-      amount === null ||
-      typeof amount !== 'number' ||
-      !Number.isInteger(amount) ||
-      amount <= 0
-    ) {
-      return res.status(400).json({
-        message: 'amount must be a positive integer (smallest currency unit, e.g. cents)',
+      const { amount, currency = 'eur' } = req.body || {};
+
+      if (
+        amount === undefined ||
+        amount === null ||
+        typeof amount !== 'number' ||
+        !Number.isInteger(amount) ||
+        amount <= 0
+      ) {
+        return res.status(400).json({
+          message: 'amount must be a positive integer (smallest currency unit, e.g. cents)',
+        });
+      }
+
+      if (currency !== undefined && (typeof currency !== 'string' || currency.length !== 3)) {
+        return res.status(400).json({
+          message: 'currency must be a 3-letter ISO code (e.g. eur)',
+        });
+      }
+
+      const user = await User.findById(req.user?.id);
+      if (!user) {
+        return res.status(404).json({
+          message: 'user not found',
+        });
+      }
+
+      if (!user.stripeCustomerId) {
+        return res.status(400).json({
+          message: 'stripeCustomerId not found for user. Add a card first.',
+        });
+      }
+
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount,
+        currency: currency.toLowerCase(),
+        customer: user.stripeCustomerId,
       });
+
+      return res.status(200).json(paymentIntent);
+    } catch (error) {
+      const status = error.status || 500;
+      return res.status(status).json({ message: error.message });
     }
-
-    if (currency !== undefined && (typeof currency !== 'string' || currency.length !== 3)) {
-      return res.status(400).json({
-        message: 'currency must be a 3-letter ISO code (e.g. eur)',
-      });
-    }
-
-    const user = await User.findById(req.user?.id);
-    if (!user) {
-      return res.status(404).json({
-        message: 'user not found',
-      });
-    }
-
-    if (!user.stripeCustomerId) {
-      return res.status(400).json({
-        message: 'stripeCustomerId not found for user. Add a card first.',
-      });
-    }
-
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount,
-      currency: currency.toLowerCase(),
-      customer: user.stripeCustomerId,
-    });
-
-    res.status(200).json(paymentIntent);
   },
 };
 

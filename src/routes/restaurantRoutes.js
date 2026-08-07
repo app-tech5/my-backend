@@ -51,6 +51,16 @@ router.get('/profile', async (req, res) => {
     });
   }
 });
+router.get('/commission', async (req, res) => {
+  try {
+    const { getEffectiveCommissionRate } = require('../services/commissionService');
+    const effective = await getEffectiveCommissionRate(req.restaurant);
+    res.json({ success: true, data: effective });
+  } catch (error) {
+    console.error('restaurant commission', error);
+    res.status(500).json({ success: false, message: res.__('server_error') });
+  }
+});
 router.put('/profile', async (req, res) => {
   try {
     const restaurantId = req.restaurant._id;
