@@ -1,8 +1,10 @@
 name: CI
 
 on:
+  # Tests on PRs / local feature branch only — NOT on features-online
+  # (features-online push runs Deploy backend alone).
   push:
-    branches: [features-online, features-local-clean]
+    branches: [features-local-clean]
   pull_request:
     branches: [features-online, features-local-clean]
   workflow_dispatch:
