@@ -43,20 +43,42 @@ jobs:
               echo "[sync_env] ok ${key} (length=${#value})"
             }
 
-            echo "=== 1/5 git fetch ==="
+            OLD_SHA=$(git rev-parse HEAD)
+
+            echo "=== 1/5 git pull ==="
             git fetch origin features-online
+            git checkout features-online
+            git pull --ff-only origin features-online
 
-            echo "=== 2/5 git reset ==="
-            git reset --hard origin/features-online
+            NEW_SHA=$(git rev-parse HEAD)
+            echo "SHA ${OLD_SHA} -> ${NEW_SHA}"
 
-            echo "=== 3/5 sync STRIPE_SECRET_KEY ==="
+            echo "=== 2/5 sync STRIPE_SECRET_KEY ==="
             sync_env STRIPE_SECRET_KEY "${STRIPE_SECRET_KEY:-}"
 
-            echo "=== 4/5 npm ci + migrate ==="
-            npm ci
-            npm run migrate:up
+            echo "=== 3/5 npm install (only if deps changed) ==="
+            if [ "$OLD_SHA" = "$NEW_SHA" ]; then
+              echo "No new commits — skip npm install"
+            elif git diff --name-only "$OLD_SHA" "$NEW_SHA" | grep -qE '^package(-lock)?\.json$'; then
+              npm install
+            else
+              echo "package.json / package-lock.json unchanged — skip npm install"
+            fi
+
+            echo "=== 4/5 migrate (only if migrations changed) ==="
+            if [ "$OLD_SHA" = "$NEW_SHA" ]; then
+              echo "No new commits — skip migrate"
+            elif git diff --name-only "$OLD_SHA" "$NEW_SHA" | grep -qE '^migrations/'; then
+              npm run migrate:up
+            else
+              echo "migrations/ unchanged — skip migrate"
+            fi
 
             echo "=== 5/5 pm2 restart ==="
-            pm2 restart "${{ env.VPS_PM2_NAME }}"
+            if [ "$OLD_SHA" = "$NEW_SHA" ]; then
+              echo "No new commits — skip pm2 restart"
+            else
+              pm2 restart "${{ env.VPS_PM2_NAME }}"
+            fi
 
             echo "=== deploy done ==="
