@@ -22,7 +22,10 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           envs: STRIPE_SECRET_KEY
-          script_stop: true
+          # IMPORTANT: script_stop must stay false.
+          # When true, appleboy injects "exit if $? != 0" after EVERY line,
+          # which kills multi-line if/elif/functions (e.g. grep no-match).
+          script_stop: false
           script: |
             set -eo pipefail
             export NVM_DIR="$HOME/.nvm"
@@ -43,11 +46,6 @@ jobs:
               echo "[sync_env] ok ${key} (length=${#value})"
             }
 
-            file_changed() {
-              # $1 = regex; never fail the script when grep finds nothing
-              echo "$CHANGED_FILES" | grep -Eq "$1" || return 1
-            }
-
             OLD_SHA=$(git rev-parse HEAD)
 
             echo "=== 1/5 git pull ==="
@@ -62,30 +60,39 @@ jobs:
               CHANGED_FILES=$(git diff --name-only "$OLD_SHA" "$NEW_SHA" || true)
             fi
 
+            NEED_NPM=0
+            NEED_MIGRATE=0
+            case "$CHANGED_FILES" in
+              *package.json*|*package-lock.json*) NEED_NPM=1 ;;
+            esac
+            case "$CHANGED_FILES" in
+              *migrations/*) NEED_MIGRATE=1 ;;
+            esac
+
             echo "=== 2/5 sync STRIPE_SECRET_KEY ==="
             sync_env STRIPE_SECRET_KEY "${STRIPE_SECRET_KEY:-}"
 
             echo "=== 3/5 npm install (only if deps changed) ==="
             if [ "$OLD_SHA" = "$NEW_SHA" ]; then
-              echo "No new commits — skip npm install"
-            elif file_changed '^package(-lock)?\.json$'; then
+              echo "No new commits - skip npm install"
+            elif [ "$NEED_NPM" = "1" ]; then
               npm install
             else
-              echo "package.json / package-lock.json unchanged — skip npm install"
+              echo "package.json / package-lock.json unchanged - skip npm install"
             fi
 
             echo "=== 4/5 migrate (only if migrations changed) ==="
             if [ "$OLD_SHA" = "$NEW_SHA" ]; then
-              echo "No new commits — skip migrate"
-            elif file_changed '^migrations/'; then
+              echo "No new commits - skip migrate"
+            elif [ "$NEED_MIGRATE" = "1" ]; then
               npm run migrate:up
             else
-              echo "migrations/ unchanged — skip migrate"
+              echo "migrations/ unchanged - skip migrate"
             fi
 
             echo "=== 5/5 pm2 restart ==="
             if [ "$OLD_SHA" = "$NEW_SHA" ]; then
-              echo "No new commits — skip pm2 restart"
+              echo "No new commits - skip pm2 restart"
             else
               pm2 restart "${{ env.VPS_PM2_NAME }}"
             fi
