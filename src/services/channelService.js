@@ -3,14 +3,36 @@ const Order = require('../models/Order');
 const User = require('../models/User');
 const Restaurant = require('../models/Restaurant');
 
+function resolveWhatsAppConfig(settings) {
+  const phoneNumberId =
+    settings?.whatsappPhoneNumberId || process.env.WHATSAPP_PHONE_NUMBER_ID || '';
+  const accessToken =
+    settings?.whatsappAccessToken || process.env.WHATSAPP_ACCESS_TOKEN || '';
+  const verifyToken =
+    settings?.whatsappVerifyToken || process.env.WHATSAPP_VERIFY_TOKEN || 'goodfood_whatsapp_verify';
+  const templateLang =
+    settings?.whatsappTemplateLang || process.env.WHATSAPP_TEMPLATE_LANG || 'en';
+
+  return {
+    enabled: !!settings?.whatsappEnabled,
+    phoneNumberId,
+    accessToken,
+    verifyToken,
+    templateLang,
+    configured: !!(phoneNumberId && accessToken),
+  };
+}
+
 async function getChannelConfig() {
   const settings = await AppSetting.findOne().lean();
+  const wa = resolveWhatsAppConfig(settings);
   return {
     whatsapp: {
-      enabled: !!settings?.whatsappEnabled,
-      phoneNumberId: settings?.whatsappPhoneNumberId || '',
+      enabled: wa.enabled,
+      phoneNumberId: wa.phoneNumberId,
       // never expose token to clients
-      configured: !!(settings?.whatsappAccessToken && settings?.whatsappPhoneNumberId),
+      configured: wa.configured,
+      templateLang: wa.templateLang,
     },
     ussd: {
       enabled: !!settings?.ussdEnabled,
@@ -28,11 +50,12 @@ async function getChannelConfig() {
  */
 async function sendWhatsAppMessage({ to, body, templateName, templateLang = 'en', components }) {
   const settings = await AppSetting.findOne().lean();
-  if (!settings?.whatsappEnabled) {
+  const wa = resolveWhatsAppConfig(settings);
+  if (!wa.enabled) {
     return { skipped: true, reason: 'whatsapp_disabled' };
   }
-  const token = settings.whatsappAccessToken;
-  const phoneNumberId = settings.whatsappPhoneNumberId;
+  const token = wa.accessToken;
+  const phoneNumberId = wa.phoneNumberId;
   if (!token || !phoneNumberId || String(token).includes('demo')) {
     return { skipped: true, reason: 'whatsapp_not_configured', demo: true };
   }
@@ -49,7 +72,7 @@ async function sendWhatsAppMessage({ to, body, templateName, templateLang = 'en'
         type: 'template',
         template: {
           name: templateName,
-          language: { code: templateLang },
+          language: { code: templateLang || wa.templateLang },
           components: components || [],
         },
       }
@@ -72,14 +95,20 @@ async function sendWhatsAppMessage({ to, body, templateName, templateLang = 'en'
   if (!res.ok) {
     return { ok: false, status: res.status, data };
   }
-  return { ok: true, data };
+  return {
+    ok: true,
+    messageId: data?.messages?.[0]?.id || null,
+    contactWaId: data?.contacts?.[0]?.wa_id || null,
+    data,
+  };
 }
 
 async function notifyOrderViaChannels(order, { title, message }) {
+  const settings = await AppSetting.findOne().lean();
   const userId = order?.user?._id || order?.user;
   const user = userId ? await User.findById(userId).select('phone name').lean() : null;
   const results = {};
-  if (user?.phone) {
+  if (settings?.whatsappNotifyOnStatus !== false && user?.phone) {
     results.whatsapp = await sendWhatsAppMessage({
       to: user.phone,
       body: `${title}\n${message}`,
@@ -277,6 +306,7 @@ async function createChannelOrder({
 
 module.exports = {
   getChannelConfig,
+  resolveWhatsAppConfig,
   sendWhatsAppMessage,
   notifyOrderViaChannels,
   handleUssdSession,

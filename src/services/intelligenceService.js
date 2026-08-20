@@ -14,6 +14,11 @@ const DeliverySetting = require('../models/DeliverySetting');
 const Restaurant = require('../models/Restaurant');
 const i18n = require('../config/i18n');
 const {
+  applyRecommendationProvider,
+  applyEtaProvider,
+  applySurgeProvider,
+} = require('./ai/recommendationProviders');
+const {
   ACTIVE_ORDER_STATUSES,
   KITCHEN_STATUSES,
   ONLINE_DRIVER_STATUSES,
@@ -254,17 +259,46 @@ async function getRecommendations({
     .sort((a, b) => b.score - a.score)
     .slice(0, clampRecoLimit(limit));
 
+  const builtinItems = ranked.map((r) => ({
+    ...r.product,
+    recommendationScore: Number(r.score.toFixed(2)),
+    reason: buildRecoReason(r.product, { bucket, weather, pairScores }),
+  }));
+
+  const providerResult = await applyRecommendationProvider({
+    candidates: ranked.map((r) => r.product),
+    builtinItems,
+    restaurantId,
+    productIds,
+    historyIds,
+    weather,
+    bucket,
+    limit: clampRecoLimit(limit),
+  });
+
+  const items = providerResult.items.map((item) => {
+    const { aiReason, ...rest } = item;
+    return {
+      ...rest,
+      // Keep original deterministic explanation unless external provider gave one.
+      reason:
+        typeof aiReason === 'string' && aiReason
+          ? aiReason
+          : item.reason || buildRecoReason(item, { bucket, weather, pairScores }),
+    };
+  });
+
   return {
-    items: ranked.map((r) => ({
-      ...r.product,
-      recommendationScore: Number(r.score.toFixed(2)),
-      reason: buildRecoReason(r.product, { bucket, weather, pairScores }),
-    })),
+    items,
     context: {
       timeOfDay: bucket,
       weather,
       basedOnCart: productIds.length > 0,
       basedOnHistory: historyIds.length > 0,
+      recommendationProvider: providerResult.provider,
+      recommendationMode: providerResult.mode,
+      recommendationModel: providerResult.model || null,
+      recommendationFallbackError: providerResult.fallbackError || null,
     },
   };
 }
@@ -364,7 +398,7 @@ async function getSmartEta({ restaurantId, lat, lng }) {
     Math.round(basePrep + kitchenExtra + travelMinutes + weatherExtra)
   );
 
-  return {
+  const builtinResult = {
     minMinutes,
     maxMinutes,
     label: i18n.__('intelligence_eta_label', String(minMinutes), String(maxMinutes)),
@@ -380,6 +414,13 @@ async function getSmartEta({ restaurantId, lat, lng }) {
       weatherExtraMinutes: weatherExtra,
       weather,
     },
+  };
+  const providerResult = await applyEtaProvider({ builtinResult });
+  return {
+    ...providerResult.eta,
+    provider: providerResult.provider,
+    providerMode: providerResult.mode,
+    providerFallbackError: providerResult.fallbackError || null,
   };
 }
 
@@ -441,7 +482,7 @@ async function getSurgePricing({ restaurantId, lat, lng }) {
   multiplier = Math.min(LIMITS.SURGE_MAX_MULTIPLIER, Number(multiplier.toFixed(2)));
   const active = multiplier > LIMITS.SURGE_ACTIVE_THRESHOLD;
 
-  return {
+  const builtinResult = {
     active,
     multiplier: active ? multiplier : 1,
     label: active
@@ -455,6 +496,13 @@ async function getSurgePricing({ restaurantId, lat, lng }) {
       weather,
       rushHour: isRushHour(),
     },
+  };
+  const providerResult = await applySurgeProvider({ builtinResult });
+  return {
+    ...providerResult.surge,
+    provider: providerResult.provider,
+    providerMode: providerResult.mode,
+    providerFallbackError: providerResult.fallbackError || null,
   };
 }
 

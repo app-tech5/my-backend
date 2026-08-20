@@ -24,6 +24,8 @@ const AppSettingSchema = new mongoose.Schema(
     whatsappEnabled: { type: Boolean, default: false },
     whatsappPhoneNumberId: { type: String, default: "" },
     whatsappAccessToken: { type: String, default: "" },
+    whatsappVerifyToken: { type: String, default: "" },
+    whatsappTemplateLang: { type: String, default: "en" },
     whatsappNotifyOnStatus: { type: Boolean, default: true },
     ussdEnabled: { type: Boolean, default: false },
     ussdShortCode: { type: String, default: "" },

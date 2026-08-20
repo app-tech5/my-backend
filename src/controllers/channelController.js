@@ -3,7 +3,9 @@ const {
   handleUssdSession,
   createChannelOrder,
   sendWhatsAppMessage,
+  resolveWhatsAppConfig,
 } = require('../services/channelService');
+const AppSetting = require('../models/AppSetting');
 
 async function getConfig(_req, res) {
   try {
@@ -37,7 +39,8 @@ async function whatsappWebhookVerify(req, res) {
   const mode = req.query['hub.mode'];
   const token = req.query['hub.verify_token'];
   const challenge = req.query['hub.challenge'];
-  const expected = process.env.WHATSAPP_VERIFY_TOKEN || 'goodfood_whatsapp_verify';
+  const settings = await AppSetting.findOne().lean();
+  const expected = resolveWhatsAppConfig(settings).verifyToken;
   if (mode === 'subscribe' && token === expected) {
     return res.status(200).send(challenge);
   }
@@ -50,9 +53,30 @@ async function whatsappWebhook(req, res) {
     const entry = req.body?.entry?.[0];
     const changes = entry?.changes?.[0]?.value;
     const messages = changes?.messages || [];
+    const statuses = changes?.statuses || [];
     if (messages.length) {
       // Logged for operators — full conversational checkout is opt-in via Admin keys
-      console.info('[whatsapp] inbound', messages.map((m) => ({ from: m.from, type: m.type })));
+      console.info(
+        '[whatsapp] inbound',
+        messages.map((m) => ({
+          from: m.from,
+          type: m.type,
+          text: m?.text?.body || '',
+          timestamp: m.timestamp,
+        }))
+      );
+    }
+    if (statuses.length) {
+      console.info(
+        '[whatsapp] status',
+        statuses.map((s) => ({
+          id: s.id,
+          status: s.status,
+          recipient_id: s.recipient_id,
+          timestamp: s.timestamp,
+          error: s.errors?.[0]?.message || null,
+        }))
+      );
     }
   } catch (_) {
     /* ignore */
