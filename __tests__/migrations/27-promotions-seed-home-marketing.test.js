@@ -32,6 +32,10 @@ describe('migration 27-promotions-seed-home-marketing', () => {
     await db.collection('restaurants').insertMany([
       { _id: restaurantId, name: 'Bistro One', rating: 4.8 },
       { _id: new ObjectId(), name: 'Bistro Two', rating: 4.5 },
+      { _id: new ObjectId(), name: 'Bistro Three', rating: 4.4 },
+      { _id: new ObjectId(), name: 'Bistro Four', rating: 4.3 },
+      { _id: new ObjectId(), name: 'Bistro Five', rating: 4.2 },
+      { _id: new ObjectId(), name: 'Bistro Six', rating: 4.1 },
     ]);
     await db.collection('promotions').insertOne({
       name: 'Expired restaurant promo',
@@ -67,7 +71,13 @@ describe('migration 27-promotions-seed-home-marketing', () => {
   it('is idempotent', async () => {
     const userId = new ObjectId();
     await db.collection('users').insertOne({ _id: userId, role: 'admin' });
-    await db.collection('restaurants').insertOne({ _id: new ObjectId(), name: 'Test', rating: 4 });
+    await db.collection('restaurants').insertMany(
+      Array.from({ length: 6 }, (_, i) => ({
+        _id: new ObjectId(),
+        name: `Test ${i + 1}`,
+        rating: 4 - i * 0.1,
+      }))
+    );
 
     await migration.up(db);
     await migration.up(db);

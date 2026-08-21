@@ -108,15 +108,14 @@ async function down(db) {
 
   const seededOrders = await ordersCol.find({ migrationSeedKey: SEED_KEY }).toArray();
   for (const order of seededOrders) {
-    const restore = {
-      updatedAt: new Date(),
-      migrationSeedKey: '',
-      migrationSeedPreviousCreatedAt: '',
-    };
+    const restore = { updatedAt: new Date() };
     if (order.migrationSeedPreviousCreatedAt) {
       restore.createdAt = order.migrationSeedPreviousCreatedAt;
     }
-    await ordersCol.updateOne({ _id: order._id }, { $set: restore, $unset: { migrationSeedKey: '', migrationSeedPreviousCreatedAt: '' } });
+    await ordersCol.updateOne(
+      { _id: order._id },
+      { $set: restore, $unset: { migrationSeedKey: '', migrationSeedPreviousCreatedAt: '' } }
+    );
   }
 
   console.log(`↩️ Migration 28 annulée (${seededOrders.length} commande(s) restaurée(s))`);

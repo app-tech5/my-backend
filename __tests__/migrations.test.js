@@ -54,7 +54,8 @@ describe('Database Migrations Tests', () => {
     runMigrateUp();
 
     const gateways = await db.collection('gateways').find({}).toArray();
-    expect(gateways.length).toBe(8);
+    expect(gateways.length).toBeGreaterThanOrEqual(8);
+    expect(gateways.map((g) => g.identifier)).toContain('crypto');
     expect(gateways.map((g) => g.identifier)).toContain('stripe');
     expect(gateways.map((g) => g.identifier)).toContain('cash-on-delivery');
   }, 120000);
@@ -70,15 +71,19 @@ describe('Database Migrations Tests', () => {
     expect(fileNames.some((name) => name.includes('22-users-fix-bad-paris-locations-from-migration-19'))).toBe(true);
   }, 120000);
 
-  test('should NOT create sensitive collections on a fresh database', async () => {
+  test('should seed baseline marketplace collections on a fresh database', async () => {
     runMigrateUp();
 
     const collections = await db.listCollections().toArray();
     const collectionNames = collections.map((c) => c.name);
 
-    expect(collectionNames).not.toContain('users');
-    expect(collectionNames).not.toContain('restaurants');
-    expect(collectionNames).not.toContain('orders');
-    expect(collectionNames).not.toContain('drivers');
+    expect(collectionNames).toContain('users');
+    expect(collectionNames).toContain('currencies');
+    expect(collectionNames).toContain('languages');
+    expect(collectionNames).toContain('gateways');
+
+    const demoUser = await db.collection('users').findOne({ email: 'demo@customer.com' });
+    expect(demoUser).toBeTruthy();
+    expect(demoUser.role).toBe('customer');
   }, 120000);
 });

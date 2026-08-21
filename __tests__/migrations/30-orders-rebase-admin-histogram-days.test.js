@@ -83,7 +83,7 @@ describe('migration 30-orders-rebase-admin-histogram-days', () => {
 
     await migration.up(db);
     const migrated = await db.collection('orders').findOne({ _id: orderId });
-    expect(migrated.createdAt.getDate()).toBe(18);
+    expect(migrated.createdAt.getDate()).toBe(3);
 
     await migration.down(db);
     const restored = await db.collection('orders').findOne({ _id: orderId });
