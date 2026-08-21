@@ -103,3 +103,5 @@ run-migrations-ordered.sh
 
 # Keep only safe migrations (safe for sharing)
 !migrations-prod/
+# Accidental duplicate of migrations/ (do not ship)
+migrationsG/
