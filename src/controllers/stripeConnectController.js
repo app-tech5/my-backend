@@ -3,7 +3,7 @@ const {
   createAccountUpdateLink,
   retrieveConnectAccount,
   syncConnectPayoutMethod,
-  transferToDriver,
+  transferToDriver
 } = require('../services/stripeConnectService');
 
 function assertDriverUser(req, res) {
@@ -22,13 +22,13 @@ function assertDriverUser(req, res) {
 
 function resolveConnectUrls(req) {
   const refreshUrl =
-    req.body?.refreshUrl ||
-    process.env.STRIPE_CONNECT_REFRESH_URL ||
-    'goodfooddriver://stripe-connect/refresh';
+  req.body?.refreshUrl ||
+  process.env.STRIPE_CONNECT_REFRESH_URL ||
+  'goodfooddriver://stripe-connect/refresh';
   const returnUrl =
-    req.body?.returnUrl ||
-    process.env.STRIPE_CONNECT_RETURN_URL ||
-    'goodfooddriver://stripe-connect/return';
+  req.body?.returnUrl ||
+  process.env.STRIPE_CONNECT_RETURN_URL ||
+  'goodfooddriver://stripe-connect/return';
 
   return { refreshUrl, returnUrl };
 }
@@ -41,14 +41,14 @@ const stripeConnectController = {
       const { refreshUrl, returnUrl } = resolveConnectUrls(req);
       const onboarding = await createAccountUpdateLink(req.user.id, {
         refreshUrl,
-        returnUrl,
+        returnUrl
       });
 
       return res.status(200).json(onboarding);
     } catch (error) {
       console.error('Stripe Connect onboarding error:', error);
       return res.status(error.statusCode || 500).json({
-        message: error.message || i18n.__('server_error'),
+        message: error.message || i18n.__('server_error')
       });
     }
   },
@@ -66,12 +66,12 @@ const stripeConnectController = {
 
       return res.status(200).json({
         ...status,
-        paymentMethod,
+        paymentMethod
       });
     } catch (error) {
       console.error('Stripe Connect status error:', error);
       return res.status(error.statusCode || 500).json({
-        message: error.message || i18n.__('server_error'),
+        message: error.message || i18n.__('server_error')
       });
     }
   },
@@ -90,7 +90,7 @@ const stripeConnectController = {
     } catch (error) {
       console.error('Stripe Connect sync error:', error);
       return res.status(error.statusCode || 500).json({
-        message: error.message || i18n.__('server_error'),
+        message: error.message || i18n.__('server_error')
       });
     }
   },
@@ -107,17 +107,17 @@ const stripeConnectController = {
       const transfer = await transferToDriver(targetUserId, {
         amount,
         currency,
-        metadata,
+        metadata
       });
 
       return res.status(200).json({ transfer });
     } catch (error) {
       console.error('Stripe Connect transfer error:', error);
       return res.status(error.statusCode || 500).json({
-        message: error.message || i18n.__('server_error'),
+        message: error.message || i18n.__('server_error')
       });
     }
-  },
+  }
 };
 
 module.exports = stripeConnectController;

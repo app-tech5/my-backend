@@ -6,7 +6,7 @@ const {
   createListing,
   activateListing,
   trackEvent,
-  serializeListing,
+  serializeListing
 } = require('../services/sponsoredListingService');
 const SponsoredListing = require('../models/SponsoredListing');
 
@@ -33,7 +33,7 @@ exports.getActive = async (req, res) => {
     console.error('sponsored getActive', error);
     res.status(500).json({
       message: i18n.__('errors.server') || 'Server error',
-      error: error.message,
+      error: error.message
     });
   }
 };
@@ -68,7 +68,7 @@ exports.createMine = async (req, res) => {
       image = '',
       startAt,
       endAt,
-      status = 'active',
+      status = 'active'
     } = req.body || {};
 
     if (!name || !startAt || !endAt) {
@@ -86,10 +86,10 @@ exports.createMine = async (req, res) => {
       image,
       startAt: new Date(startAt),
       endAt: new Date(endAt),
-      status: ['draft', 'pending_payment', 'active', 'paused'].includes(status)
-        ? status
-        : 'active',
-      createdBy: req.user._id || req.user.id,
+      status: ['draft', 'pending_payment', 'active', 'paused'].includes(status) ?
+      status :
+      'active',
+      createdBy: req.user._id || req.user.id
     });
 
     res.status(201).json({ listing });

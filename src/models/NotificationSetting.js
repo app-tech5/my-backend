@@ -2,23 +2,23 @@ const mongoose = require('mongoose');
 const addPopulateMiddleware = require('../utils/addPopulateMiddleware');
 
 const notificationSettingSchema = new mongoose.Schema({
-  userType: { 
-    type: String, 
-    enum: ['admin', 'restaurant', 'driver', 'customer'], 
+  userType: {
+    type: String,
+    enum: ['admin', 'restaurant', 'driver', 'customer'],
     required: true,
     index: true,
     default: 'customer'
   },
-  userId: { 
-    type: mongoose.Schema.Types.ObjectId, 
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     index: true,
-    required: false,
+    required: false
   },
   channels: {
     type: Object,
     default: {
-      email: { 
+      email: {
         enabled: true,
         types: {
           newOrder: true,
@@ -26,14 +26,14 @@ const notificationSettingSchema = new mongoose.Schema({
           deliveryUpdate: true
         }
       },
-      push: { 
+      push: {
         enabled: true,
         types: {
           newOrder: true,
           assignedOrder: true
         }
       },
-      sms: { 
+      sms: {
         enabled: false,
         types: {
           otp: true,
@@ -52,16 +52,16 @@ const notificationSettingSchema = new mongoose.Schema({
       }
     }
   },
-  lastUpdated: { 
-    type: Date, 
-    default: Date.now 
+  lastUpdated: {
+    type: Date,
+    default: Date.now
   }
-}, { 
-  timestamps: true 
+}, {
+  timestamps: true
 });
 
 addPopulateMiddleware(notificationSettingSchema, [
-  { path: 'userId', select: 'name email role image' },
-]);
+{ path: 'userId', select: 'name email role image' }]
+);
 
 module.exports = mongoose.model('NotificationSetting', notificationSettingSchema);

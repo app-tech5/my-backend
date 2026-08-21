@@ -18,14 +18,14 @@ const restaurantSchema = new mongoose.Schema({
   alias: { type: String, required: true, default: "" },
   id: { type: String, required: true, default: "" },
   categories: [
-    {
-      alias: { type: String, required: true, default: "" },
-      title: { type: String, required: true, default: "" },
-      image: { type: String, default: "" },
-      value: { type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true, default: null },
-      label: { type: String, default: "" },
-    },
-  ],
+  {
+    alias: { type: String, required: true, default: "" },
+    title: { type: String, required: true, default: "" },
+    image: { type: String, default: "" },
+    value: { type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true, default: null },
+    label: { type: String, default: "" }
+  }],
+
   is_closed: { type: Boolean, required: true, default: false },
   isAvailableForDelivery: { type: Boolean, default: false },
   isActivated: { type: Boolean, default: false },
@@ -39,7 +39,7 @@ const restaurantSchema = new mongoose.Schema({
   image: { type: String, default: "" },
   users: {
     value: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    label: { type: String },
+    label: { type: String }
   },
   address: { type: String, default: "" },
   collectTime: { type: Number, default: 20 },
@@ -54,11 +54,11 @@ const restaurantSchema = new mongoose.Schema({
       rate: "0.00",
       name: "TVA",
       value: { type: mongoose.Schema.Types.ObjectId, ref: "Tax", required: true },
-      label: "",
+      label: ""
     }
   },
   commission_rate: { type: Number, default: 15 },
-  reward: { type: String, default: "" },
+  reward: { type: String, default: "" }
 });
 restaurantSchema.pre("save", async function (next) {
   if (this.tax?.value) {
@@ -76,7 +76,7 @@ restaurantSchema.pre("save", async function (next) {
       rate: String(defaultTax.rate ?? "0.00"),
       name: defaultTax.name || "TVA",
       value: defaultTax._id,
-      label: defaultTax.name || "",
+      label: defaultTax.name || ""
     };
   } catch (error) {
     console.error("Restaurant default tax assignment failed:", error);
@@ -86,11 +86,11 @@ restaurantSchema.pre("save", async function (next) {
 
 restaurantSchema.pre("find", function (next) {
   this.populate([
-    { path: "serviceModes.value", model: "ServiceMode" },
-    { path: "categories.value", model: "Category" },
-    { path: "users.value", model: "User" },
-    { path: "tax.value", model: "Tax" },
-  ]);
+  { path: "serviceModes.value", model: "ServiceMode" },
+  { path: "categories.value", model: "Category" },
+  { path: "users.value", model: "User" },
+  { path: "tax.value", model: "Tax" }]
+  );
   next();
 });
 restaurantSchema.pre('findOneAndUpdate', async function (next) {
@@ -124,7 +124,7 @@ restaurantSchema.post('findOneAndUpdate', async function (doc) {
       relatedEntityModel: 'Restaurant',
       action: 'view_restaurant',
       actionData: { restaurantId },
-      pushData: { type: 'restaurant_activated', restaurantId },
+      pushData: { type: 'restaurant_activated', restaurantId }
     });
   } catch (error) {
     console.error(i18n.__('restaurant_activation_notification_error'), error);

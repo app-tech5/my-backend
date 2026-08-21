@@ -33,7 +33,7 @@ describe('migration 24-customersupports-translate-faqs-to-english', () => {
       user: userId,
       question: "Où voir l'état de ma commande ?",
       answer: 'Allez dans Commandes pour suivre votre commande.',
-      faq_category: 'delivery',
+      faq_category: 'delivery'
     });
 
     await migration.up(db);
@@ -51,7 +51,7 @@ describe('migration 24-customersupports-translate-faqs-to-english', () => {
     await db.collection('users').insertOne({
       _id: new ObjectId(),
       role: 'admin',
-      email: 'admin@test.com',
+      email: 'admin@test.com'
     });
 
     await migration.up(db);
@@ -72,7 +72,7 @@ describe('migration 24-customersupports-translate-faqs-to-english', () => {
       user: userId,
       question: "L'application ne fonctionne pas",
       answer: 'Redémarrez l application.',
-      faq_category: 'other',
+      faq_category: 'other'
     });
 
     await migration.up(db);

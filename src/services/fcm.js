@@ -14,7 +14,7 @@ function getFirebaseApp() {
   try {
     const serviceAccount = JSON.parse(serviceAccountJson);
     return admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
+      credential: admin.credential.cert(serviceAccount)
     });
   } catch (error) {
     console.error(i18n.__('fcm_init_error'), error);
@@ -37,7 +37,7 @@ async function sendPushToDevice({ token, title, body, data = {} }) {
     const merged = {
       ...(typeof data === 'object' && data !== null ? data : {}),
       ...(title != null && title !== '' ? { title: String(title) } : {}),
-      ...(body != null && body !== '' ? { body: String(body) } : {}),
+      ...(body != null && body !== '' ? { body: String(body) } : {})
     };
 
     const payloadData = Object.entries(merged).reduce((acc, [key, value]) => {
@@ -46,24 +46,23 @@ async function sendPushToDevice({ token, title, body, data = {} }) {
       return acc;
     }, {});
 
-    // Data-only so the client `setBackgroundMessageHandler` runs (display + local notification on the app).
     await admin.messaging(app).send({
       token,
       data: payloadData,
       android: {
-        priority: 'high',
+        priority: 'high'
       },
       apns: {
         headers: {
           'apns-push-type': 'background',
-          'apns-priority': '5',
+          'apns-priority': '5'
         },
         payload: {
           aps: {
-            'content-available': 1,
-          },
-        },
-      },
+            'content-available': 1
+          }
+        }
+      }
     });
     return { sent: true };
   } catch (error) {
@@ -73,5 +72,5 @@ async function sendPushToDevice({ token, title, body, data = {} }) {
 }
 
 module.exports = {
-  sendPushToDevice,
+  sendPushToDevice
 };

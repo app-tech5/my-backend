@@ -34,13 +34,13 @@ describe('migration 28-restaurant-demo-dashboard-marketing', () => {
       email: migration.DEMO_EMAIL,
       role: 'restaurant',
       name: 'Demo Restaurant',
-      restaurant: restaurantId,
+      restaurant: restaurantId
     });
 
     await db.collection('restaurants').insertOne({
       _id: restaurantId,
       name: 'Hermiston LLC',
-      users: { value: new ObjectId(), label: 'Old Owner' },
+      users: { value: new ObjectId(), label: 'Old Owner' }
     });
 
     await db.collection('orders').insertOne({
@@ -49,7 +49,7 @@ describe('migration 28-restaurant-demo-dashboard-marketing', () => {
       status: 'pending',
       totalPrice: 24.5,
       createdAt: past,
-      updatedAt: past,
+      updatedAt: past
     });
 
     await migration.up(db);
@@ -72,13 +72,13 @@ describe('migration 28-restaurant-demo-dashboard-marketing', () => {
       _id: userId,
       email: migration.DEMO_EMAIL,
       role: 'restaurant',
-      restaurant: restaurantId,
+      restaurant: restaurantId
     });
 
     await db.collection('restaurants').insertOne({
       _id: restaurantId,
       name: 'Hermiston LLC',
-      users: { value: new ObjectId(), label: 'Old Owner' },
+      users: { value: new ObjectId(), label: 'Old Owner' }
     });
 
     await db.collection('orders').insertOne({
@@ -87,7 +87,7 @@ describe('migration 28-restaurant-demo-dashboard-marketing', () => {
       status: 'delivered',
       totalPrice: 19,
       createdAt: past,
-      updatedAt: past,
+      updatedAt: past
     });
 
     await migration.up(db);

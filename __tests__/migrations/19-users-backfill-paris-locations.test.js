@@ -26,19 +26,19 @@ describe('migration 19-users-backfill-paris-locations', () => {
   it('assigns distinct Paris locations to users missing location', async () => {
     const usersCol = db.collection('users');
     await usersCol.insertMany([
-      {
-        _id: new ObjectId(),
-        role: 'customer',
-        name: 'Alice',
-        address: 'Old address 1',
-      },
-      {
-        _id: new ObjectId(),
-        role: 'customer',
-        name: 'Bob',
-        address: 'Old address 2',
-      },
-    ]);
+    {
+      _id: new ObjectId(),
+      role: 'customer',
+      name: 'Alice',
+      address: 'Old address 1'
+    },
+    {
+      _id: new ObjectId(),
+      role: 'customer',
+      name: 'Bob',
+      address: 'Old address 2'
+    }]
+    );
 
     await migration.up(db);
 
@@ -61,7 +61,7 @@ describe('migration 19-users-backfill-paris-locations', () => {
       role: 'customer',
       name: 'Carol',
       address: '12 Rue de Rivoli, 75001 Paris',
-      location: { latitude: 48.8556, longitude: 2.3601 },
+      location: { latitude: 48.8556, longitude: 2.3601 }
     };
     await usersCol.insertOne(existing);
 
@@ -79,7 +79,7 @@ describe('migration 19-users-backfill-paris-locations', () => {
       _id: userId,
       role: 'customer',
       name: 'Jeff',
-      address: '1088 Molly Coves, North Jesseborough',
+      address: '1088 Molly Coves, North Jesseborough'
     });
 
     await migration.up(db);

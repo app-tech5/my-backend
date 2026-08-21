@@ -1,11 +1,3 @@
-/**
- * Prépare le dashboard restaurant demo (demo@restaurant.com).
- * - Aligne users.value du restaurant sur le compte demo
- * - Remonte quelques commandes à aujourd'hui pour les stats "Today"
- *
- * up   → sync lien demo + refresh dates commandes (idempotent)
- * down → restaure users.value + dates sauvegardées
- */
 
 const { ObjectId } = require('mongodb');
 
@@ -40,20 +32,20 @@ async function up(db) {
         $set: {
           users: {
             value: demoUser._id,
-            label: demoUser.name || demoUser.email || DEMO_EMAIL,
+            label: demoUser.name || demoUser.email || DEMO_EMAIL
           },
-          updatedAt: now,
-        },
+          updatedAt: now
+        }
       }
     );
     console.log('✅ Restaurant demo lié au compte demo@restaurant.com');
   }
 
-  const candidateOrders = await ordersCol
-    .find({ restaurant: restaurantId, status: { $in: ['pending', 'preparing', 'ready', 'delivered'] } })
-    .sort({ updatedAt: -1 })
-    .limit(4)
-    .toArray();
+  const candidateOrders = await ordersCol.
+  find({ restaurant: restaurantId, status: { $in: ['pending', 'preparing', 'ready', 'delivered'] } }).
+  sort({ updatedAt: -1 }).
+  limit(4).
+  toArray();
 
   let refreshed = 0;
   for (let index = 0; index < candidateOrders.length; index += 1) {
@@ -72,8 +64,8 @@ async function up(db) {
           createdAt,
           updatedAt: now,
           migrationSeedKey: SEED_KEY,
-          migrationSeedPreviousCreatedAt: order.createdAt,
-        },
+          migrationSeedPreviousCreatedAt: order.createdAt
+        }
       }
     );
     refreshed += 1;
@@ -99,9 +91,9 @@ async function down(db) {
         $set: {
           users: {
             value: PREVIOUS_USERS_VALUE,
-            label: PREVIOUS_USERS_LABEL,
-          },
-        },
+            label: PREVIOUS_USERS_LABEL
+          }
+        }
       }
     );
   }
@@ -125,5 +117,5 @@ module.exports = {
   SEED_KEY,
   DEMO_EMAIL,
   up,
-  down,
+  down
 };

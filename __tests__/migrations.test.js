@@ -37,7 +37,7 @@ describe('Database Migrations Tests', () => {
     const env = {
       ...process.env,
       MONGO_URI: process.env.MONGO_URI,
-      MONGODB_DATABASE: process.env.MONGODB_DATABASE,
+      MONGODB_DATABASE: process.env.MONGODB_DATABASE
     };
 
     execSync('npm run migrate:up', { env, stdio: 'pipe' });

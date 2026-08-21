@@ -25,8 +25,8 @@ async function insertDemoUser() {
       image: "https://cdn.jsdelivr.net/gh/faker-js/assets-person-portrait/male/512/42.jpg",
       address: "456 Demo Street, Paris",
       location: {
-        latitude: 48.8566,  
-        longitude: 2.3522   
+        latitude: 48.8566,
+        longitude: 2.3522
       },
       role: "customer",
       isActive: true,

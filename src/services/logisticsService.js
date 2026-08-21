@@ -6,7 +6,7 @@ const i18n = require('../config/i18n');
 const {
   BATCH_CANDIDATE_STATUSES,
   ACTIVE_DRIVER_ORDER_STATUSES,
-  LIMITS,
+  LIMITS
 } = require('../constants/logistics');
 
 function toNum(v, fallback = 0) {
@@ -15,13 +15,13 @@ function toNum(v, fallback = 0) {
 }
 
 function haversineKm(lat1, lng1, lat2, lng2) {
-  const toRad = (d) => (d * Math.PI) / 180;
+  const toRad = (d) => d * Math.PI / 180;
   const R = 6371;
   const dLat = toRad(lat2 - lat1);
   const dLng = toRad(lng2 - lng1);
   const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  Math.sin(dLat / 2) ** 2 +
+  Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
@@ -76,13 +76,12 @@ async function findBatchCandidates({ orderId, driverId, radiusKm, driverUserId }
 
   let radius = radiusKm != null ? toNum(radiusKm) : await resolveBatchRadiusKm(anchor.restaurant);
 
-  // Priority-plan drivers search a wider neighborhood for batch adds
   try {
     const userId =
-      driverUserId ||
-      (driverId
-        ? (await Driver.findById(driverId).select('userId').lean())?.userId
-        : null);
+    driverUserId || (
+    driverId ?
+    (await Driver.findById(driverId).select('userId').lean())?.userId :
+    null);
     if (userId) {
       const { getActiveBenefits } = require('./subscriptionService');
       const benefits = await getActiveBenefits(userId, 'driver');
@@ -91,7 +90,7 @@ async function findBatchCandidates({ orderId, driverId, radiusKm, driverUserId }
       }
     }
   } catch (_) {
-    /* keep base radius */
+
   }
 
   const pool = await Order.find({
@@ -99,13 +98,13 @@ async function findBatchCandidates({ orderId, driverId, radiusKm, driverUserId }
     'delivery.type': 'delivery',
     status: { $in: [...BATCH_CANDIDATE_STATUSES] },
     $or: [
-      { driver: null },
-      { driver: { $exists: false } },
-      ...(driverId ? [{ driver: driverId }] : []),
-    ],
-  })
-    .limit(40)
-    .lean();
+    { driver: null },
+    { driver: { $exists: false } },
+    ...(driverId ? [{ driver: driverId }] : [])]
+
+  }).
+  limit(40).
+  lean();
 
   const scored = [];
   for (const order of pool) {
@@ -114,12 +113,12 @@ async function findBatchCandidates({ orderId, driverId, radiusKm, driverUserId }
     const distanceKm = haversineKm(origin.lat, origin.lng, point.lat, point.lng);
     if (distanceKm > radius) continue;
     const sameRestaurant =
-      String(order.restaurant?._id || order.restaurant) ===
-      String(anchor.restaurant?._id || anchor.restaurant);
+    String(order.restaurant?._id || order.restaurant) ===
+    String(anchor.restaurant?._id || anchor.restaurant);
     scored.push({
       order,
       distanceKm: Number(distanceKm.toFixed(2)),
-      sameRestaurant,
+      sameRestaurant
     });
   }
 
@@ -141,12 +140,12 @@ async function acceptOrderWithBatching({ orderId, driverId, includeNearby = true
 
   const { anchor, candidates, radiusKm } = await findBatchCandidates({
     orderId,
-    driverId,
+    driverId
   });
 
   const batchId =
-    anchor.batchId ||
-    new mongoose.Types.ObjectId().toString();
+  anchor.batchId ||
+  new mongoose.Types.ObjectId().toString();
 
   const toAssign = [anchor, ...(includeNearby ? candidates.map((c) => c.order) : [])];
   const ids = toAssign.map((o) => o._id);
@@ -157,14 +156,14 @@ async function acceptOrderWithBatching({ orderId, driverId, includeNearby = true
       $set: {
         driver: driverId,
         status: 'out_for_delivery',
-        batchId,
-      },
+        batchId
+      }
     }
   );
 
   await Driver.findByIdAndUpdate(driverId, {
     currentOrder: orderId,
-    status: 'on_delivery',
+    status: 'on_delivery'
   });
 
   const orders = await Order.find({ _id: { $in: ids } }).lean();
@@ -174,27 +173,27 @@ async function acceptOrderWithBatching({ orderId, driverId, includeNearby = true
     radiusKm,
     orders,
     batchedCount: orders.length,
-    nearbyAdded: Math.max(0, orders.length - 1),
+    nearbyAdded: Math.max(0, orders.length - 1)
   };
 }
 
 async function listDriverActiveOrders(driverId) {
   return Order.find({
     driver: driverId,
-    status: { $in: [...ACTIVE_DRIVER_ORDER_STATUSES] },
-  })
-    .sort({ updatedAt: -1 })
-    .lean();
+    status: { $in: [...ACTIVE_DRIVER_ORDER_STATUSES] }
+  }).
+  sort({ updatedAt: -1 }).
+  lean();
 }
 
 async function emitDriverLocationToActiveOrders(driverDoc) {
   if (!global.io || !driverDoc?._id) return;
   const active = await Order.find({
     driver: driverDoc._id,
-    status: { $in: [...ACTIVE_DRIVER_ORDER_STATUSES] },
-  })
-    .select('_id')
-    .lean();
+    status: { $in: [...ACTIVE_DRIVER_ORDER_STATUSES] }
+  }).
+  select('_id').
+  lean();
 
   const ids = active.map((o) => String(o._id));
   if (driverDoc.currentOrder && !ids.includes(String(driverDoc.currentOrder))) {
@@ -205,7 +204,7 @@ async function emitDriverLocationToActiveOrders(driverDoc) {
     global.io.to(`order-${id}`).emit('driver-location-updated', {
       location: driverDoc.location,
       driverId: String(driverDoc._id),
-      at: new Date().toISOString(),
+      at: new Date().toISOString()
     });
   }
 }
@@ -230,7 +229,7 @@ async function completeDeliveryWithProof({
   signatureData,
   lat,
   lng,
-  contactless = true,
+  contactless = true
 }) {
   const order = await Order.findById(orderId);
   if (!order) {
@@ -269,22 +268,22 @@ async function completeDeliveryWithProof({
     contactless: !!contactless,
     completedAt: new Date(),
     completedLocation:
-      lat != null && lng != null
-        ? { type: 'Point', coordinates: [Number(lng), Number(lat)] }
-        : undefined,
+    lat != null && lng != null ?
+    { type: 'Point', coordinates: [Number(lng), Number(lat)] } :
+    undefined,
     geofenceMeters,
     distanceMeters,
-    geofenceOk,
+    geofenceOk
   };
   await order.save();
 
   if (driverId) {
     const remaining = await Order.find({
       driver: driverId,
-      status: { $in: [...ACTIVE_DRIVER_ORDER_STATUSES] },
-    })
-      .select('_id')
-      .lean();
+      status: { $in: [...ACTIVE_DRIVER_ORDER_STATUSES] }
+    }).
+    select('_id').
+    lean();
 
     const patch = { $inc: { totalDeliveries: 1 } };
     if (!remaining.length) {
@@ -306,5 +305,5 @@ module.exports = {
   acceptOrderWithBatching,
   listDriverActiveOrders,
   emitDriverLocationToActiveOrders,
-  completeDeliveryWithProof,
+  completeDeliveryWithProof
 };

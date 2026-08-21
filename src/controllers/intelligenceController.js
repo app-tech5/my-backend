@@ -2,7 +2,7 @@ const {
   getRecommendations,
   getSmartEta,
   getSurgePricing,
-  getDeliveryQuote,
+  getDeliveryQuote
 } = require('../services/intelligenceService');
 const { LIMITS } = require('../constants/intelligence');
 const i18n = require('../config/i18n');
@@ -10,10 +10,10 @@ const i18n = require('../config/i18n');
 function parseIds(value) {
   if (!value) return [];
   if (Array.isArray(value)) return value.map(String).filter(Boolean);
-  return String(value)
-    .split(',')
-    .map((s) => s.trim())
-    .filter(Boolean);
+  return String(value).
+  split(',').
+  map((s) => s.trim()).
+  filter(Boolean);
 }
 
 function parseCoord(value) {
@@ -24,7 +24,7 @@ function parseCoord(value) {
 
 function fail(res, error, fallbackKey) {
   return res.status(500).json({
-    message: error.message || i18n.__(fallbackKey),
+    message: error.message || i18n.__(fallbackKey)
   });
 }
 
@@ -35,14 +35,14 @@ async function recommendations(req, res) {
     const lat = parseCoord(req.query.lat);
     const lng = parseCoord(req.query.lng);
     const limit =
-      req.query.limit != null ? Number(req.query.limit) : LIMITS.DEFAULT_RECO_LIMIT;
+    req.query.limit != null ? Number(req.query.limit) : LIMITS.DEFAULT_RECO_LIMIT;
     const data = await getRecommendations({
       restaurantId,
       productIds,
       lat,
       lng,
       limit,
-      userId: req.user?.id,
+      userId: req.user?.id
     });
     return res.json(data);
   } catch (error) {
@@ -77,23 +77,23 @@ async function surge(req, res) {
 async function quote(req, res) {
   try {
     const restaurantId =
-      req.query.restaurantId || req.query.restaurant || req.body?.restaurantId;
+    req.query.restaurantId || req.query.restaurant || req.body?.restaurantId;
     const productIds = parseIds(
       req.query.productIds || req.query.products || req.body?.productIds
     );
     const lat = parseCoord(req.query.lat ?? req.body?.lat);
     const lng = parseCoord(req.query.lng ?? req.body?.lng);
     const subtotal =
-      req.query.subtotal != null
-        ? Number(req.query.subtotal)
-        : Number(req.body?.subtotal || 0);
+    req.query.subtotal != null ?
+    Number(req.query.subtotal) :
+    Number(req.body?.subtotal || 0);
     const data = await getDeliveryQuote({
       restaurantId,
       lat,
       lng,
       subtotal,
       productIds,
-      userId: req.user?.id,
+      userId: req.user?.id
     });
     return res.json(data);
   } catch (error) {
@@ -105,5 +105,5 @@ module.exports = {
   recommendations,
   eta,
   surge,
-  quote,
+  quote
 };

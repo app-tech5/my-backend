@@ -15,12 +15,11 @@ const UserSettingsSchema = new mongoose.Schema({
     newOrders: { type: Boolean, default: true },
     orderUpdates: { type: Boolean, default: true },
     lowStock: { type: Boolean, default: false },
-    marketing: { type: Boolean, default: false },
+    marketing: { type: Boolean, default: false }
   },
   restaurantSettings: {
     autoAcceptOrders: { type: Boolean, default: false },
-    preparationTime: { type: Number, default: 15 },
-  },
+    preparationTime: { type: Number, default: 15 }
+  }
 }, { timestamps: true });
 module.exports = mongoose.model('UserSettings', UserSettingsSchema);
-

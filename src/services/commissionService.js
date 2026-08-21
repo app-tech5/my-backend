@@ -2,10 +2,6 @@ const Restaurant = require('../models/Restaurant');
 const AppSetting = require('../models/AppSetting');
 const { getActiveBenefits } = require('./subscriptionService');
 
-/**
- * Resolve the effective platform commission % for a restaurant,
- * applying active restaurant subscription benefits (reduce or waive).
- */
 async function getEffectiveCommissionRate(restaurantOrId) {
   let restaurant = restaurantOrId;
   if (!restaurant || !restaurant._id) {
@@ -19,7 +15,7 @@ async function getEffectiveCommissionRate(restaurantOrId) {
       rate: Number(settings?.commissionRate) || 15,
       waived: false,
       reducedBy: 0,
-      source: 'default',
+      source: 'default'
     };
   }
 
@@ -44,7 +40,7 @@ async function getEffectiveCommissionRate(restaurantOrId) {
       waived: true,
       reducedBy: baseRate,
       source: 'subscription_saas',
-      planName: benefits.planName,
+      planName: benefits.planName
     };
   }
 
@@ -57,19 +53,19 @@ async function getEffectiveCommissionRate(restaurantOrId) {
     waived: false,
     reducedBy,
     source: reducedBy > 0 ? 'subscription_discount' : 'restaurant',
-    planName: benefits.planName,
+    planName: benefits.planName
   };
 }
 
 function splitOrderAmounts(orderTotal, commissionRatePercent) {
   const total = Number(orderTotal) || 0;
   const rate = Math.max(0, Number(commissionRatePercent) || 0);
-  const platform = Math.round(((total * rate) / 100) * 100) / 100;
+  const platform = Math.round(total * rate / 100 * 100) / 100;
   const restaurant = Math.round((total - platform) * 100) / 100;
   return { platform, restaurant, rate };
 }
 
 module.exports = {
   getEffectiveCommissionRate,
-  splitOrderAmounts,
+  splitOrderAmounts
 };

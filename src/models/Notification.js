@@ -24,38 +24,38 @@ const notificationSchema = new Schema({
     type: String,
     required: false,
     validate: {
-      validator: function(v) {
+      validator: function (v) {
         return /^(https?:\/\/).+\.(jpg|jpeg|png|gif)$/i.test(v);
       },
-      message: props => i18n.__('invalid_image_url', props.value)
+      message: (props) => i18n.__('invalid_image_url', props.value)
     }
   },
   type: {
     type: String,
     required: true,
     enum: [
-      'order_status',
-      'order',
-      'review',
-      'promotion',
-      'system',
-      'delivery_update',
-      'new_restaurant',
-      'payment',
-      'account'
-    ],
+    'order_status',
+    'order',
+    'review',
+    'promotion',
+    'system',
+    'delivery_update',
+    'new_restaurant',
+    'payment',
+    'account'],
+
     default: 'system'
   },
   relatedEntity: {
     type: Schema.Types.ObjectId,
-    required: function() {
+    required: function () {
       return ['order_status', 'delivery_update', 'payment'].includes(this.type);
     },
     refPath: 'relatedEntityModel'
   },
   relatedEntityModel: {
     type: String,
-    required: function() {
+    required: function () {
       return ['order_status', 'delivery_update', 'payment'].includes(this.type);
     },
     enum: ['Order', 'Payment', 'Delivery', 'Review', 'Restaurant']
@@ -81,14 +81,14 @@ const notificationSchema = new Schema({
   },
   actionUrl: {
     type: String,
-    required: function() {
+    required: function () {
       return this.isActionRequired;
     },
     validate: {
-      validator: function(v) {
+      validator: function (v) {
         return /^(https?:\/\/).+/i.test(v);
       },
-      message: props => i18n.__('invalid_url', props.value)
+      message: (props) => i18n.__('invalid_url', props.value)
     }
   },
   priority: {
@@ -144,22 +144,22 @@ notificationSchema.pre('findOneAndDelete', function (next) {
 });
 notificationSchema.index({ user: 1, isRead: 1, createdAt: -1 });
 notificationSchema.index({ type: 1, createdAt: -1 });
-notificationSchema.methods.markAsRead = function() {
+notificationSchema.methods.markAsRead = function () {
   this.isRead = true;
   return this.save();
 };
-notificationSchema.pre('save', function(next) {
+notificationSchema.pre('save', function (next) {
   if (this.expiresAt && this.expiresAt < new Date()) {
-    this.isRead = true; 
+    this.isRead = true;
   }
   next();
 });
-notificationSchema.statics.findUnreadForUser = function(userId) {
-  return this.find({ user: userId, isRead: false })
-             .sort({ createdAt: -1 })
-             .limit(50);
+notificationSchema.statics.findUnreadForUser = function (userId) {
+  return this.find({ user: userId, isRead: false }).
+  sort({ createdAt: -1 }).
+  limit(50);
 };
-notificationSchema.statics.createOrderNotification = async function(userId, orderId, message, title = i18n.__('order_update')) {
+notificationSchema.statics.createOrderNotification = async function (userId, orderId, message, title = i18n.__('order_update')) {
   return this.create({
     user: userId,
     title,

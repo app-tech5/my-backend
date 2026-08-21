@@ -1,18 +1,14 @@
-/**
- * Backfill NotificationSetting.userId with a coherent User of matching role.
- * Idempotent via migrationSeedKey.
- */
 
 const SEED_KEY = 'migration_33_notificationsettings_backfill_userids';
 
 module.exports = {
   async up(db) {
     const usersByRole = {};
-    const users = await db
-      .collection('users')
-      .find({})
-      .project({ _id: 1, role: 1, email: 1 })
-      .toArray();
+    const users = await db.
+    collection('users').
+    find({}).
+    project({ _id: 1, role: 1, email: 1 }).
+    toArray();
 
     for (const u of users) {
       const role = u.role || 'customer';
@@ -36,8 +32,8 @@ module.exports = {
           $set: {
             userId: user._id,
             migrationSeedKey: SEED_KEY,
-            migrationSeedPreviousUserId: doc.userId ?? null,
-          },
+            migrationSeedPreviousUserId: doc.userId ?? null
+          }
         }
       );
       updated += 1;
@@ -47,10 +43,10 @@ module.exports = {
   },
 
   async down(db) {
-    const docs = await db
-      .collection('notificationsettings')
-      .find({ migrationSeedKey: SEED_KEY })
-      .toArray();
+    const docs = await db.
+    collection('notificationsettings').
+    find({ migrationSeedKey: SEED_KEY }).
+    toArray();
 
     for (const doc of docs) {
       const prev = doc.migrationSeedPreviousUserId;
@@ -61,8 +57,8 @@ module.exports = {
             $unset: {
               userId: '',
               migrationSeedKey: '',
-              migrationSeedPreviousUserId: '',
-            },
+              migrationSeedPreviousUserId: ''
+            }
           }
         );
       } else {
@@ -72,13 +68,13 @@ module.exports = {
             $set: { userId: prev },
             $unset: {
               migrationSeedKey: '',
-              migrationSeedPreviousUserId: '',
-            },
+              migrationSeedPreviousUserId: ''
+            }
           }
         );
       }
     }
 
     console.log(`  ✓ Reverted ${docs.length} notification settings userIds`);
-  },
+  }
 };

@@ -10,9 +10,9 @@ describe("migration 18-orders-normalize-seed-subtotals-below-free-delivery-thres
   it("scales line items down to the requested subtotal", () => {
     const items = migration.scaleItemsToSubtotal(
       [
-        { price: 50, quantity: 2, total: 100, extras: [] },
-        { price: 30, quantity: 1, total: 30, extras: [] },
-      ],
+      { price: 50, quantity: 2, total: 100, extras: [] },
+      { price: 30, quantity: 1, total: 30, extras: [] }],
+
       22
     );
 

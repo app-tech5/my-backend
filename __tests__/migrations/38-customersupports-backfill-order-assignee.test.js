@@ -30,15 +30,15 @@ describe('migration 38-customersupports-backfill-order-assignee', () => {
     const ticketId = new ObjectId();
 
     await db.collection('users').insertMany([
-      { _id: adminId, email: 'admin@example.com', role: 'admin', name: 'Admin' },
-      { _id: customerId, email: 'demo@customer.com', role: 'customer', name: 'Demo Customer' },
-    ]);
+    { _id: adminId, email: 'admin@example.com', role: 'admin', name: 'Admin' },
+    { _id: customerId, email: 'demo@customer.com', role: 'customer', name: 'Demo Customer' }]
+    );
     await db.collection('orders').insertOne({
       _id: orderId,
       user: customerId,
       status: 'delivered',
       restaurant: new ObjectId(),
-      createdAt: new Date(),
+      createdAt: new Date()
     });
     await db.collection('customersupports').insertOne({
       _id: ticketId,
@@ -47,7 +47,7 @@ describe('migration 38-customersupports-backfill-order-assignee', () => {
       subject: 'Chat en direct - demo',
       description: 'Need help with my order',
       status: 'open',
-      created_at: new Date(),
+      created_at: new Date()
     });
 
     await migration.up(db);

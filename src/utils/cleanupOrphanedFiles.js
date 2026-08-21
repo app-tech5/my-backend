@@ -70,12 +70,12 @@ async function deleteOrphanedFiles() {
     for (const model of models) {
       const documents = await model.find({
         $or: [
-          { image: { $exists: true } },
-          { documents: { $exists: true } },
-          { logoUrl: { $exists: true } },
-          { imageUrl: { $exists: true } },
-          { image_url: { $exists: true } },
-        ],
+        { image: { $exists: true } },
+        { documents: { $exists: true } },
+        { logoUrl: { $exists: true } },
+        { imageUrl: { $exists: true } },
+        { image_url: { $exists: true } }]
+
       });
 
       documents.forEach((doc) => collectUsedFilesFromDoc(doc, usedUploads, usedPublic));

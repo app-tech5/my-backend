@@ -7,42 +7,42 @@ const UserSubscriptionSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
-      index: true,
+      index: true
     },
     subscription: {
       type: Schema.Types.ObjectId,
       ref: 'Subscription',
-      required: true,
+      required: true
     },
     target: {
       type: String,
       enum: ['customer', 'restaurant', 'driver'],
-      required: true,
+      required: true
     },
     status: {
       type: String,
       enum: ['active', 'cancelled', 'expired'],
       default: 'active',
-      index: true,
+      index: true
     },
     startedAt: {
       type: Date,
-      default: Date.now,
+      default: Date.now
     },
     currentPeriodEnd: {
       type: Date,
-      required: true,
+      required: true
     },
     cancelledAt: Date,
     autoRenew: {
       type: Boolean,
-      default: true,
+      default: true
     },
     paymentMethod: {
       type: String,
       enum: ['wallet', 'free', 'manual', 'card'],
-      default: 'wallet',
-    },
+      default: 'wallet'
+    }
   },
   { timestamps: true, versionKey: false }
 );

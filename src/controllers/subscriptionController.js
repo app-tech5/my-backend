@@ -8,29 +8,29 @@ const {
   serializePlan,
   serializeEnrollment,
   getActiveEnrollment,
-  getActiveBenefits,
+  getActiveBenefits
 } = require('../services/subscriptionService');
 
 async function getWalletBalance(userId) {
   const docs = await Transaction.find({
     $or: [{ user: userId }, { userId }],
-    status: 'completed',
+    status: 'completed'
   }).select('transaction_type payment_method amount status');
 
   return docs.reduce((acc, doc) => {
     const amount = Number(doc.amount) || 0;
     if (
-      doc.transaction_type === 'customer_top_up' ||
-      doc.transaction_type === 'refund' ||
-      doc.transaction_type === 'adjustment' ||
-      doc.transaction_type === 'cashback'
-    ) {
+    doc.transaction_type === 'customer_top_up' ||
+    doc.transaction_type === 'refund' ||
+    doc.transaction_type === 'adjustment' ||
+    doc.transaction_type === 'cashback')
+    {
       return acc + amount;
     }
     if (
-      doc.transaction_type === 'customer_payment' &&
-      doc.payment_method === 'platform_credit'
-    ) {
+    doc.transaction_type === 'customer_payment' &&
+    doc.payment_method === 'platform_credit')
+    {
       return acc - amount;
     }
     return acc;
@@ -43,12 +43,12 @@ exports.listPlans = async (req, res) => {
     const target = req.query.target || roleTarget;
     const plans = await Subscription.find({
       is_active: true,
-      target,
+      target
     }).sort({ price: 1 });
 
     res.json({
       target,
-      plans: plans.map(serializePlan),
+      plans: plans.map(serializePlan)
     });
   } catch (error) {
     res.status(500).json({ message: error.message || i18n.__('server_error') });
@@ -63,7 +63,7 @@ exports.getMine = async (req, res) => {
     res.json({
       target,
       enrollment: enrollment ? serializeEnrollment(enrollment) : null,
-      benefits,
+      benefits
     });
   } catch (error) {
     res.status(500).json({ message: error.message || i18n.__('server_error') });
@@ -95,7 +95,7 @@ exports.subscribe = async (req, res) => {
     if (existing) {
       return res.status(409).json({
         message: 'You already have an active subscription',
-        enrollment: serializeEnrollment(existing),
+        enrollment: serializeEnrollment(existing)
       });
     }
 
@@ -109,7 +109,7 @@ exports.subscribe = async (req, res) => {
           return res.status(402).json({
             message: 'Insufficient wallet balance. Please top up your wallet first.',
             required: price,
-            balance,
+            balance
           });
         }
         await Transaction.create({
@@ -122,8 +122,8 @@ exports.subscribe = async (req, res) => {
           user: req.user.id,
           platform_fee: {
             amount: price,
-            description: `Subscription: ${plan.name}`,
-          },
+            description: `Subscription: ${plan.name}`
+          }
         });
         paymentMethod = 'wallet';
       } else {
@@ -136,8 +136,8 @@ exports.subscribe = async (req, res) => {
           user: req.user.id,
           platform_fee: {
             amount: price,
-            description: `Subscription: ${plan.name}`,
-          },
+            description: `Subscription: ${plan.name}`
+          }
         });
         paymentMethod = 'manual';
       }
@@ -152,17 +152,17 @@ exports.subscribe = async (req, res) => {
       startedAt: now,
       currentPeriodEnd: computePeriodEnd(now, plan.billing_cycle),
       autoRenew: true,
-      paymentMethod,
+      paymentMethod
     });
 
     await enrollment.populate('subscription');
     res.status(201).json({
       enrollment: serializeEnrollment(enrollment),
-      benefits: await getActiveBenefits(req.user.id, target),
+      benefits: await getActiveBenefits(req.user.id, target)
     });
   } catch (error) {
     res.status(error.status || 500).json({
-      message: error.message || i18n.__('server_error'),
+      message: error.message || i18n.__('server_error')
     });
   }
 };
@@ -178,14 +178,14 @@ exports.cancelMine = async (req, res) => {
     enrollment.status = 'cancelled';
     enrollment.cancelledAt = new Date();
     enrollment.autoRenew = false;
-    // End access immediately for a clear UX
+
     enrollment.currentPeriodEnd = new Date();
     await enrollment.save();
     await enrollment.populate('subscription');
 
     res.json({
       enrollment: serializeEnrollment(enrollment),
-      benefits: await getActiveBenefits(req.user.id, target),
+      benefits: await getActiveBenefits(req.user.id, target)
     });
   } catch (error) {
     res.status(500).json({ message: error.message || i18n.__('server_error') });

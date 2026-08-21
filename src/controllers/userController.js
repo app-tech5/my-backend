@@ -1,5 +1,5 @@
 class UserController extends BaseController {
-    constructor() {
-      super(User); 
-    }
+  constructor() {
+    super(User);
   }
+}

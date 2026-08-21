@@ -10,7 +10,7 @@ const serviceModeSchema = new mongoose.Schema({
   },
   restaurantId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Restaurant' 
+    ref: 'Restaurant'
   }
 });
 const ServiceMode = mongoose.model('ServiceMode', serviceModeSchema);

@@ -1,15 +1,3 @@
-/**
- * Corrige les `delivery.deliveryFee` aberrants (souvent générés par faker)
- * en recalculant les frais selon la logique métier de l'app client :
- *
- * - pickup → 0
- * - livraison gratuite (FREE / freeDeliveryEnabled / seuil panier) → 0
- * - DYNAMIC / RESTAURANT_DEFINED + distance client/restaurant → base + km × tarif, borné min/max
- * - sinon → fixedDeliveryFee du restaurant (ou défaut app)
- *
- * Ne modifie que les commandes dont le fee stocké est clairement invalide
- * (pickup avec fee > 0, fee > MAX_PLAUSIBLE_DELIVERY_FEE, ou fee > 0 alors que le recalcul donne 0).
- */
 
 const MAX_PLAUSIBLE_DELIVERY_FEE = 20;
 const MAX_DELIVERY_DISTANCE_KM = 50;
@@ -39,14 +27,14 @@ function isUsableGeoCoordinate(lat, lon) {
 
 function getDistanceKmFromLatLon(lat1, lon1, lat2, lon2) {
   const R = 6371;
-  const dLat = ((lat2 - lat1) * Math.PI) / 180;
-  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
   const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
+  Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+  Math.cos(lat1 * Math.PI / 180) *
+  Math.cos(lat2 * Math.PI / 180) *
+  Math.sin(dLon / 2) *
+  Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 }
@@ -93,7 +81,7 @@ function calculateDeliveryFeeFromSetting(setting, distanceKm, defaultFee = DEFAU
     fixedDeliveryFee,
     dynamicDeliveryFee,
     maxDeliveryDistance,
-    isDeliveryEnabled,
+    isDeliveryEnabled
   } = setting;
 
   if (isDeliveryEnabled === false) {
@@ -105,17 +93,17 @@ function calculateDeliveryFeeFromSetting(setting, distanceKm, defaultFee = DEFAU
   }
 
   if (
-    distanceKm != null &&
-    Number.isFinite(Number(maxDeliveryDistance)) &&
-    distanceKm > Number(maxDeliveryDistance)
-  ) {
+  distanceKm != null &&
+  Number.isFinite(Number(maxDeliveryDistance)) &&
+  distanceKm > Number(maxDeliveryDistance))
+  {
     return Number(toFiniteNumber(fixedDeliveryFee, defaultFee).toFixed(2));
   }
 
   if (
-    ["DYNAMIC", "RESTAURANT_DEFINED"].includes(deliveryFeeType) &&
-    distanceKm != null
-  ) {
+  ["DYNAMIC", "RESTAURANT_DEFINED"].includes(deliveryFeeType) &&
+  distanceKm != null)
+  {
     const dyn = dynamicDeliveryFee || {};
     const baseFee = toFiniteNumber(dyn.baseFee, NaN);
     const perKmFee = toFiniteNumber(dyn.perKmFee, NaN);
@@ -243,14 +231,14 @@ module.exports = {
             "tax.amount": taxAmount,
             "delivery.deliveryFee": deliveryFee,
             totalPrice,
-            updatedAt: new Date(),
-          },
+            updatedAt: new Date()
+          }
         }
       );
     }
   },
 
   async down() {
-    // Frais d'origine faker non récupérables de façon déterministe.
-  },
+
+  }
 };

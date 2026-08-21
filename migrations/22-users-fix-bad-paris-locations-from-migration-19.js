@@ -1,22 +1,15 @@
-/**
- * Corrige les users assignés par la migration 19 avec des coordonnées/adresses
- * invalides (bug RNG dans generateParisLocation).
- *
- * Réassigne des spots Paris valides (pool statique + générateur corrigé),
- * puis recalcule les delivery fees des commandes concernées.
- */
 
 const {
   toFiniteNumber,
   resolveDeliveryFee,
-  recalculateOrderTotals,
+  recalculateOrderTotals
 } = require('./16-orders-fix-absurd-delivery-fees');
 
 const {
   PARIS_USER_LOCATIONS,
   hasValidLocation,
   seededShuffle,
-  generateParisLocation,
+  generateParisLocation
 } = require('./19-users-backfill-paris-locations');
 
 const USER_BACKUP_COLLECTION = '_migration_22_user_location_fix_backups';
@@ -104,12 +97,12 @@ async function recalculateOrdersForUsers(db, userIds) {
     deliverySettings.map((setting) => [String(setting.restaurant), setting])
   );
 
-  const orders = await ordersCol
-    .find({
-      user: { $in: userIds },
-      'delivery.type': 'delivery',
-    })
-    .toArray();
+  const orders = await ordersCol.
+  find({
+    user: { $in: userIds },
+    'delivery.type': 'delivery'
+  }).
+  toArray();
 
   let updatedCount = 0;
 
@@ -153,10 +146,10 @@ async function recalculateOrdersForUsers(db, userIds) {
             subtotal: order.subtotal,
             taxAmount: order.tax?.amount,
             deliveryFee: order.delivery?.deliveryFee,
-            totalPrice: order.totalPrice,
+            totalPrice: order.totalPrice
           },
-          migratedAt: new Date(),
-        },
+          migratedAt: new Date()
+        }
       },
       { upsert: true }
     );
@@ -169,8 +162,8 @@ async function recalculateOrdersForUsers(db, userIds) {
           'tax.amount': taxAmount,
           'delivery.deliveryFee': deliveryFee,
           totalPrice,
-          updatedAt: new Date(),
-        },
+          updatedAt: new Date()
+        }
       }
     );
 
@@ -184,10 +177,10 @@ async function up(db) {
   const usersCol = db.collection('users');
   const backupCol = db.collection(USER_BACKUP_COLLECTION);
 
-  const allUsers = await usersCol
-    .find({ role: { $ne: 'admin' } })
-    .sort({ _id: 1 })
-    .toArray();
+  const allUsers = await usersCol.
+  find({ role: { $ne: 'admin' } }).
+  sort({ _id: 1 }).
+  toArray();
 
   const badUsers = allUsers.filter(isBadParisBackfillLocation);
 
@@ -219,17 +212,17 @@ async function up(db) {
           userId: user._id,
           previous: {
             address: user.address ?? '',
-            location: user.location ?? null,
+            location: user.location ?? null
           },
           next: {
             address: spot.address,
             location: {
               latitude: spot.latitude,
-              longitude: spot.longitude,
-            },
+              longitude: spot.longitude
+            }
           },
-          migratedAt: new Date(),
-        },
+          migratedAt: new Date()
+        }
       },
       { upsert: true }
     );
@@ -241,9 +234,9 @@ async function up(db) {
           address: spot.address,
           location: {
             latitude: spot.latitude,
-            longitude: spot.longitude,
-          },
-        },
+            longitude: spot.longitude
+          }
+        }
       }
     );
   }
@@ -272,8 +265,8 @@ async function down(db) {
       {
         $set: {
           address: backup.previous.address,
-          location: backup.previous.location,
-        },
+          location: backup.previous.location
+        }
       }
     );
   }
@@ -289,8 +282,8 @@ async function down(db) {
           'tax.amount': backup.previous.taxAmount,
           'delivery.deliveryFee': backup.previous.deliveryFee,
           totalPrice: backup.previous.totalPrice,
-          updatedAt: new Date(),
-        },
+          updatedAt: new Date()
+        }
       }
     );
   }
@@ -314,5 +307,5 @@ module.exports = {
   isBadParisBackfillLocation,
   pickDistinctParisSpots,
   up,
-  down,
+  down
 };

@@ -19,10 +19,10 @@ const getPublicFolderPath = (folder) => {
 };
 
 const buildPublicFileUrl = (req, folder, filename) =>
-  `${req.protocol}://${req.get('host')}/api/public/${getPublicFolder(folder)}/${filename}`;
+`${req.protocol}://${req.get('host')}/api/public/${getPublicFolder(folder)}/${filename}`;
 
 module.exports = {
   getPublicFolder,
   getPublicFolderPath,
-  buildPublicFileUrl,
+  buildPublicFileUrl
 };

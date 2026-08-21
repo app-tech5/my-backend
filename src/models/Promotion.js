@@ -21,33 +21,33 @@ const promotionSchema = new Schema({
     type: String,
     required: true,
     enum: [
-      'percentage_discount', 
-      'fixed_discount', 
-      'free_delivery', 
-      'buy_x_get_y', 
-      'combo_deal',
-      'flash_sale',
-      'happy_hour'
-    ],
+    'percentage_discount',
+    'fixed_discount',
+    'free_delivery',
+    'buy_x_get_y',
+    'combo_deal',
+    'flash_sale',
+    'happy_hour'],
+
     default: 'percentage_discount'
   },
   discountValue: {
     type: Number,
-    required: function() {
+    required: function () {
       return ['percentage_discount', 'fixed_discount'].includes(this.promotionType);
     },
     min: 0
   },
   buyQuantity: {
     type: Number,
-    required: function() {
+    required: function () {
       return this.promotionType === 'buy_x_get_y';
     },
     min: 1
   },
   getQuantity: {
     type: Number,
-    required: function() {
+    required: function () {
       return this.promotionType === 'buy_x_get_y';
     },
     min: 1
@@ -91,7 +91,7 @@ const promotionSchema = new Schema({
     type: Date,
     required: true,
     validate: {
-      validator: function(value) {
+      validator: function (value) {
         return value > this.startDate;
       },
       message: i18n.__('end_date_must_be_after_start_date')
@@ -160,28 +160,28 @@ const promotionSchema = new Schema({
 promotionSchema.index({ promotionType: 1, isActive: 1 });
 promotionSchema.index({ scope: 1, isActive: 1 });
 promotionSchema.index({ endDate: 1, isActive: 1 });
-promotionSchema.methods.isActiveNow = function() {
+promotionSchema.methods.isActiveNow = function () {
   const now = new Date();
   const isWithinDateRange = now >= this.startDate && now <= this.endDate;
   if (this.happyHours && this.happyHours.length > 0) {
     const currentHour = now.getHours();
     const currentMinutes = now.getMinutes();
     const currentDay = now.getDay();
-    const isHappyHour = this.happyHours.some(slot => {
+    const isHappyHour = this.happyHours.some((slot) => {
       const [startH, startM] = slot.start.split(':').map(Number);
       const [endH, endM] = slot.end.split(':').map(Number);
       const isDayMatch = slot.days.includes(currentDay);
-      const isTimeMatch = (
-        (currentHour > startH || (currentHour === startH && currentMinutes >= startM)) &&
-        (currentHour < endH || (currentHour === endH && currentMinutes <= endM))
-      );  
+      const isTimeMatch =
+      (currentHour > startH || currentHour === startH && currentMinutes >= startM) && (
+      currentHour < endH || currentHour === endH && currentMinutes <= endM);
+
       return isDayMatch && isTimeMatch;
     });
     return this.isActive && isWithinDateRange && isHappyHour;
   }
   return this.isActive && isWithinDateRange;
 };
-promotionSchema.methods.applyPromotion = function(item, quantity = 1, totalAmount = 0) {
+promotionSchema.methods.applyPromotion = function (item, quantity = 1, totalAmount = 0) {
   if (!this.isActiveNow()) {
     throw new Error(i18n.__('promotion_not_active'));
   }
@@ -195,15 +195,15 @@ promotionSchema.methods.applyPromotion = function(item, quantity = 1, totalAmoun
       const freeItems = Math.floor(quantity / this.buyQuantity) * this.getQuantity;
       return freeItems * item.price;
     case 'combo_deal':
-      const comboItem = this.comboItems.find(ci => ci.item.equals(item._id));
-      return comboItem ? (item.price - comboItem.discountedPrice) : 0;
+      const comboItem = this.comboItems.find((ci) => ci.item.equals(item._id));
+      return comboItem ? item.price - comboItem.discountedPrice : 0;
     case 'free_delivery':
-      return 0; 
+      return 0;
     default:
       return 0;
   }
 };
-promotionSchema.pre('save', function(next) {
+promotionSchema.pre('save', function (next) {
   if (this.promotionType === 'combo_deal' && this.comboItems.length < 2) {
     throw new Error(i18n.__('combo_deal_must_include_at_least_2_items'));
   }

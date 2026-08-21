@@ -1,10 +1,3 @@
-/**
- * Traduit les FAQ `customersupports` (type: faq) du français vers l'anglais.
- * Sauvegarde question/answer d'origine pour rollback.
- *
- * up   → met à jour les FAQ reconnues + insère les FAQ driver EN si collection vide
- * down → restaure les sauvegardes
- */
 
 const { ObjectId } = require('mongodb');
 
@@ -12,88 +5,86 @@ const BACKUP_COLLECTION = '_migration_24_customersupport_faq_backups';
 const MIGRATION_TAG = 'migration_24_english_faq';
 
 const FAQ_TRANSLATIONS = [
-  {
-    questionFr: "Où voir l'état de ma commande ?",
-    questionEn: 'Where can I see my order status?',
-    answerEn:
-      'Open the Orders section and tap your active order to view preparation and delivery updates in real time.',
-    faq_category: 'delivery',
-  },
-  {
-    questionFr: 'Puis-je changer l\'adresse de livraison ?',
-    questionEn: 'Can I change the delivery address?',
-    answerEn:
-      'You can update the delivery address before the restaurant starts preparing your order, from your profile or at checkout.',
-    faq_category: 'delivery',
-  },
-  {
-    questionFr: 'Puis-je modifier ma commande ?',
-    questionEn: 'Can I modify my order?',
-    answerEn:
-      'Contact support as soon as possible. Once preparation has started, changes may no longer be possible.',
-    faq_category: 'other',
-  },
-  {
-    questionFr: 'Que faire si ma commande est endommagée ?',
-    questionEn: 'What should I do if my order is damaged?',
-    answerEn:
-      'Take a photo of the issue and contact support within 24 hours. We will review your case and offer a suitable resolution.',
-    faq_category: 'other',
-  },
-  {
-    questionFr: "L'application ne fonctionne pas",
-    questionEn: 'The app is not working',
-    answerEn:
-      'Force close the app, check your internet connection, install the latest update, then restart your device. If the issue persists, contact support.',
-    faq_category: 'other',
-  },
-  {
-    questionFr: "L'application ne fonctionne pas ?",
-    questionEn: 'The app is not working',
-    answerEn:
-      'Force close the app, check your internet connection, install the latest update, then restart your device. If the issue persists, contact support.',
-    faq_category: 'other',
-  },
-];
+{
+  questionFr: "Où voir l'état de ma commande ?",
+  questionEn: 'Where can I see my order status?',
+  answerEn:
+  'Open the Orders section and tap your active order to view preparation and delivery updates in real time.',
+  faq_category: 'delivery'
+},
+{
+  questionFr: 'Puis-je changer l\'adresse de livraison ?',
+  questionEn: 'Can I change the delivery address?',
+  answerEn:
+  'You can update the delivery address before the restaurant starts preparing your order, from your profile or at checkout.',
+  faq_category: 'delivery'
+},
+{
+  questionFr: 'Puis-je modifier ma commande ?',
+  questionEn: 'Can I modify my order?',
+  answerEn:
+  'Contact support as soon as possible. Once preparation has started, changes may no longer be possible.',
+  faq_category: 'other'
+},
+{
+  questionFr: 'Que faire si ma commande est endommagée ?',
+  questionEn: 'What should I do if my order is damaged?',
+  answerEn:
+  'Take a photo of the issue and contact support within 24 hours. We will review your case and offer a suitable resolution.',
+  faq_category: 'other'
+},
+{
+  questionFr: "L'application ne fonctionne pas",
+  questionEn: 'The app is not working',
+  answerEn:
+  'Force close the app, check your internet connection, install the latest update, then restart your device. If the issue persists, contact support.',
+  faq_category: 'other'
+},
+{
+  questionFr: "L'application ne fonctionne pas ?",
+  questionEn: 'The app is not working',
+  answerEn:
+  'Force close the app, check your internet connection, install the latest update, then restart your device. If the issue persists, contact support.',
+  faq_category: 'other'
+}];
 
 const DRIVER_FAQS_EN = [
-  {
-    question: 'How do I accept a delivery?',
-    answer:
-      "Tap an available order on the home screen and press 'Accept' to start the delivery.",
-    faq_category: 'delivery',
-  },
-  {
-    question: "What happens if I can't complete a delivery?",
-    answer:
-      'Contact support immediately. We will help reassign the order to another driver.',
-    faq_category: 'delivery',
-  },
-  {
-    question: 'How do I get paid?',
-    answer:
-      'Payments are processed automatically after a successful delivery. Check your earnings in the app.',
-    faq_category: 'payment',
-  },
-  {
-    question: 'What should I do in case of an accident?',
-    answer:
-      'Stop immediately, ensure everyone is safe, and call emergency services. Then contact our support team.',
-    faq_category: 'other',
-  },
-  {
-    question: 'How do I update my availability status?',
-    answer:
-      'Use the status toggle on the home screen to switch between Available, Busy, or Offline.',
-    faq_category: 'account',
-  },
-];
+{
+  question: 'How do I accept a delivery?',
+  answer:
+  "Tap an available order on the home screen and press 'Accept' to start the delivery.",
+  faq_category: 'delivery'
+},
+{
+  question: "What happens if I can't complete a delivery?",
+  answer:
+  'Contact support immediately. We will help reassign the order to another driver.',
+  faq_category: 'delivery'
+},
+{
+  question: 'How do I get paid?',
+  answer:
+  'Payments are processed automatically after a successful delivery. Check your earnings in the app.',
+  faq_category: 'payment'
+},
+{
+  question: 'What should I do in case of an accident?',
+  answer:
+  'Stop immediately, ensure everyone is safe, and call emergency services. Then contact our support team.',
+  faq_category: 'other'
+},
+{
+  question: 'How do I update my availability status?',
+  answer:
+  'Use the status toggle on the home screen to switch between Available, Busy, or Offline.',
+  faq_category: 'account'
+}];
 
 function normalizeQuestion(value) {
-  return String(value || '')
-    .trim()
-    .replace(/\s+/g, ' ')
-    .toLowerCase();
+  return String(value || '').
+  trim().
+  replace(/\s+/g, ' ').
+  toLowerCase();
 }
 
 async function backupFaq(backupCol, doc) {
@@ -105,10 +96,10 @@ async function backupFaq(backupCol, doc) {
         previous: {
           question: doc.question,
           answer: doc.answer,
-          faq_category: doc.faq_category,
+          faq_category: doc.faq_category
         },
-        migratedAt: new Date(),
-      },
+        migratedAt: new Date()
+      }
     },
     { upsert: true }
   );
@@ -129,9 +120,9 @@ async function up(db) {
   let translatedCount = 0;
 
   for (const entry of FAQ_TRANSLATIONS) {
-    const docs = await faqsCol
-      .find({ type: 'faq', question: entry.questionFr })
-      .toArray();
+    const docs = await faqsCol.
+    find({ type: 'faq', question: entry.questionFr }).
+    toArray();
 
     for (const doc of docs) {
       await backupFaq(backupCol, doc);
@@ -143,8 +134,8 @@ async function up(db) {
             answer: entry.answerEn,
             faq_category: entry.faq_category,
             updated_at: new Date(),
-            actionData: { ...(doc.actionData || {}), migrationTag: MIGRATION_TAG },
-          },
+            actionData: { ...(doc.actionData || {}), migrationTag: MIGRATION_TAG }
+          }
         }
       );
       translatedCount += 1;
@@ -166,7 +157,7 @@ async function up(db) {
         faq_category: faq.faq_category,
         created_at: now,
         updated_at: now,
-        actionData: { migrationTag: MIGRATION_TAG, seeded: true },
+        actionData: { migrationTag: MIGRATION_TAG, seeded: true }
       }))
     );
 
@@ -191,9 +182,9 @@ async function down(db) {
           question: backup.previous.question,
           answer: backup.previous.answer,
           faq_category: backup.previous.faq_category,
-          updated_at: new Date(),
+          updated_at: new Date()
         },
-        $unset: { 'actionData.migrationTag': '' },
+        $unset: { 'actionData.migrationTag': '' }
       }
     );
   }
@@ -201,7 +192,7 @@ async function down(db) {
   await faqsCol.deleteMany({
     type: 'faq',
     'actionData.migrationTag': MIGRATION_TAG,
-    'actionData.seeded': true,
+    'actionData.seeded': true
   });
 
   await backupCol.deleteMany({});
@@ -216,5 +207,5 @@ module.exports = {
   DRIVER_FAQS_EN,
   normalizeQuestion,
   up,
-  down,
+  down
 };

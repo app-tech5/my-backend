@@ -32,12 +32,12 @@ describe('migration 20-orders-recalculate-delivery-fees-after-user-locations', (
     await db.collection('restaurants').insertOne({
       _id: restaurantId,
       latitude: '48.8715899',
-      longitude: '2.3487251',
+      longitude: '2.3487251'
     });
 
     await db.collection('users').insertOne({
       _id: userId,
-      location: { latitude: 48.8345672, longitude: 2.3264158 },
+      location: { latitude: 48.8345672, longitude: 2.3264158 }
     });
 
     await db.collection('deliverysettings').insertOne({
@@ -50,9 +50,9 @@ describe('migration 20-orders-recalculate-delivery-fees-after-user-locations', (
         baseFee: 2.7,
         perKmFee: 1.12,
         minFee: 2.94,
-        maxFee: 9.79,
+        maxFee: 9.79
       },
-      maxDeliveryDistance: 10,
+      maxDeliveryDistance: 10
     });
 
     await db.collection('orders').insertOne({
@@ -62,7 +62,7 @@ describe('migration 20-orders-recalculate-delivery-fees-after-user-locations', (
       subtotal: 22,
       tax: { rate: 0.1, amount: 2.2 },
       delivery: { type: 'delivery', deliveryFee: 5.65 },
-      totalPrice: 29.85,
+      totalPrice: 29.85
     });
 
     await migration20.up(db);
@@ -80,18 +80,18 @@ describe('migration 20-orders-recalculate-delivery-fees-after-user-locations', (
     await db.collection('restaurants').insertOne({
       _id: restaurantId,
       latitude: '48.8715899',
-      longitude: '2.3487251',
+      longitude: '2.3487251'
     });
 
     await db.collection('users').insertOne({
       _id: userId,
-      address: 'No GPS',
+      address: 'No GPS'
     });
 
     await db.collection('deliverysettings').insertOne({
       restaurant: restaurantId,
       deliveryFeeType: 'FIXED',
-      fixedDeliveryFee: 5.65,
+      fixedDeliveryFee: 5.65
     });
 
     await db.collection('orders').insertOne({
@@ -101,7 +101,7 @@ describe('migration 20-orders-recalculate-delivery-fees-after-user-locations', (
       subtotal: 22,
       tax: { rate: 0.1, amount: 2.2 },
       delivery: { type: 'delivery', deliveryFee: 5.65 },
-      totalPrice: 29.85,
+      totalPrice: 29.85
     });
 
     await migration20.up(db);
@@ -118,12 +118,12 @@ describe('migration 20-orders-recalculate-delivery-fees-after-user-locations', (
     await db.collection('restaurants').insertOne({
       _id: restaurantId,
       latitude: '48.8715899',
-      longitude: '2.3487251',
+      longitude: '2.3487251'
     });
 
     await db.collection('users').insertOne({
       _id: userId,
-      location: { latitude: 48.8345672, longitude: 2.3264158 },
+      location: { latitude: 48.8345672, longitude: 2.3264158 }
     });
 
     await db.collection('deliverysettings').insertOne({
@@ -136,9 +136,9 @@ describe('migration 20-orders-recalculate-delivery-fees-after-user-locations', (
         baseFee: 2.7,
         perKmFee: 1.12,
         minFee: 2.94,
-        maxFee: 9.79,
+        maxFee: 9.79
       },
-      maxDeliveryDistance: 10,
+      maxDeliveryDistance: 10
     });
 
     await db.collection('orders').insertOne({
@@ -148,7 +148,7 @@ describe('migration 20-orders-recalculate-delivery-fees-after-user-locations', (
       subtotal: 22,
       tax: { rate: 0.1, amount: 2.2 },
       delivery: { type: 'delivery', deliveryFee: 5.65 },
-      totalPrice: 29.85,
+      totalPrice: 29.85
     });
 
     await migration20.up(db);

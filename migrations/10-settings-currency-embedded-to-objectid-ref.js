@@ -1,13 +1,5 @@
 const { ObjectId } = require("mongodb");
 
-/**
- * Aligne la collection `settings` avec le modèle Mongoose Setting :
- * `currency` doit être un ObjectId référençant `currencies`, pas un sous-document.
- *
- * Pour chaque document dont `currency` est un objet (code/value/label/symbol),
- * on résout une devise dans `currencies` par `code` (priorité à `code`, sinon `value`).
- * Si aucune devise ne correspond, on insère une ligne dans `currencies` à partir du snapshot.
- */
 function isObjectIdLike(c) {
   return c instanceof ObjectId;
 }
@@ -46,7 +38,7 @@ module.exports = {
       let currencyDoc = await currenciesCol.findOne({ code });
       if (!currencyDoc) {
         currencyDoc = await currenciesCol.findOne({
-          code: { $regex: new RegExp(`^${code.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, "i") },
+          code: { $regex: new RegExp(`^${code.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, "i") }
         });
       }
 
@@ -55,11 +47,11 @@ module.exports = {
         const { insertedId } = await currenciesCol.insertOne({
           code,
           exchangeRate:
-            typeof emb.exchangeRate === "number" ? emb.exchangeRate : 0,
+          typeof emb.exchangeRate === "number" ? emb.exchangeRate : 0,
           name: emb.name || emb.label || code,
           symbol: emb.symbol != null ? String(emb.symbol) : "",
           createdAt: now,
-          updatedAt: now,
+          updatedAt: now
         });
         currencyDoc = await currenciesCol.findOne({ _id: insertedId });
       }
@@ -96,11 +88,11 @@ module.exports = {
               value: currencyDoc.code,
               label: currencyDoc.name,
               symbol: currencyDoc.symbol,
-              code: currencyDoc.code,
-            },
-          },
+              code: currencyDoc.code
+            }
+          }
         }
       );
     }
-  },
+  }
 };

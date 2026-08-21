@@ -3,7 +3,7 @@ const {
   batchSuggestions,
   acceptBatch,
   activeOrders,
-  completeWithProof,
+  completeWithProof
 } = require('../controllers/logisticsController');
 
 const router = express.Router();

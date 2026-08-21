@@ -24,7 +24,7 @@ const couponSchema = new Schema({
   },
   discountValue: {
     type: Number,
-    required: function() {
+    required: function () {
       return this.discountType !== 'free_delivery';
     },
     min: 0
@@ -51,7 +51,7 @@ const couponSchema = new Schema({
     type: Date,
     required: true,
     validate: {
-      validator: function(value) {
+      validator: function (value) {
         return value > this.startDate;
       },
       message: i18n.__('end_date_must_be_after_start_date')
@@ -105,16 +105,16 @@ const couponSchema = new Schema({
 });
 couponSchema.index({ code: 1, isActive: 1 });
 couponSchema.index({ endDate: 1, isActive: 1 });
-couponSchema.methods.isValid = function() {
+couponSchema.methods.isValid = function () {
   const now = new Date();
   return (
     this.isActive &&
     now >= this.startDate &&
-    now <= this.endDate &&
-    (this.maxUses ? this.currentUses < this.maxUses : true)
-  );
+    now <= this.endDate && (
+    this.maxUses ? this.currentUses < this.maxUses : true));
+
 };
-couponSchema.methods.applyDiscount = function(totalAmount) {
+couponSchema.methods.applyDiscount = function (totalAmount) {
   if (!this.isValid()) {
     throw new Error(i18n.__('invalid_coupon'));
   }
@@ -127,7 +127,7 @@ couponSchema.methods.applyDiscount = function(totalAmount) {
     case 'fixed':
       return Math.max(0, totalAmount - this.discountValue);
     case 'free_delivery':
-      return totalAmount; 
+      return totalAmount;
     default:
       return totalAmount;
   }

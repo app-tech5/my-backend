@@ -7,11 +7,10 @@ module.exports = {
     }
     await db.createCollection('currencies');
     await db.collection('currencies').createIndex({ code: 1 }, { unique: true });
-    
+
     const basicCurrencies = [
-      { code: 'USD', exchangeRate: 1, name: 'United States Dollar', symbol: '$' },
-      { code: 'EUR', exchangeRate: 0.85, name: 'Euro', symbol: '€' },
-    ];
+    { code: 'USD', exchangeRate: 1, name: 'United States Dollar', symbol: '$' },
+    { code: 'EUR', exchangeRate: 0.85, name: 'Euro', symbol: '€' }];
 
     await db.collection('currencies').insertMany(basicCurrencies);
   },

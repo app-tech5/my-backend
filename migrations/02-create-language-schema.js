@@ -7,13 +7,12 @@ module.exports = {
     }
 
     const supportedLanguages = [
-      { code: 'en', name: 'English', isDefault: true },
-      { code: 'fr', name: 'French', isDefault: false },
-    ];
+    { code: 'en', name: 'English', isDefault: true },
+    { code: 'fr', name: 'French', isDefault: false }];
 
     await db.collection('languages').insertMany(supportedLanguages);
 
-    const defaultLanguage = supportedLanguages.find(lang => lang.isDefault);
+    const defaultLanguage = supportedLanguages.find((lang) => lang.isDefault);
     await db.collection('settings').updateOne(
       { _id: "app_settings" },
       {

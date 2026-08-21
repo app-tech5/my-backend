@@ -1,12 +1,9 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const autopopulate = require('mongoose-autopopulate');
-/**
- * Réglages de livraison par restaurant — à utiliser avec `GET/PATCH` génériques :
- * `GET /resource/deliverysettings?type=:restaurantId` (filtre comme `Product`).
- */
+
 const deliverySettingsSchema = new Schema({
-  // ajoute autopopulate pour le restaurant
+
   restaurant: {
     type: Schema.Types.ObjectId,
     ref: 'Restaurant',
@@ -16,24 +13,24 @@ const deliverySettingsSchema = new Schema({
   },
   isPickupEnabled: {
     type: Boolean,
-    default: true,
+    default: true
   },
   freeDeliveryEnabled: {
     type: Boolean,
-    default: false,
+    default: false
   },
   isDeliveryEnabled: {
     type: Boolean,
     default: true,
-    required: true,
+    required: true
   },
-  deliveryPreparationTime: { 
+  deliveryPreparationTime: {
     type: Number,
     default: 30,
     min: 5,
     max: 180
   },
-  maxDeliveryDistance: { 
+  maxDeliveryDistance: {
     type: Number,
     default: 15,
     min: 1,
@@ -58,32 +55,32 @@ const deliverySettingsSchema = new Schema({
       maxFee: 10
     }
   },
-  freeDeliveryThreshold: { 
+  freeDeliveryThreshold: {
     type: Number,
     default: 25
   },
   deliveryZones: [{
     name: String,
-    polygonCoordinates: [[Number]], 
+    polygonCoordinates: [[Number]],
     fee: Number
   }],
   deliveryHours: {
     type: Object,
     default: {
-      start : '08:00',
+      start: '08:00',
       end: '23:00'
     }
   },
-  blackoutDays: [Date], 
+  blackoutDays: [Date],
   allowScheduledDelivery: {
     type: Boolean,
     default: true
   },
-  schedulingLeadTime: { 
+  schedulingLeadTime: {
     type: Number,
     default: 2
   },
-  timeSlotDuration: { 
+  timeSlotDuration: {
     type: Number,
     default: 30,
     enum: [15, 30, 45, 60]
@@ -93,7 +90,7 @@ const deliverySettingsSchema = new Schema({
     enum: ['AUTO', 'MANUAL', 'HYBRID'],
     default: 'AUTO'
   },
-  autoAssignmentRadius: { 
+  autoAssignmentRadius: {
     type: Number,
     default: 5
   },

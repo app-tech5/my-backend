@@ -7,9 +7,8 @@ module.exports = {
     }
 
     const serviceModes = [
-      { value: 'pickup', label: 'Pickup' },
-      { value: 'delivery', label: 'Delivery' }
-    ];
+    { value: 'pickup', label: 'Pickup' },
+    { value: 'delivery', label: 'Delivery' }];
 
     await db.collection('servicemodes').insertMany(serviceModes);
   },

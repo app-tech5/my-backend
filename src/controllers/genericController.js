@@ -21,7 +21,7 @@ const genericController = (Model) => {
       try {
         const item = await Model.findById(req.params.id).setOptions({
           role: req.user?.type,
-          authUser: req.user,
+          authUser: req.user
         });
         if (!item) {
           return res.status(404).json({ message: i18n.__("not_found") });
@@ -34,14 +34,14 @@ const genericController = (Model) => {
     getByUserId: async (req, res) => {
       try {
         const query = Model.find({
-          $or: [{ user: req.user.id }, { userId: req.user.id }],
+          $or: [{ user: req.user.id }, { userId: req.user.id }]
         });
         const item = await query;
 
         if (Model.modelName === 'Transaction') {
           return res.json({
             transactions: item,
-            balance: query._walletBalance ?? 0,
+            balance: query._walletBalance ?? 0
           });
         }
 
@@ -65,14 +65,14 @@ const genericController = (Model) => {
 
         if (Model.modelName === 'PaymentMethod') {
           const {
-            assertPaymentMethodAllowed,
+            assertPaymentMethodAllowed
           } = require('../services/paymentEligibilityService');
           await assertPaymentMethodAllowed(payload.methodType);
         }
 
         if (Model.modelName === 'Order') {
           const {
-            assertPaymentMethodAllowed,
+            assertPaymentMethodAllowed
           } = require('../services/paymentEligibilityService');
           const { priceOrderForCustomer } = require('../services/orderPricingService');
 
@@ -81,32 +81,32 @@ const genericController = (Model) => {
           const items = Array.isArray(payload.items) ? payload.items : [];
           const itemsSubtotal = items.reduce((sum, it) => {
             const line =
-              Number(it.total) ||
-              Number(it.price || 0) * Number(it.quantity || 1);
+            Number(it.total) ||
+            Number(it.price || 0) * Number(it.quantity || 1);
             return sum + line;
           }, 0);
           const baseSubtotal =
-            itemsSubtotal > 0 ? itemsSubtotal : Number(payload.subtotal) || 0;
+          itemsSubtotal > 0 ? itemsSubtotal : Number(payload.subtotal) || 0;
           const taxRate =
-            payload.tax?.rate != null
-              ? Number(payload.tax.rate)
-              : 0;
+          payload.tax?.rate != null ?
+          Number(payload.tax.rate) :
+          0;
           const priced = await priceOrderForCustomer({
             userId: payload.user || req.user?.id,
             subtotal: baseSubtotal,
             deliveryFee: Number(payload.delivery?.deliveryFee || 0),
-            taxRate,
+            taxRate
           });
           payload.subtotal = priced.subtotal;
           payload.tax = {
             ...(payload.tax || {}),
             rate: priced.taxRate,
-            amount: priced.taxAmount,
+            amount: priced.taxAmount
           };
           payload.totalPrice = priced.totalPrice;
           payload.delivery = {
             ...(payload.delivery || {}),
-            deliveryFee: priced.deliveryFee,
+            deliveryFee: priced.deliveryFee
           };
           if (priced.discountAmount > 0 || priced.memberFreeDelivery) {
             payload.channelMeta = {
@@ -115,15 +115,15 @@ const genericController = (Model) => {
                 discountPercent: priced.discountPercent,
                 discountAmount: priced.discountAmount,
                 freeDelivery: priced.memberFreeDelivery,
-                planName: priced.benefits?.planName,
-              },
+                planName: priced.benefits?.planName
+              }
             };
           }
         }
 
         if (Model.modelName === 'AppSetting') {
           const {
-            syncGatewayFlagsFromAppSettings,
+            syncGatewayFlagsFromAppSettings
           } = require('../services/paymentEligibilityService');
           await syncGatewayFlagsFromAppSettings(payload);
         }
@@ -135,9 +135,9 @@ const genericController = (Model) => {
             await AppSetting.updateOne({}, { $set: { stripeEnabled: !!payload.active } });
           }
           if (
-            (id === 'cash-on-delivery' || id === 'cash_on_delivery') &&
-            typeof payload.active === 'boolean'
-          ) {
+          (id === 'cash-on-delivery' || id === 'cash_on_delivery') &&
+          typeof payload.active === 'boolean')
+          {
             await AppSetting.updateOne(
               {},
               { $set: { cashOnDeliveryEnabled: !!payload.active } }
@@ -157,28 +157,17 @@ const genericController = (Model) => {
         if (req.user?.isDemo) return res.status(403).json({ message: i18n.__("demo_mode_action_not_available") });
         if (Model.modelName === 'Order') {
           const allowedStatusUpdates = {
-            'pending': ['cancelled'],
+            'pending': ['cancelled']
           };
           const currentOrder = await Model.findById(req.params.id);
           if (!currentOrder) {
             return res.status(404).json({ message: i18n.__("order_not_found") });
           }
-          // if (currentOrder.user.toString() !== req.user.id) {
-          //   return res.status(403).json({ message: i18n.__("you_can_only_modify_your_own_orders") });
-          // }
-          // if (req.body.status && req.body.status !== currentOrder.status) {
-          //   const currentStatus = currentOrder.status;
-          //   const newStatus = req.body.status;
-          //   if (allowedStatusUpdates[currentStatus] && !allowedStatusUpdates[currentStatus].includes(newStatus)) {
-          //     return res.status(400).json({
-          //       message: `Cannot change order status from ${currentStatus} to ${newStatus}`
-          //     });
-          //   }
-          // }
+
         }
         if (Model.modelName === 'AppSetting') {
           const {
-            syncGatewayFlagsFromAppSettings,
+            syncGatewayFlagsFromAppSettings
           } = require('../services/paymentEligibilityService');
           await syncGatewayFlagsFromAppSettings(req.body);
         }
@@ -191,9 +180,9 @@ const genericController = (Model) => {
             await AppSetting.updateOne({}, { $set: { stripeEnabled: !!req.body.active } });
           }
           if (
-            (id === 'cash-on-delivery' || id === 'cash_on_delivery') &&
-            typeof req.body.active === 'boolean'
-          ) {
+          (id === 'cash-on-delivery' || id === 'cash_on_delivery') &&
+          typeof req.body.active === 'boolean')
+          {
             await AppSetting.updateOne(
               {},
               { $set: { cashOnDeliveryEnabled: !!req.body.active } }
@@ -222,7 +211,7 @@ const genericController = (Model) => {
         if (req.user?.isDemo) return res.status(403).json({ message: i18n.__("demo_mode_action_not_available") });
         const deletedItem = await Model.findByIdAndDelete(req.params.id).setOptions({
           role: req.user?.type,
-          authUser: req.user,
+          authUser: req.user
         });
         if (!deletedItem) return res.status(404).json({ message: i18n.__("not_found") });
         res.json({ message: i18n.__("deleted_successfully") });
@@ -239,9 +228,9 @@ const genericController = (Model) => {
         if (!doc) return res.json({});
         const defaultFields = Object.fromEntries(
           Object.entries(doc.toObject()).map(([key, value]) => [
-            key,
-            getDefaultValue(value, key),
-          ])
+          key,
+          getDefaultValue(value, key)]
+          )
         );
         res.json(defaultFields);
       } catch (error) {
@@ -267,12 +256,12 @@ const genericController = (Model) => {
             let val = schemaType.defaultValue;
             if (val === undefined) {
               const inst = schemaType.instance || '';
-              if (inst === 'String') val = '';
-              else if (inst === 'Number') val = 0;
-              else if (inst === 'Boolean') val = false;
-              else if (inst === 'Date') val = null;
-              else if (inst === 'ObjectId' || inst === 'ObjectID') val = '';
-              else if (inst === 'Array') val = [];
+              if (inst === 'String') val = '';else
+              if (inst === 'Number') val = 0;else
+              if (inst === 'Boolean') val = false;else
+              if (inst === 'Date') val = null;else
+              if (inst === 'ObjectId' || inst === 'ObjectID') val = '';else
+              if (inst === 'Array') val = [];
             }
             simplifiedSchema[path] = val;
           }
@@ -282,7 +271,7 @@ const genericController = (Model) => {
         res.status(500).json({ error: error.message });
       }
     }
-    ,
+
   };
 };
 module.exports = genericController;

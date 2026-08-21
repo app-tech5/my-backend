@@ -32,17 +32,17 @@ describe('migration 30-orders-rebase-admin-histogram-days', () => {
       status: day === 23 ? 'cancelled' : 'delivered',
       migrationSeedKey: migration.SOURCE_SEED_KEY,
       createdAt: new Date(2026, 6, day, 12, 30, 0, 0),
-      updatedAt: new Date(2026, 6, day, 12, 30, 0, 0),
+      updatedAt: new Date(2026, 6, day, 12, 30, 0, 0)
     }));
 
     await db.collection('orders').insertMany(orders);
     await migration.up(db);
 
-    const touched = await db
-      .collection('orders')
-      .find({ migrationSeedKey: migration.SOURCE_SEED_KEY })
-      .sort({ createdAt: 1 })
-      .toArray();
+    const touched = await db.
+    collection('orders').
+    find({ migrationSeedKey: migration.SOURCE_SEED_KEY }).
+    sort({ createdAt: 1 }).
+    toArray();
 
     expect(touched).toHaveLength(6);
     expect(touched.map((o) => o.createdAt.getDate())).toEqual(migration.DAYS_PER_MONTH);
@@ -55,7 +55,7 @@ describe('migration 30-orders-rebase-admin-histogram-days', () => {
       _id: new ObjectId(),
       migrationSeedKey: migration.SOURCE_SEED_KEY,
       createdAt: new Date(2026, 6, 23, 12, 30, 0, 0),
-      updatedAt: new Date(2026, 6, 23, 12, 30, 0, 0),
+      updatedAt: new Date(2026, 6, 23, 12, 30, 0, 0)
     });
 
     await migration.up(db);
@@ -78,7 +78,7 @@ describe('migration 30-orders-rebase-admin-histogram-days', () => {
       _id: orderId,
       migrationSeedKey: migration.SOURCE_SEED_KEY,
       createdAt: original,
-      updatedAt: original,
+      updatedAt: original
     });
 
     await migration.up(db);

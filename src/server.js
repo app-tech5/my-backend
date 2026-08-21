@@ -31,9 +31,9 @@ connectDB();
 const app = express();
 app.use(i18n.init);
 
-const corsOrigins = process.env.CORS_ORIGINS
-  ? process.env.CORS_ORIGINS.split(',').map(origin => origin.trim())
-  : ['http://localhost:3000'];
+const corsOrigins = process.env.CORS_ORIGINS ?
+process.env.CORS_ORIGINS.split(',').map((origin) => origin.trim()) :
+['http://localhost:3000'];
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -48,7 +48,7 @@ global.io = io;
 io.on('connection', (socket) => {
 
   socket.on('joinOrderRoom', (userId) => {
-     
+
     socket.join(`orders-${userId}`);
   });
 
@@ -65,10 +65,10 @@ io.on('connection', (socket) => {
   });
 
   socket.on('joinOrderTrackingRoom', (orderId) => {
-     
+
     socket.join(`order-${orderId}`);
   });
-  
+
   socket.on('leaveOrderTrackingRoom', (orderId) => {
     if (!orderId) return;
     socket.leave(`order-${orderId}`);
@@ -96,12 +96,12 @@ app.use("/api/public", (req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   next();
 }, express.static(path.join(__dirname, "../public")));
-// Public static uploads must be before auth: <img src> cannot send Bearer tokens.
+
 app.use("/api/uploads", (req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   next();
 }, express.static(path.join(__dirname, "../uploads")));
-// Public hybrid-channel webhooks (Meta WhatsApp verify + USSD aggregator)
+
 const { publicRouter: channelPublicRoutes, protectedRouter: channelProtectedRoutes } = require("./routes/channelRoutes");
 app.use("/api/channels", channelPublicRoutes);
 app.use("/api", authMiddleware);

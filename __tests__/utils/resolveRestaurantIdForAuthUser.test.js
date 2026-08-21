@@ -1,11 +1,11 @@
 const { resolveRestaurantIdForAuthUser } = require('../../src/utils/resolveRestaurantIdForAuthUser');
 
 jest.mock('../../src/models/User', () => ({
-  findById: jest.fn(),
+  findById: jest.fn()
 }));
 
 jest.mock('../../src/models/Restaurant', () => ({
-  findOne: jest.fn(),
+  findOne: jest.fn()
 }));
 
 const User = require('../../src/models/User');
@@ -21,7 +21,7 @@ describe('resolveRestaurantIdForAuthUser', () => {
     const result = await resolveRestaurantIdForAuthUser({
       id: '6989322d80e02f73898de666',
       type: 'restaurant',
-      restaurant: restaurantId,
+      restaurant: restaurantId
     });
 
     expect(result).toBe(restaurantId);
@@ -31,13 +31,13 @@ describe('resolveRestaurantIdForAuthUser', () => {
   it('falls back to user.restaurant field', async () => {
     User.findById.mockReturnValue({
       select: () => ({
-        lean: async () => ({ restaurant: 'abc123' }),
-      }),
+        lean: async () => ({ restaurant: 'abc123' })
+      })
     });
 
     const result = await resolveRestaurantIdForAuthUser({
       id: 'user1',
-      type: 'restaurant',
+      type: 'restaurant'
     });
 
     expect(result).toBe('abc123');
@@ -46,18 +46,18 @@ describe('resolveRestaurantIdForAuthUser', () => {
   it('falls back to restaurant.users.value lookup', async () => {
     User.findById.mockReturnValue({
       select: () => ({
-        lean: async () => ({ restaurant: null }),
-      }),
+        lean: async () => ({ restaurant: null })
+      })
     });
     Restaurant.findOne.mockReturnValue({
       select: () => ({
-        lean: async () => ({ _id: 'fromUsersValue' }),
-      }),
+        lean: async () => ({ _id: 'fromUsersValue' })
+      })
     });
 
     const result = await resolveRestaurantIdForAuthUser({
       id: 'user1',
-      type: 'restaurant',
+      type: 'restaurant'
     });
 
     expect(result).toBe('fromUsersValue');

@@ -1,18 +1,3 @@
-/**
- * Corrige les lignes `orders.items` avec price/total à 0.
- *
- * Priorité pour le prix unitaire :
- * 1. price déjà présent sur la ligne
- * 2. prix du Product/Menu référencé (item.item)
- * 3. moyenne des prix du restaurant (menus ou products)
- *
- * Pour les extras : si extra.price vaut 0, lookup sur products.productId.
- *
- * Total ligne :
- *   (unitPrice * quantity) + extras + variants (extra ou price)
- *
- * Puis recalcul de subtotal, tax.amount et totalPrice.
- */
 
 function toFiniteNumber(value, fallback = 0) {
   if (typeof value === "number" && Number.isFinite(value)) return value;
@@ -43,11 +28,11 @@ async function getRestaurantAverageUnitPrice(db, restaurantId, itemType) {
   }
 
   for (const collectionName of collections) {
-    const prices = await db
-      .collection(collectionName)
-      .find({ restaurant: restaurantId, price: { $gt: 0 } })
-      .project({ price: 1 })
-      .toArray();
+    const prices = await db.
+    collection(collectionName).
+    find({ restaurant: restaurantId, price: { $gt: 0 } }).
+    project({ price: 1 }).
+    toArray();
 
     if (prices.length > 0) {
       const total = prices.reduce((sum, doc) => sum + toFiniteNumber(doc.price, 0), 0);
@@ -83,7 +68,7 @@ async function resolveExtras(db, extras = []) {
     resolved.push({
       ...extra,
       price,
-      quantity,
+      quantity
     });
   }
 
@@ -116,7 +101,7 @@ async function resolveLineItem(db, item, restaurantId) {
     quantity,
     extras,
     variants,
-    total,
+    total
   };
 }
 
@@ -169,14 +154,14 @@ module.exports = {
             "tax.amount": taxAmount,
             totalPrice,
             "delivery.deliveryFee": deliveryFee,
-            updatedAt: new Date(),
-          },
+            updatedAt: new Date()
+          }
         }
       );
     }
   },
 
   async down() {
-    // Prix d'origine non restaurables de façon fiable.
-  },
+
+  }
 };

@@ -67,7 +67,7 @@ router.put('/profile', async (req, res) => {
     const updates = req.body;
     const allowedFields = ['name', 'email', 'phone', 'address', 'description', 'openingTime', 'closingTime', 'is_closed', 'commission_rate', 'collectTime'];
     const filteredUpdates = {};
-    allowedFields.forEach(field => {
+    allowedFields.forEach((field) => {
       if (updates[field] !== undefined) {
         filteredUpdates[field] = updates[field];
       }
@@ -116,12 +116,12 @@ router.get('/stats', async (req, res) => {
     const restaurantId = req.restaurant._id;
     const orders = await Order.find({ restaurant: restaurantId });
     const totalOrders = orders.length;
-    const completedOrders = orders.filter(order => order.status === 'delivered').length;
-    const totalRevenue = orders
-      .filter(order => order.status === 'delivered')
-      .reduce((sum, order) => sum + (order.totalPrice || 0), 0);
-    const pendingOrders = orders.filter(order =>
-      ['pending', 'accepted', 'preparing', 'ready'].includes(order.status)
+    const completedOrders = orders.filter((order) => order.status === 'delivered').length;
+    const totalRevenue = orders.
+    filter((order) => order.status === 'delivered').
+    reduce((sum, order) => sum + (order.totalPrice || 0), 0);
+    const pendingOrders = orders.filter((order) =>
+    ['pending', 'accepted', 'preparing', 'ready'].includes(order.status)
     ).length;
     const averageRating = 4.2;
     const activeMenuItems = 24;
@@ -149,7 +149,7 @@ router.get('/analytics', async (req, res) => {
     const { period = 'today' } = req.query;
     const restaurantId = req.restaurant._id;
     const now = new Date();
-    let startDate, endDate = now;
+    let startDate,endDate = now;
     switch (period) {
       case 'today':
         startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -169,16 +169,16 @@ router.get('/analytics', async (req, res) => {
       createdAt: { $gte: startDate, $lte: endDate }
     });
     const totalOrders = orders.length;
-    const completedOrders = orders.filter(order => order.status === 'delivered').length;
-    const cancelledOrders = orders.filter(order => order.status === 'cancelled').length;
-    const totalRevenue = orders
-      .filter(order => order.status === 'delivered')
-      .reduce((sum, order) => sum + (order.totalPrice || 0), 0);
+    const completedOrders = orders.filter((order) => order.status === 'delivered').length;
+    const cancelledOrders = orders.filter((order) => order.status === 'cancelled').length;
+    const totalRevenue = orders.
+    filter((order) => order.status === 'delivered').
+    reduce((sum, order) => sum + (order.totalPrice || 0), 0);
     const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
-    const cancellationRate = totalOrders > 0 ? (cancelledOrders / totalOrders) * 100 : 0;
+    const cancellationRate = totalOrders > 0 ? cancelledOrders / totalOrders * 100 : 0;
     const averageRating = 4.2;
     const averagePreparationTime = 18;
-    const activeCustomers = Math.floor(totalOrders * 0.8); 
+    const activeCustomers = Math.floor(totalOrders * 0.8);
     const onTimeDeliveryRate = 91.7;
     const totalDeliveries = completedOrders;
     const trends = {
@@ -221,10 +221,10 @@ router.get('/orders', async (req, res) => {
     if (status) {
       filter.status = status;
     }
-    const orders = await Order.find(filter)
-      .populate('user', 'name phone')
-      .sort({ createdAt: -1 })
-      .limit(50);
+    const orders = await Order.find(filter).
+    populate('user', 'name phone').
+    sort({ createdAt: -1 }).
+    limit(50);
     res.json({
       success: true,
       data: orders
@@ -370,9 +370,9 @@ router.put('/orders/:orderId/status', async (req, res) => {
 router.get('/menu', async (req, res) => {
   try {
     const restaurantId = req.restaurant._id;
-    const menuItems = await Product.find({ restaurant: restaurantId })
-      .populate('restaurant', 'name')
-      .sort({ created_at: -1 });
+    const menuItems = await Product.find({ restaurant: restaurantId }).
+    populate('restaurant', 'name').
+    sort({ created_at: -1 });
     res.json({
       success: true,
       data: menuItems

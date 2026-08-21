@@ -9,7 +9,7 @@ async function initialize(req, res) {
       email,
       reference,
       callbackUrl,
-      metadata,
+      metadata
     } = req.body || {};
 
     if (!provider || !(Number(amount) > 0)) {
@@ -23,7 +23,7 @@ async function initialize(req, res) {
       email: email || req.user?.email,
       reference,
       callbackUrl,
-      metadata: { ...(metadata || {}), userId: String(req.user?._id || '') },
+      metadata: { ...(metadata || {}), userId: String(req.user?._id || '') }
     });
 
     return res.json(result);
@@ -31,7 +31,7 @@ async function initialize(req, res) {
     const status = error.status || 500;
     return res.status(status).json({
       message: error.message || 'Payment init failed',
-      data: error.data,
+      data: error.data
     });
   }
 }
@@ -39,11 +39,11 @@ async function initialize(req, res) {
 async function listProviders(_req, res) {
   const Gateway = require('../models/Gateway');
   const {
-    filterListedProviders,
+    filterListedProviders
   } = require('../services/paymentEligibilityService');
-  const rows = await Gateway.find({ active: true })
-    .select('identifier name image capabilities fees active metadata')
-    .lean();
+  const rows = await Gateway.find({ active: true }).
+  select('identifier name image capabilities fees active metadata').
+  lean();
   const filtered = await filterListedProviders(rows);
   return res.json({
     providers: filtered.map((g) => ({
@@ -51,8 +51,8 @@ async function listProviders(_req, res) {
       name: g.name,
       image: g.image,
       capabilities: g.capabilities,
-      fees: g.fees,
-    })),
+      fees: g.fees
+    }))
   });
 }
 

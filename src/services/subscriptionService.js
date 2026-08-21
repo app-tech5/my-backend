@@ -42,9 +42,9 @@ function serializePlan(plan) {
       reducedCommissionPercent: Number(plan.benefitFlags?.reducedCommissionPercent) || 0,
       waiveCommission: !!plan.benefitFlags?.waiveCommission,
       platformAccess: !!plan.benefitFlags?.platformAccess,
-      prioritySupport: !!plan.benefitFlags?.prioritySupport,
+      prioritySupport: !!plan.benefitFlags?.prioritySupport
     },
-    isActive: plan.is_active !== false,
+    isActive: plan.is_active !== false
   };
 }
 
@@ -59,7 +59,7 @@ function serializeEnrollment(enrollment) {
     cancelledAt: enrollment.cancelledAt || null,
     autoRenew: !!enrollment.autoRenew,
     paymentMethod: enrollment.paymentMethod,
-    plan: plan && plan._id ? serializePlan(plan) : { id: String(enrollment.subscription) },
+    plan: plan && plan._id ? serializePlan(plan) : { id: String(enrollment.subscription) }
   };
 }
 
@@ -69,10 +69,10 @@ async function getActiveEnrollment(userId, target) {
     user: userId,
     status: 'active',
     ...(target ? { target } : {}),
-    currentPeriodEnd: { $gt: now },
-  })
-    .sort({ currentPeriodEnd: -1 })
-    .populate('subscription');
+    currentPeriodEnd: { $gt: now }
+  }).
+  sort({ currentPeriodEnd: -1 }).
+  populate('subscription');
 
   if (!enrollment) return null;
 
@@ -95,7 +95,7 @@ async function getActiveBenefits(userId, target) {
       platformAccess: false,
       prioritySupport: false,
       planName: null,
-      currentPeriodEnd: null,
+      currentPeriodEnd: null
     };
   }
   const plan = enrollment.subscription;
@@ -109,7 +109,7 @@ async function getActiveBenefits(userId, target) {
     prioritySupport: !!plan.benefitFlags?.prioritySupport,
     planName: plan.name,
     currentPeriodEnd: enrollment.currentPeriodEnd,
-    benefits: Array.isArray(plan.benefits) ? plan.benefits : [],
+    benefits: Array.isArray(plan.benefits) ? plan.benefits : []
   };
 }
 
@@ -119,5 +119,5 @@ module.exports = {
   serializePlan,
   serializeEnrollment,
   getActiveEnrollment,
-  getActiveBenefits,
+  getActiveBenefits
 };

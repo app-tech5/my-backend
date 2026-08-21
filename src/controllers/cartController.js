@@ -17,7 +17,7 @@ const cartController = {
         });
         await cart.save();
       }
-      cart.items = cart.items.map(item => {
+      cart.items = cart.items.map((item) => {
         if (!item.id) {
           item.id = item._id || item.uniqueKey || `item_${Date.now()}_${Math.random()}`;
         }
@@ -101,7 +101,7 @@ const cartController = {
       if (!userId) {
         return res.status(401).json({ message: i18n.__("authentication_required") });
       }
-      const { itemId } = req.params; 
+      const { itemId } = req.params;
       const cart = await Cart.findByUser(userId);
       if (!cart) {
         return res.status(404).json({ message: i18n.__("cart_not_found") });
@@ -126,7 +126,7 @@ const cartController = {
       if (!userId) {
         return res.status(401).json({ message: i18n.__("authentication_required") });
       }
-      const { itemId } = req.params; 
+      const { itemId } = req.params;
       const itemData = req.body;
       const cart = await Cart.findByUser(userId);
       if (!cart) {
@@ -201,7 +201,7 @@ const cartController = {
       if (!userId) {
         return res.status(401).json({ message: i18n.__("authentication_required") });
       }
-      const { localItems } = req.body; 
+      const { localItems } = req.body;
       let cart = await Cart.findByUser(userId);
       if (!cart) {
         cart = new Cart({
@@ -213,8 +213,8 @@ const cartController = {
       }
       if (localItems && Array.isArray(localItems)) {
         for (const localItem of localItems) {
-          const existingItemIndex = cart.items.findIndex(item =>
-            item.uniqueKey === localItem.uniqueKey
+          const existingItemIndex = cart.items.findIndex((item) =>
+          item.uniqueKey === localItem.uniqueKey
           );
           if (existingItemIndex >= 0) {
             cart.items[existingItemIndex].quantity = Math.max(
@@ -225,7 +225,7 @@ const cartController = {
           } else {
             if (!localItem.name || !localItem.image || !localItem.price) {
               console.warn(i18n.__('invalid_item_sync_skip'), localItem);
-              return; 
+              return;
             }
             const itemId = localItem.id || localItem._id || localItem.uniqueKey || `item_${Date.now()}_${Math.random()}`;
             const preparedItem = {

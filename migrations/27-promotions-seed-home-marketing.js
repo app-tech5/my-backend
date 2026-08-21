@@ -1,11 +1,3 @@
-/**
- * Seed / refresh des promotions marketing pour la Home customer app.
- * - Réactive les promos expirées (dates mises à jour)
- * - Ajoute 3 promos platform + des promos restaurant si besoin
- *
- * up   → refresh + insert (idempotent via migrationSeedKey)
- * down → supprime uniquement les docs créés par cette migration
- */
 
 const { ObjectId } = require('mongodb');
 
@@ -20,65 +12,65 @@ function addMonths(date, months) {
 function buildPlatformPromotions(createdBy, now) {
   const endDate = addMonths(now, 12);
   return [
-    {
-      name: '$0 Delivery Fee',
-      description: 'Free delivery on your next order with Good Food',
-      promotionType: 'free_delivery',
-      scope: 'platform',
-      applicableRestaurants: [],
-      applicableCategories: [],
-      applicableItems: [],
-      startDate: now,
-      endDate,
-      isActive: true,
-      priority: 10,
-      userEligibility: 'all',
-      currentUsage: 0,
-      createdBy,
-      migrationSeedKey: SEED_KEY,
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      name: '5% off with Good Food',
-      description: 'Save on every order this month',
-      promotionType: 'percentage_discount',
-      discountValue: 5,
-      scope: 'platform',
-      applicableRestaurants: [],
-      applicableCategories: [],
-      applicableItems: [],
-      startDate: now,
-      endDate,
-      isActive: true,
-      priority: 9,
-      userEligibility: 'all',
-      currentUsage: 0,
-      createdBy,
-      migrationSeedKey: SEED_KEY,
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      name: 'Weekend Flash Deal',
-      description: 'Limited-time weekend savings across the marketplace',
-      promotionType: 'flash_sale',
-      scope: 'platform',
-      applicableRestaurants: [],
-      applicableCategories: [],
-      applicableItems: [],
-      startDate: now,
-      endDate,
-      isActive: true,
-      priority: 8,
-      userEligibility: 'all',
-      currentUsage: 0,
-      createdBy,
-      migrationSeedKey: SEED_KEY,
-      createdAt: now,
-      updatedAt: now,
-    },
-  ];
+  {
+    name: '$0 Delivery Fee',
+    description: 'Free delivery on your next order with Good Food',
+    promotionType: 'free_delivery',
+    scope: 'platform',
+    applicableRestaurants: [],
+    applicableCategories: [],
+    applicableItems: [],
+    startDate: now,
+    endDate,
+    isActive: true,
+    priority: 10,
+    userEligibility: 'all',
+    currentUsage: 0,
+    createdBy,
+    migrationSeedKey: SEED_KEY,
+    createdAt: now,
+    updatedAt: now
+  },
+  {
+    name: '5% off with Good Food',
+    description: 'Save on every order this month',
+    promotionType: 'percentage_discount',
+    discountValue: 5,
+    scope: 'platform',
+    applicableRestaurants: [],
+    applicableCategories: [],
+    applicableItems: [],
+    startDate: now,
+    endDate,
+    isActive: true,
+    priority: 9,
+    userEligibility: 'all',
+    currentUsage: 0,
+    createdBy,
+    migrationSeedKey: SEED_KEY,
+    createdAt: now,
+    updatedAt: now
+  },
+  {
+    name: 'Weekend Flash Deal',
+    description: 'Limited-time weekend savings across the marketplace',
+    promotionType: 'flash_sale',
+    scope: 'platform',
+    applicableRestaurants: [],
+    applicableCategories: [],
+    applicableItems: [],
+    startDate: now,
+    endDate,
+    isActive: true,
+    priority: 8,
+    userEligibility: 'all',
+    currentUsage: 0,
+    createdBy,
+    migrationSeedKey: SEED_KEY,
+    createdAt: now,
+    updatedAt: now
+  }];
+
 }
 
 function buildRestaurantPromotions(restaurants, createdBy, now) {
@@ -89,7 +81,7 @@ function buildRestaurantPromotions(restaurants, createdBy, now) {
     name: labels[index % labels.length],
     description: `Special offer at ${restaurant.name}`,
     promotionType: 'percentage_discount',
-    discountValue: 10 + (index % 3) * 5,
+    discountValue: 10 + index % 3 * 5,
     scope: 'restaurant',
     applicableRestaurants: [restaurant._id],
     applicableCategories: [],
@@ -103,7 +95,7 @@ function buildRestaurantPromotions(restaurants, createdBy, now) {
     createdBy,
     migrationSeedKey: SEED_KEY,
     createdAt: now,
-    updatedAt: now,
+    updatedAt: now
   }));
 }
 
@@ -117,14 +109,14 @@ async function up(db) {
   const refreshResult = await promotionsCol.updateMany(
     {
       isActive: true,
-      endDate: { $lt: now },
+      endDate: { $lt: now }
     },
     {
       $set: {
         startDate: now,
         endDate,
-        updatedAt: now,
-      },
+        updatedAt: now
+      }
     }
   );
 
@@ -139,9 +131,9 @@ async function up(db) {
   }
 
   const createdByUser =
-    (await usersCol.findOne({ role: 'admin' })) ||
-    (await usersCol.findOne({ role: 'customer' })) ||
-    (await usersCol.findOne({}));
+  (await usersCol.findOne({ role: 'admin' })) || (
+  await usersCol.findOne({ role: 'customer' })) || (
+  await usersCol.findOne({}));
 
   if (!createdByUser) {
     console.log('⚠️ Aucun utilisateur trouvé — migration ignorée');
@@ -155,9 +147,8 @@ async function up(db) {
   }
 
   const docs = [
-    ...buildPlatformPromotions(createdByUser._id, now),
-    ...buildRestaurantPromotions(restaurants, createdByUser._id, now),
-  ];
+  ...buildPlatformPromotions(createdByUser._id, now),
+  ...buildRestaurantPromotions(restaurants, createdByUser._id, now)];
 
   await promotionsCol.insertMany(docs);
   console.log(`✅ ${docs.length} promotion(s) marketing seedée(s)`);
@@ -174,5 +165,5 @@ module.exports = {
   buildPlatformPromotions,
   buildRestaurantPromotions,
   up,
-  down,
+  down
 };

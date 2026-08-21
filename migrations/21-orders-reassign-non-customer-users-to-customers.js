@@ -1,14 +1,9 @@
-/**
- * Réassigne `order.user` lorsque ce n'est pas un vrai client (driver, admin, restaurant…).
- * Répartition aléatoire déterministe sur plusieurs customers (`role: customer`).
- * Recalcule delivery fee + totaux avec la location du nouveau client.
- */
 
 const { ObjectId } = require('mongodb');
 const {
   toFiniteNumber,
   resolveDeliveryFee,
-  recalculateOrderTotals,
+  recalculateOrderTotals
 } = require('./16-orders-fix-absurd-delivery-fees');
 const { seededShuffle } = require('./19-users-backfill-paris-locations');
 
@@ -16,21 +11,21 @@ const BACKUP_COLLECTION = '_migration_21_order_user_reassign_backups';
 const SHUFFLE_SEED = 20260619;
 
 async function findOrdersWithNonCustomerUser(db) {
-  return db
-    .collection('orders')
-    .aggregate([
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'user',
-          foreignField: '_id',
-          as: 'userDoc',
-        },
-      },
-      { $unwind: '$userDoc' },
-      { $match: { 'userDoc.role': { $ne: 'customer' } } },
-    ])
-    .toArray();
+  return db.
+  collection('orders').
+  aggregate([
+  {
+    $lookup: {
+      from: 'users',
+      localField: 'user',
+      foreignField: '_id',
+      as: 'userDoc'
+    }
+  },
+  { $unwind: '$userDoc' },
+  { $match: { 'userDoc.role': { $ne: 'customer' } } }]
+  ).
+  toArray();
 }
 
 function buildCustomerAssignments(orders, customerIds, seed = SHUFFLE_SEED) {
@@ -46,7 +41,7 @@ function buildCustomerAssignments(orders, customerIds, seed = SHUFFLE_SEED) {
 
   return shuffledOrders.map((order, index) => ({
     order,
-    newUserId: shuffledCustomers[index % shuffledCustomers.length],
+    newUserId: shuffledCustomers[index % shuffledCustomers.length]
   }));
 }
 
@@ -73,10 +68,10 @@ async function up(db) {
     return;
   }
 
-  const customers = await usersCol
-    .find({ role: 'customer' })
-    .project({ _id: 1 })
-    .toArray();
+  const customers = await usersCol.
+  find({ role: 'customer' }).
+  project({ _id: 1 }).
+  toArray();
 
   const customerIds = customers.map((customer) => customer._id);
   const assignments = buildCustomerAssignments(badOrders, customerIds);
@@ -115,7 +110,7 @@ async function up(db) {
 
     const deliveryUpdate = {
       ...(order.delivery || {}),
-      deliveryFee,
+      deliveryFee
     };
 
     if (order.delivery?.type === 'delivery' && newUser.address) {
@@ -132,11 +127,11 @@ async function up(db) {
             delivery: order.delivery,
             subtotal: order.subtotal,
             taxAmount: order.tax?.amount,
-            totalPrice: order.totalPrice,
+            totalPrice: order.totalPrice
           },
           nextUserId: newUserId,
-          migratedAt: new Date(),
-        },
+          migratedAt: new Date()
+        }
       },
       { upsert: true }
     );
@@ -150,8 +145,8 @@ async function up(db) {
           subtotal,
           'tax.amount': taxAmount,
           totalPrice,
-          updatedAt: new Date(),
-        },
+          updatedAt: new Date()
+        }
       }
     );
   }
@@ -180,8 +175,8 @@ async function down(db) {
           subtotal: backup.previous.subtotal,
           'tax.amount': backup.previous.taxAmount,
           totalPrice: backup.previous.totalPrice,
-          updatedAt: new Date(),
-        },
+          updatedAt: new Date()
+        }
       }
     );
   }
@@ -197,5 +192,5 @@ module.exports = {
   buildCustomerAssignments,
   countAssignmentsByUser,
   up,
-  down,
+  down
 };

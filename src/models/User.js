@@ -69,8 +69,8 @@ const UserSchema = new mongoose.Schema(
     deviceToken: { type: String, default: '' },
     isDemo: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   { timestamps: true }
 );
@@ -94,9 +94,9 @@ UserSchema.pre("find", async function (next) {
 });
 UserSchema.pre("save", async function (next) {
   if (
-    process.env.DEMO_MODE === 'true' &&
-    PROFILE_FIELDS.some((field) => this.isModified(field))
-  ) {
+  process.env.DEMO_MODE === 'true' &&
+  PROFILE_FIELDS.some((field) => this.isModified(field)))
+  {
     return next(createDemoProfileUpdateError());
   }
   if (this.isModified("password") && this.password) this.password = await bcrypt.hash(this.password, 10);

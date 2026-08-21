@@ -6,24 +6,24 @@ const orderChatMessageSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Order',
       required: true,
-      index: true,
+      index: true
     },
     sender: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
+      required: true
     },
     senderRole: {
       type: String,
       enum: ['customer', 'driver', 'restaurant', 'admin'],
-      required: true,
+      required: true
     },
     text: {
       type: String,
       required: true,
       trim: true,
-      maxlength: 2000,
-    },
+      maxlength: 2000
+    }
   },
   { timestamps: true }
 );

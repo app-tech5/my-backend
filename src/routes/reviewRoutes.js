@@ -36,15 +36,15 @@ router.get('/reviews', async (req, res) => {
     const reviews = await Review.find({
       restaurant: restaurantId,
       status: 'approved'
-    })
-    .populate('user', 'name') 
-    .populate('order', 'orderNumber') 
-    .sort({ createdAt: -1 }) 
-    .lean();
+    }).
+    populate('user', 'name').
+    populate('order', 'orderNumber').
+    sort({ createdAt: -1 }).
+    lean();
     const totalReviews = reviews.length;
-    const averageRating = totalReviews > 0
-      ? (reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews).toFixed(1)
-      : 0;
+    const averageRating = totalReviews > 0 ?
+    (reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews).toFixed(1) :
+    0;
     const ratingCounts = reviews.reduce((counts, review) => {
       counts[review.rating] = (counts[review.rating] || 0) + 1;
       return counts;

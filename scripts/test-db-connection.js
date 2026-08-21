@@ -25,7 +25,7 @@ async function testConnection() {
     await mongoose.connect(mongoURL, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 5000
     });
     await mongoose.connection.db.admin().ping();
     console.info(i18n.__('mongodb_connection_successful'));

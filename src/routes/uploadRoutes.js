@@ -7,7 +7,7 @@ const {
   privateUpload,
   publicUpload,
   memoryUpload,
-  runUpload,
+  runUpload
 } = require('../utils/uploadValidation');
 const { buildPublicFileUrl } = require('../utils/publicUpload');
 
@@ -55,14 +55,14 @@ router.post(
   async (req, res) => {
     try {
       const postData = new URLSearchParams({
-        image: req.file.buffer.toString("base64"),
+        image: req.file.buffer.toString("base64")
       });
 
       const response = await fetch(
         `https://api.imgbb.com/1/upload?key=${process.env.IMGBB_API_KEY}`,
         {
           method: "POST",
-          body: postData,
+          body: postData
         }
       );
 
@@ -76,7 +76,7 @@ router.post(
     } catch (error) {
       res.status(500).json({
         error: "Server Error",
-        message: error.message,
+        message: error.message
       });
     }
   }
@@ -86,21 +86,21 @@ router.get("/cloudinary-signature", blockDemoUpload, (req, res) => {
   try {
     const timestamp = Math.round(Date.now() / 1000);
     const paramsToSign = `timestamp=${timestamp}${process.env.CLOUDINARY_API_SECRET}`;
-    const signature = crypto
-      .createHash("sha1")
-      .update(paramsToSign)
-      .digest("hex");
+    const signature = crypto.
+    createHash("sha1").
+    update(paramsToSign).
+    digest("hex");
 
     res.json({
       timestamp,
       signature,
       apiKey: process.env.CLOUDINARY_API_KEY,
-      cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+      cloudName: process.env.CLOUDINARY_CLOUD_NAME
     });
   } catch (error) {
     res.status(500).json({
       error: "Signature generation failed",
-      message: error.message,
+      message: error.message
     });
   }
 });

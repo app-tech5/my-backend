@@ -23,14 +23,14 @@ const SubscriptionSchema = new Schema({
     type: String,
     default: 'USD',
     uppercase: true,
-    trim: true,
+    trim: true
   },
   billing_cycle: {
     type: String,
     enum: ['daily', 'weekly', 'monthly', 'yearly'],
     default: 'monthly'
   },
-  benefits: {  
+  benefits: {
     type: [String],
     default: []
   },
@@ -38,11 +38,11 @@ const SubscriptionSchema = new Schema({
     freeDelivery: { type: Boolean, default: false },
     discountPercent: { type: Number, default: 0, min: 0, max: 100 },
     reducedCommissionPercent: { type: Number, default: 0, min: 0, max: 100 },
-    /** When true, monthly plan fee replaces per-order commission (SaaS access mode). */
+
     waiveCommission: { type: Boolean, default: false },
-    /** Marks the plan as platform-access SaaS (vs marketplace commission discount). */
+
     platformAccess: { type: Boolean, default: false },
-    prioritySupport: { type: Boolean, default: false },
+    prioritySupport: { type: Boolean, default: false }
   },
   is_active: {
     type: Boolean,
@@ -52,8 +52,8 @@ const SubscriptionSchema = new Schema({
     type: Date,
     default: Date.now
   },
-  end_date: Date,  
-  max_usage: {  
+  end_date: Date,
+  max_usage: {
     type: Number,
     default: null
   },
@@ -72,7 +72,7 @@ const SubscriptionSchema = new Schema({
       default: ""
     }
   }],
-  stripe_id: String,  
+  stripe_id: String,
   created_by: {
     type: Schema.Types.ObjectId,
     ref: 'User'

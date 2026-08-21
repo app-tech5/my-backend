@@ -48,7 +48,7 @@ function serializeMessage(msg) {
     senderName: msg.sender?.name || null,
     senderRole: msg.senderRole,
     text: msg.text,
-    createdAt: msg.createdAt,
+    createdAt: msg.createdAt
   };
 }
 
@@ -57,19 +57,19 @@ exports.getMessages = async (req, res) => {
     const order = await Order.findById(req.params.orderId).select('user restaurant driver status');
     await assertOrderChatAccess(req, order);
 
-    const messages = await OrderChatMessage.find({ order: order._id })
-      .sort({ createdAt: 1 })
-      .limit(200)
-      .populate('sender', 'name');
+    const messages = await OrderChatMessage.find({ order: order._id }).
+    sort({ createdAt: 1 }).
+    limit(200).
+    populate('sender', 'name');
 
     res.json({
       orderId: String(order._id),
       status: order.status,
-      messages: messages.map(serializeMessage),
+      messages: messages.map(serializeMessage)
     });
   } catch (error) {
     res.status(error.status || 500).json({
-      message: error.message || i18n.__('server_error'),
+      message: error.message || i18n.__('server_error')
     });
   }
 };
@@ -88,15 +88,14 @@ exports.postMessage = async (req, res) => {
     const access = await assertOrderChatAccess(req, order);
 
     if (['delivered', 'cancelled'].includes(order.status) && access.role !== 'admin') {
-      // Allow chat during active delivery window; still allow briefly after deliver? Keep open for active statuses mainly.
-      // Soft rule: allow chat for out_for_delivery, ready, preparing, pending if participants exist.
+
     }
 
     const saved = await OrderChatMessage.create({
       order: order._id,
       sender: req.user.id,
       senderRole: access.role,
-      text,
+      text
     });
 
     await saved.populate('sender', 'name');
@@ -104,7 +103,7 @@ exports.postMessage = async (req, res) => {
 
     if (global.io) {
       global.io.to(`order-chat-${order._id}`).emit('order-chat-message', payload);
-      // Also nudge participants' user rooms
+
       const customerId = String(order.user?._id || order.user);
       global.io.to(`user-${customerId}`).emit('order-chat-message', payload);
       if (order.driver) {
@@ -118,7 +117,7 @@ exports.postMessage = async (req, res) => {
     res.status(201).json(payload);
   } catch (error) {
     res.status(error.status || 500).json({
-      message: error.message || i18n.__('server_error'),
+      message: error.message || i18n.__('server_error')
     });
   }
 };

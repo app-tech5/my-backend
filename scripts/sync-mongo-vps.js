@@ -21,16 +21,16 @@ function getVpsConfig() {
     mongoUri: buildMongoURL('VPS_'),
     backupBase: process.env.VPS_BACKUP_BASE || '/root/my-backend/backups',
     pm2Name: process.env.VPS_PM2_NAME || 'my-backend',
-    remoteRestorePath: process.env.VPS_REMOTE_RESTORE_PATH || '/tmp/good-foods-restore',
+    remoteRestorePath: process.env.VPS_REMOTE_RESTORE_PATH || '/tmp/good-foods-restore'
   };
 }
 
 function shellWithNvm(command) {
   return [
-    'export NVM_DIR="$HOME/.nvm"',
-    '[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"',
-    command,
-  ].join(' && ');
+  'export NVM_DIR="$HOME/.nvm"',
+  '[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"',
+  command].
+  join(' && ');
 }
 
 function sshTarget(config) {
@@ -39,13 +39,13 @@ function sshTarget(config) {
 
 function runSsh(config, remoteCommand) {
   runCommand('ssh', [
-    '-i',
-    config.sshKey,
-    '-o',
-    'BatchMode=yes',
-    sshTarget(config),
-    remoteCommand,
-  ]);
+  '-i',
+  config.sshKey,
+  '-o',
+  'BatchMode=yes',
+  sshTarget(config),
+  remoteCommand]
+  );
 }
 
 function runScp(config, source, destination) {
@@ -76,21 +76,21 @@ function dumpLocalMongoViaDocker(localUri, dockerContainer, dumpRoot) {
   const containerDumpDir = '/tmp/mongo-sync-dump';
 
   runCommand('docker', [
-    'exec',
-    dockerContainer,
-    'mongodump',
-    `--uri=${localUri}`,
-    `--out=${containerDumpDir}`,
-  ]);
+  'exec',
+  dockerContainer,
+  'mongodump',
+  `--uri=${localUri}`,
+  `--out=${containerDumpDir}`]
+  );
 
   const localDumpPath = path.join(dumpRoot, dbName);
   fs.mkdirSync(dumpRoot, { recursive: true });
 
   runCommand('docker', [
-    'cp',
-    `${dockerContainer}:${containerDumpDir}/${dbName}`,
-    localDumpPath,
-  ]);
+  'cp',
+  `${dockerContainer}:${containerDumpDir}/${dbName}`,
+  localDumpPath]
+  );
 
   runCommand('docker', ['exec', dockerContainer, 'rm', '-rf', containerDumpDir]);
 
@@ -103,11 +103,11 @@ function syncMongoToVps() {
   const config = getVpsConfig();
   ensureRequirements(config);
 
-  const timestamp = new Date()
-    .toISOString()
-    .replace(/[-:]/g, '')
-    .replace(/\..+/, '')
-    .replace('T', '-');
+  const timestamp = new Date().
+  toISOString().
+  replace(/[-:]/g, '').
+  replace(/\..+/, '').
+  replace('T', '-');
   const localBackupDir = path.resolve(
     process.env.LOCAL_BACKUP_BASE || 'backups',
     `vps-before-sync-${timestamp}`

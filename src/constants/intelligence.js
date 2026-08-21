@@ -1,117 +1,113 @@
-/**
- * Tunables for recommendations / ETA / surge pricing.
- * Override URLs via env without code changes.
- */
 
 const ACTIVE_ORDER_STATUSES = Object.freeze([
-  'pending',
-  'preparing',
-  'ready',
-  'out_for_delivery',
-]);
+'pending',
+'preparing',
+'ready',
+'out_for_delivery']
+);
 
 const KITCHEN_STATUSES = Object.freeze(['pending', 'preparing', 'ready']);
 
 const ONLINE_DRIVER_STATUSES = Object.freeze(['available', 'busy', 'on_delivery']);
 
 const PAIR_ORDER_STATUSES = Object.freeze([
-  'delivered',
-  'out_for_delivery',
-  'ready',
-  'preparing',
-]);
+'delivered',
+'out_for_delivery',
+'ready',
+'preparing']
+);
 
 const TIME_OF_DAY = Object.freeze({
   BREAKFAST: 'breakfast',
   LUNCH: 'lunch',
   SNACK: 'snack',
   DINNER: 'dinner',
-  LATE: 'late',
+  LATE: 'late'
 });
 
 const WEATHER_CONDITION = Object.freeze({
   FAIR: 'fair',
   RAIN: 'rain',
   HOT: 'hot',
-  COLD: 'cold',
+  COLD: 'cold'
 });
 
 const ROUTING_SOURCE = Object.freeze({
   OSRM: 'osrm',
-  HEURISTIC: 'heuristic',
+  HEURISTIC: 'heuristic'
 });
 
 const WEATHER_SOURCE = Object.freeze({
   OPEN_METEO: 'open-meteo',
-  HEURISTIC: 'heuristic',
+  HEURISTIC: 'heuristic'
 });
 
 const TIME_TAGS = Object.freeze({
   [TIME_OF_DAY.BREAKFAST]: Object.freeze([
-    'breakfast',
-    'coffee',
-    'pastry',
-    'juice',
-    'tea',
-    'brunch',
-  ]),
+  'breakfast',
+  'coffee',
+  'pastry',
+  'juice',
+  'tea',
+  'brunch']
+  ),
   [TIME_OF_DAY.LUNCH]: Object.freeze([
-    'lunch',
-    'salad',
-    'sandwich',
-    'bowl',
-    'popular',
-  ]),
+  'lunch',
+  'salad',
+  'sandwich',
+  'bowl',
+  'popular']
+  ),
   [TIME_OF_DAY.SNACK]: Object.freeze([
-    'snack',
-    'dessert',
-    'drink',
-    'coffee',
-    'sweet',
-  ]),
+  'snack',
+  'dessert',
+  'drink',
+  'coffee',
+  'sweet']
+  ),
   [TIME_OF_DAY.DINNER]: Object.freeze([
-    'dinner',
-    'main',
-    'popular',
-    'spicy',
-    'comfort',
-  ]),
+  'dinner',
+  'main',
+  'popular',
+  'spicy',
+  'comfort']
+  ),
   [TIME_OF_DAY.LATE]: Object.freeze([
-    'comfort',
-    'pizza',
-    'burger',
-    'drink',
-    'dessert',
-  ]),
+  'comfort',
+  'pizza',
+  'burger',
+  'drink',
+  'dessert']
+  )
 });
 
 const WEATHER_TAGS = Object.freeze({
   [WEATHER_CONDITION.RAIN]: Object.freeze([
-    'soup',
-    'comfort',
-    'hot',
-    'tea',
-    'coffee',
-    'dessert',
-  ]),
+  'soup',
+  'comfort',
+  'hot',
+  'tea',
+  'coffee',
+  'dessert']
+  ),
   [WEATHER_CONDITION.HOT]: Object.freeze([
-    'salad',
-    'cold',
-    'drink',
-    'juice',
-    'ice',
-    'fresh',
-    'vegan',
-  ]),
+  'salad',
+  'cold',
+  'drink',
+  'juice',
+  'ice',
+  'fresh',
+  'vegan']
+  ),
   [WEATHER_CONDITION.COLD]: Object.freeze([
-    'soup',
-    'comfort',
-    'hot',
-    'coffee',
-    'tea',
-    'stew',
-  ]),
-  [WEATHER_CONDITION.FAIR]: Object.freeze(['popular', 'chef', 'featured']),
+  'soup',
+  'comfort',
+  'hot',
+  'coffee',
+  'tea',
+  'stew']
+  ),
+  [WEATHER_CONDITION.FAIR]: Object.freeze(['popular', 'chef', 'featured'])
 });
 
 const SCORE = Object.freeze({
@@ -121,7 +117,7 @@ const SCORE = Object.freeze({
   RATING_COUNT_THRESHOLD: 10,
   TIME_TAG_BONUS: 2.5,
   WEATHER_TAG_BONUS: 2,
-  DISCOUNT_BONUS: 1.5,
+  DISCOUNT_BONUS: 1.5
 });
 
 const LIMITS = Object.freeze({
@@ -172,7 +168,7 @@ const LIMITS = Object.freeze({
   WEATHER_RAIN_CODE_MIN: 51,
   WEATHER_HOT_C: 28,
   WEATHER_COLD_C: 8,
-  DEFAULT_TEMP_C: 18,
+  DEFAULT_TEMP_C: 18
 });
 
 const HOUR_WINDOWS = Object.freeze({
@@ -181,20 +177,20 @@ const HOUR_WINDOWS = Object.freeze({
   SNACK: Object.freeze({ start: 15, end: 18 }),
   DINNER: Object.freeze({ start: 18, end: 23 }),
   RUSH: Object.freeze([
-    Object.freeze({ start: 7, end: 9 }),
-    Object.freeze({ start: 12, end: 14 }),
-    Object.freeze({ start: 17, end: 20 }),
-  ]),
+  Object.freeze({ start: 7, end: 9 }),
+  Object.freeze({ start: 12, end: 14 }),
+  Object.freeze({ start: 17, end: 20 })]
+  )
 });
 
 const OPEN_METEO_BASE_URL =
-  process.env.OPEN_METEO_BASE_URL || 'https://api.open-meteo.com/v1/forecast';
+process.env.OPEN_METEO_BASE_URL || 'https://api.open-meteo.com/v1/forecast';
 
 const OSRM_BASE_URL =
-  process.env.OSRM_BASE_URL || 'https://router.project-osrm.org/route/v1/driving';
+process.env.OSRM_BASE_URL || 'https://router.project-osrm.org/route/v1/driving';
 
 const PRODUCT_SELECT_FIELDS =
-  'name description price image tags discount rating restaurant category preparation_time';
+'name description price image tags discount rating restaurant category preparation_time';
 
 module.exports = {
   ACTIVE_ORDER_STATUSES,
@@ -212,5 +208,5 @@ module.exports = {
   HOUR_WINDOWS,
   OPEN_METEO_BASE_URL,
   OSRM_BASE_URL,
-  PRODUCT_SELECT_FIELDS,
+  PRODUCT_SELECT_FIELDS
 };

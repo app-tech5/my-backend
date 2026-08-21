@@ -1,10 +1,3 @@
-/**
- * Backfill customersupports (ticket / live_chat) with coherent order + assigned_to.
- * - order: prefer an order owned by the same user, else any recent order
- * - assigned_to: round-robin among admin users
- *
- * Idempotent via migrationSeedKey on updated docs (and SEED_KEY marker field).
- */
 
 const { ObjectId } = require('mongodb');
 
@@ -19,24 +12,24 @@ module.exports = {
     const orders = db.collection('orders');
     const backups = db.collection('_migration_38_customersupport_backups');
 
-    const admins = await users
-      .find({
-        $or: [{ role: 'admin' }, { type: 'admin' }, { email: 'admin@example.com' }],
-      })
-      .project({ _id: 1, name: 1, email: 1 })
-      .toArray();
+    const admins = await users.
+    find({
+      $or: [{ role: 'admin' }, { type: 'admin' }, { email: 'admin@example.com' }]
+    }).
+    project({ _id: 1, name: 1, email: 1 }).
+    toArray();
 
     if (!admins.length) {
       console.log('[38] no admin users — skip');
       return;
     }
 
-    const recentOrders = await orders
-      .find({})
-      .project({ _id: 1, user: 1, status: 1, restaurant: 1 })
-      .sort({ createdAt: -1, created_at: -1 })
-      .limit(200)
-      .toArray();
+    const recentOrders = await orders.
+    find({}).
+    project({ _id: 1, user: 1, status: 1, restaurant: 1 }).
+    sort({ createdAt: -1, created_at: -1 }).
+    limit(200).
+    toArray();
 
     if (!recentOrders.length) {
       console.log('[38] no orders — skip');
@@ -51,12 +44,12 @@ module.exports = {
       ordersByUser.get(uid).push(order);
     }
 
-    const tickets = await supports
-      .find({
-        type: { $in: ['ticket', 'live_chat'] },
-        $or: [{ order: { $exists: false } }, { order: null }, { assigned_to: { $exists: false } }, { assigned_to: null }],
-      })
-      .toArray();
+    const tickets = await supports.
+    find({
+      type: { $in: ['ticket', 'live_chat'] },
+      $or: [{ order: { $exists: false } }, { order: null }, { assigned_to: { $exists: false } }, { assigned_to: null }]
+    }).
+    toArray();
 
     let updated = 0;
     let adminIdx = 0;
@@ -71,8 +64,8 @@ module.exports = {
         const uid = String(doc.user || '');
         const userOrders = ordersByUser.get(uid) || [];
         const pick =
-          userOrders[updated % Math.max(userOrders.length, 1)] ||
-          recentOrders[updated % recentOrders.length];
+        userOrders[updated % Math.max(userOrders.length, 1)] ||
+        recentOrders[updated % recentOrders.length];
         if (pick?._id) patch.order = pick._id;
       }
       if (needsAssignee) {
@@ -89,10 +82,10 @@ module.exports = {
             _id: doc._id,
             before: {
               order: doc.order || null,
-              assigned_to: doc.assigned_to || null,
+              assigned_to: doc.assigned_to || null
             },
-            migrationSeedKey: SEED_KEY,
-          },
+            migrationSeedKey: SEED_KEY
+          }
         },
         { upsert: true }
       );
@@ -103,8 +96,8 @@ module.exports = {
           $set: {
             ...patch,
             migrationSeedKey: SEED_KEY,
-            updated_at: new Date(),
-          },
+            updated_at: new Date()
+          }
         }
       );
       updated += 1;
@@ -122,10 +115,10 @@ module.exports = {
       const before = snap.before || {};
       const unset = {};
       const set = { updated_at: new Date() };
-      if (before.order) set.order = before.order;
-      else unset.order = '';
-      if (before.assigned_to) set.assigned_to = before.assigned_to;
-      else unset.assigned_to = '';
+      if (before.order) set.order = before.order;else
+      unset.order = '';
+      if (before.assigned_to) set.assigned_to = before.assigned_to;else
+      unset.assigned_to = '';
 
       const update = { $set: set, $unset: { migrationSeedKey: '' } };
       if (Object.keys(unset).length) update.$unset = { ...update.$unset, ...unset };
@@ -134,5 +127,5 @@ module.exports = {
     }
 
     await backups.deleteMany({ migrationSeedKey: SEED_KEY });
-  },
+  }
 };

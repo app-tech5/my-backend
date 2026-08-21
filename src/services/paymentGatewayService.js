@@ -1,6 +1,6 @@
 const Gateway = require('../models/Gateway');
 const {
-  assertPaymentMethodAllowed,
+  assertPaymentMethodAllowed
 } = require('./paymentEligibilityService');
 
 async function getActiveGateway(identifier) {
@@ -30,10 +30,6 @@ function moneyToMinor(amount, currency) {
   return Math.round(n * 100);
 }
 
-/**
- * Initialize a hosted checkout / payment session for a PSP.
- * Returns redirect/authorization payload the client can open.
- */
 async function initializePayment({
   provider,
   amount,
@@ -41,7 +37,7 @@ async function initializePayment({
   email,
   reference,
   callbackUrl,
-  metadata = {},
+  metadata = {}
 }) {
   const id = String(provider || '').toLowerCase();
   const { credentials } = await getActiveGateway(id);
@@ -57,7 +53,7 @@ async function initializePayment({
       method: 'POST',
       headers: {
         Authorization: `Bearer ${secret}`,
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         email: email || 'customer@example.com',
@@ -65,8 +61,8 @@ async function initializePayment({
         currency: cur,
         reference: ref,
         callback_url: callbackUrl,
-        metadata,
-      }),
+        metadata
+      })
     });
     const data = await res.json();
     if (!res.ok || !data.status) {
@@ -77,7 +73,7 @@ async function initializePayment({
       reference: ref,
       authorizationUrl: data.data.authorization_url,
       accessCode: data.data.access_code,
-      raw: data.data,
+      raw: data.data
     };
   }
 
@@ -90,7 +86,7 @@ async function initializePayment({
       method: 'POST',
       headers: {
         Authorization: `Bearer ${secret}`,
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         tx_ref: ref,
@@ -99,8 +95,8 @@ async function initializePayment({
         redirect_url: callbackUrl,
         customer: { email: email || 'customer@example.com' },
         meta: metadata,
-        customizations: { title: 'Good Food Order', description: `Order ${ref}` },
-      }),
+        customizations: { title: 'Good Food Order', description: `Order ${ref}` }
+      })
     });
     const data = await res.json();
     if (!res.ok || data.status !== 'success') {
@@ -110,7 +106,7 @@ async function initializePayment({
       provider: id,
       reference: ref,
       authorizationUrl: data.data.link,
-      raw: data.data,
+      raw: data.data
     };
   }
 
@@ -125,14 +121,14 @@ async function initializePayment({
       method: 'POST',
       headers: {
         Authorization: `Basic ${auth}`,
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         amount: moneyToMinor(amount, cur),
         currency: cur,
         receipt: ref,
-        notes: metadata,
-      }),
+        notes: metadata
+      })
     });
     const data = await res.json();
     if (!res.ok) {
@@ -145,7 +141,7 @@ async function initializePayment({
       keyId,
       amount: data.amount,
       currency: data.currency,
-      raw: data,
+      raw: data
     };
   }
 
@@ -161,9 +157,9 @@ async function initializePayment({
       method: 'POST',
       headers: {
         Authorization: `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/x-www-form-urlencoded'
       },
-      body: 'grant_type=client_credentials',
+      body: 'grant_type=client_credentials'
     });
     const tokenData = await tokenRes.json();
     if (!tokenRes.ok) {
@@ -173,22 +169,22 @@ async function initializePayment({
       method: 'POST',
       headers: {
         Authorization: `Bearer ${tokenData.access_token}`,
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         intent: 'CAPTURE',
         purchase_units: [
-          {
-            reference_id: ref,
-            amount: { currency_code: cur, value: Number(amount).toFixed(2) },
-            custom_id: metadata.orderId || ref,
-          },
-        ],
+        {
+          reference_id: ref,
+          amount: { currency_code: cur, value: Number(amount).toFixed(2) },
+          custom_id: metadata.orderId || ref
+        }],
+
         application_context: {
           return_url: callbackUrl || `${process.env.PUBLIC_APP_URL || 'https://example.com'}/paypal/return`,
-          cancel_url: callbackUrl || `${process.env.PUBLIC_APP_URL || 'https://example.com'}/paypal/cancel`,
-        },
-      }),
+          cancel_url: callbackUrl || `${process.env.PUBLIC_APP_URL || 'https://example.com'}/paypal/cancel`
+        }
+      })
     });
     const orderData = await orderRes.json();
     if (!orderRes.ok) {
@@ -200,7 +196,7 @@ async function initializePayment({
       reference: ref,
       orderId: orderData.id,
       authorizationUrl: approve?.href,
-      raw: orderData,
+      raw: orderData
     };
   }
 
@@ -221,11 +217,11 @@ function demoInit(provider, amount, currency, reference, hint) {
     amount: Number(amount),
     currency,
     authorizationUrl: null,
-    message: hint,
+    message: hint
   };
 }
 
 module.exports = {
   getActiveGateway,
-  initializePayment,
+  initializePayment
 };

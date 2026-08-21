@@ -20,7 +20,7 @@ async function ensureStripeCustomer(userId) {
   const customer = await stripe.customers.create({
     email: user.email || undefined,
     name: user.name || undefined,
-    metadata: { userId: String(user._id) },
+    metadata: { userId: String(user._id) }
   });
 
   user.stripeCustomerId = customer.id;
@@ -42,5 +42,5 @@ module.exports = {
   stripe,
   ensureStripeCustomer,
   attachPaymentMethodToUser,
-  detachPaymentMethod,
+  detachPaymentMethod
 };

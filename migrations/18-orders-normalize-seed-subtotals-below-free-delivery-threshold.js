@@ -1,20 +1,9 @@
-/**
- * Normalise les subtotals des commandes seed (faker + migration 15) qui
- * dépassent artificiellement le seuil de livraison gratuite.
- *
- * Cible : commandes `delivery` créées avant le lot de test `697a…`
- * dont le subtotal >= freeDeliveryThreshold du restaurant.
- *
- * Actions :
- * - ramène le subtotal sous le seuil (plafond réaliste ~22 $)
- * - recalcule tax.amount, delivery.deliveryFee et totalPrice
- */
 
 const { ObjectId } = require("mongodb");
 const {
   toFiniteNumber,
   resolveDeliveryFee,
-  recalculateOrderTotals,
+  recalculateOrderTotals
 } = require("./16-orders-fix-absurd-delivery-fees");
 
 const SEED_ORDER_MAX_ID = new ObjectId("697a00000000000000000000");
@@ -47,19 +36,19 @@ function scaleItemsToSubtotal(items, targetSubtotal) {
   const scaledItems = rawItems.map((item) => {
     const quantity = Math.max(1, toFiniteNumber(item?.quantity, 1));
     const newTotal = round2(toFiniteNumber(item?.total, 0) * factor);
-    const extras = Array.isArray(item?.extras)
-      ? item.extras.map((extra) => ({
-          ...extra,
-          price: round2(toFiniteNumber(extra?.price, 0) * factor),
-        }))
-      : [];
+    const extras = Array.isArray(item?.extras) ?
+    item.extras.map((extra) => ({
+      ...extra,
+      price: round2(toFiniteNumber(extra?.price, 0) * factor)
+    })) :
+    [];
 
     return {
       ...item,
       price: round2(newTotal / quantity),
       quantity,
       extras,
-      total: newTotal,
+      total: newTotal
     };
   });
 
@@ -76,7 +65,7 @@ function scaleItemsToSubtotal(items, targetSubtotal) {
     scaledItems[scaledItems.length - 1] = {
       ...lastItem,
       total: adjustedTotal,
-      price: round2(adjustedTotal / adjustedQty),
+      price: round2(adjustedTotal / adjustedQty)
     };
   }
 
@@ -114,12 +103,12 @@ module.exports = {
       deliverySettings.map((setting) => [String(setting.restaurant), setting])
     );
 
-    const seedOrders = await ordersCol
-      .find({
-        _id: { $lt: SEED_ORDER_MAX_ID },
-        "delivery.type": "delivery",
-      })
-      .toArray();
+    const seedOrders = await ordersCol.
+    find({
+      _id: { $lt: SEED_ORDER_MAX_ID },
+      "delivery.type": "delivery"
+    }).
+    toArray();
 
     for (const order of seedOrders) {
       const deliverySetting = deliverySettingByRestaurant.get(String(order.restaurant));
@@ -145,7 +134,7 @@ module.exports = {
       const orderForFee = {
         ...order,
         subtotal,
-        items: normalizedItems,
+        items: normalizedItems
       };
 
       const deliveryFee = resolveDeliveryFee(
@@ -167,14 +156,14 @@ module.exports = {
             "tax.amount": taxAmount,
             "delivery.deliveryFee": deliveryFee,
             totalPrice,
-            updatedAt: new Date(),
-          },
+            updatedAt: new Date()
+          }
         }
       );
     }
   },
 
   async down() {
-    // Subtotals d'origine seed non récupérables de façon déterministe.
-  },
+
+  }
 };

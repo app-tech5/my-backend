@@ -1,6 +1,4 @@
-/**
- * Seed SaaS restaurant plan + sponsored listing demo campaigns.
- */
+
 module.exports = {
   async up(db) {
     const now = new Date();
@@ -15,22 +13,22 @@ module.exports = {
         currency: 'USD',
         billing_cycle: 'monthly',
         benefits: [
-          'Full platform access for your restaurant',
-          'Zero per-order commission while subscribed',
-          'Priority support',
-        ],
+        'Full platform access for your restaurant',
+        'Zero per-order commission while subscribed',
+        'Priority support'],
+
         benefitFlags: {
           freeDelivery: false,
           discountPercent: 0,
           reducedCommissionPercent: 0,
           waiveCommission: true,
           platformAccess: true,
-          prioritySupport: true,
+          prioritySupport: true
         },
         is_active: true,
         start_date: now,
         createdAt: now,
-        updatedAt: now,
+        updatedAt: now
       });
     }
 
@@ -41,21 +39,21 @@ module.exports = {
           'benefitFlags.waiveCommission': false,
           'benefitFlags.platformAccess': false,
           benefits: [
-            'Lower platform commission',
-            'Sponsored listing eligibility',
-            'Priority support',
-          ],
-          updatedAt: now,
-        },
+          'Lower platform commission',
+          'Sponsored listing eligibility',
+          'Priority support'],
+
+          updatedAt: now
+        }
       }
     );
 
-    const restaurants = await db
-      .collection('restaurants')
-      .find({ isActivated: { $ne: false } })
-      .project({ _id: 1, name: 1, image: 1 })
-      .limit(3)
-      .toArray();
+    const restaurants = await db.
+    collection('restaurants').
+    find({ isActivated: { $ne: false } }).
+    project({ _id: 1, name: 1, image: 1 }).
+    limit(3).
+    toArray();
 
     if (restaurants.length) {
       const listings = db.collection('sponsoredlistings');
@@ -80,7 +78,7 @@ module.exports = {
             impressions: 0,
             clicks: 0,
             createdAt: now,
-            updatedAt: now,
+            updatedAt: now
           }))
         );
       }
@@ -90,7 +88,7 @@ module.exports = {
   async down(db) {
     await db.collection('subscriptions').deleteOne({ name: 'Restaurant SaaS Access' });
     await db.collection('sponsoredlistings').deleteMany({
-      name: /Boost$/,
+      name: /Boost$/
     });
-  },
+  }
 };

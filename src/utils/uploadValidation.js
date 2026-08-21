@@ -5,7 +5,7 @@ const i18n = require('../config/i18n');
 const {
   ALLOWED_EXTENSIONS,
   ALLOWED_MIMES,
-  MAX_FILE_SIZE,
+  MAX_FILE_SIZE
 } = require('../config/uploadSecurity');
 const { getPublicFolderPath } = require('./publicUpload');
 
@@ -14,7 +14,7 @@ const SIGNATURES = {
   '.jpeg': [[0xff, 0xd8, 0xff]],
   '.png': [[0x89, 0x50, 0x4e, 0x47]],
   '.webp': [[0x52, 0x49, 0x46, 0x46]],
-  '.pdf': [[0x25, 0x50, 0x44, 0x46]],
+  '.pdf': [[0x25, 0x50, 0x44, 0x46]]
 };
 
 function getSafeExtension(originalname) {
@@ -40,15 +40,15 @@ function safeFilename(req, file, cb) {
 
 const multerOptions = {
   limits: { fileSize: MAX_FILE_SIZE },
-  fileFilter,
+  fileFilter
 };
 
 const privateUpload = multer({
   ...multerOptions,
   storage: multer.diskStorage({
     destination: './uploads/',
-    filename: safeFilename,
-  }),
+    filename: safeFilename
+  })
 });
 
 const publicUpload = multer({
@@ -57,13 +57,13 @@ const publicUpload = multer({
     destination: (req, file, cb) => {
       cb(null, getPublicFolderPath(req.body.folder));
     },
-    filename: safeFilename,
-  }),
+    filename: safeFilename
+  })
 });
 
 const memoryUpload = multer({
   ...multerOptions,
-  storage: multer.memoryStorage(),
+  storage: multer.memoryStorage()
 });
 
 function matchesSignature(buffer, signature) {
@@ -125,7 +125,7 @@ function handleMulterError(err, req, res, next) {
   }
 
   return res.status(400).json({
-    message: err.message || i18n.__('invalid_file_type'),
+    message: err.message || i18n.__('invalid_file_type')
   });
 }
 
@@ -143,5 +143,5 @@ module.exports = {
   publicUpload,
   memoryUpload,
   runUpload,
-  handleMulterError,
+  handleMulterError
 };

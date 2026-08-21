@@ -29,22 +29,22 @@ describe('migration 23-notifications-seed-demo-driver', () => {
     await db.collection('users').insertOne({
       _id: migration.DEMO_USER_ID,
       role: 'delivery',
-      name: 'Demo Driver',
+      name: 'Demo Driver'
     });
 
     await db.collection('orders').insertOne({
       _id: orderId,
       driver: migration.DEMO_DRIVER_ID,
       status: 'delivered',
-      createdAt: new Date(),
+      createdAt: new Date()
     });
 
     await migration.up(db);
 
-    const notifications = await db
-      .collection('notifications')
-      .find({ user: migration.DEMO_USER_ID })
-      .toArray();
+    const notifications = await db.
+    collection('notifications').
+    find({ user: migration.DEMO_USER_ID }).
+    toArray();
 
     expect(notifications.length).toBeGreaterThan(0);
     expect(notifications.every((n) => n.actionData?.seedKey === migration.SEED_KEY)).toBe(true);
@@ -57,14 +57,14 @@ describe('migration 23-notifications-seed-demo-driver', () => {
     await db.collection('users').insertOne({
       _id: migration.DEMO_USER_ID,
       role: 'delivery',
-      name: 'Demo Driver',
+      name: 'Demo Driver'
     });
 
     await migration.up(db);
     await migration.up(db);
 
     const count = await db.collection('notifications').countDocuments({
-      'actionData.seedKey': migration.SEED_KEY,
+      'actionData.seedKey': migration.SEED_KEY
     });
 
     expect(count).toBeGreaterThan(0);
@@ -74,14 +74,14 @@ describe('migration 23-notifications-seed-demo-driver', () => {
     await db.collection('users').insertOne({
       _id: migration.DEMO_USER_ID,
       role: 'delivery',
-      name: 'Demo Driver',
+      name: 'Demo Driver'
     });
 
     await migration.up(db);
     await migration.down(db);
 
     const count = await db.collection('notifications').countDocuments({
-      'actionData.seedKey': migration.SEED_KEY,
+      'actionData.seedKey': migration.SEED_KEY
     });
 
     expect(count).toBe(0);

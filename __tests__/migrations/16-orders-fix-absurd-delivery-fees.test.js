@@ -3,11 +3,11 @@ const migration = require("../../migrations/16-orders-fix-absurd-delivery-fees")
 describe("migration 16-orders-fix-absurd-delivery-fees", () => {
   const parisRestaurant = {
     latitude: "48.8699804",
-    longitude: "2.3638343",
+    longitude: "2.3638343"
   };
 
   const nearbyUser = {
-    location: { latitude: 48.87, longitude: 2.37 },
+    location: { latitude: 48.87, longitude: 2.37 }
   };
 
   it("computes haversine distance between restaurant and user", () => {
@@ -46,7 +46,7 @@ describe("migration 16-orders-fix-absurd-delivery-fees", () => {
         deliveryFeeType: "FIXED",
         freeDeliveryEnabled: false,
         freeDeliveryThreshold: 35,
-        fixedDeliveryFee: 3,
+        fixedDeliveryFee: 3
       },
       parisRestaurant,
       nearbyUser
@@ -62,8 +62,8 @@ describe("migration 16-orders-fix-absurd-delivery-fees", () => {
           baseFee: 1.5,
           perKmFee: 0.5,
           minFee: 2,
-          maxFee: 10,
-        },
+          maxFee: 10
+        }
       },
       4
     );
@@ -76,7 +76,7 @@ describe("migration 16-orders-fix-absurd-delivery-fees", () => {
       {
         deliveryFeeType: "DYNAMIC",
         dynamicDeliveryFee: { baseFee: 1.5, perKmFee: 0.5, minFee: 2, maxFee: 10 },
-        fixedDeliveryFee: 2.99,
+        fixedDeliveryFee: 2.99
       },
       parisRestaurant,
       { location: null }

@@ -34,55 +34,55 @@ describe('migration 31-admin-marketing-fill-empty-coherent-fields', () => {
     const txId = new ObjectId();
 
     await db.collection('categories').insertMany([
-      {
-        _id: frenchId,
-        name: 'French',
-        image: 'https://example.com/french.jpg',
-      },
-      {
-        _id: asianId,
-        name: 'Asian',
-        image: 'https://example.com/asian.jpg',
-      },
-    ]);
+    {
+      _id: frenchId,
+      name: 'French',
+      image: 'https://example.com/french.jpg'
+    },
+    {
+      _id: asianId,
+      name: 'Asian',
+      image: 'https://example.com/asian.jpg'
+    }]
+    );
 
     await db.collection('taxes').insertOne({
       _id: taxId,
       name: 'VAT',
       location: 'France',
-      rate: 21.8,
+      rate: 21.8
     });
 
     await db.collection('restaurants').insertOne({
       _id: restaurantId,
       name: 'Sakura Sushi',
       categories: [
-        {
-          title: 'American',
-          label: null,
-          value: staleId,
-          alias: 'stale',
-          image: '',
-        },
-      ],
+      {
+        title: 'American',
+        label: null,
+        value: staleId,
+        alias: 'stale',
+        image: ''
+      }],
+
       description: 'Cibus tyrannus contego',
       phone: '1-560-508-9131 x674',
       display_phone: '',
       tax: { label: 'GST' },
-      serviceModes: 'pickup',
+      serviceModes: 'pickup'
     });
 
     await db.collection('products').insertOne({
       _id: productId,
       name: 'Sushi Bowl',
       restaurant: restaurantId,
-      category: staleId,
+      category: staleId
     });
 
     await db.collection('users').insertOne({
       _id: userId,
       role: 'customer',
-      phone: '(821) 734-1283 x898',
+      phone: '(821) 734-1283 x898'
     });
 
     await db.collection('transactions').insertOne({
@@ -93,7 +93,7 @@ describe('migration 31-admin-marketing-fill-empty-coherent-fields', () => {
       payment_method: 'not_applicable',
       platform_fee: { amount: 16.68, percentage: 10 },
       processor_fee: { amount: 3.34 },
-      tax: { amount: 13.34 },
+      tax: { amount: 13.34 }
     });
 
     await migration.up(db);

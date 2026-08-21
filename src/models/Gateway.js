@@ -73,9 +73,9 @@ gatewaySchema.pre(/^find/, function () {
     '-credentials.webhookSecret ' +
     '-credentials.encryptionKey ' +
     '-credentials.platformSecret ' +
-    '-webhook.secret ' + 
+    '-webhook.secret ' +
     '-credentials.keySecret'
-);
+  );
 });
 
 const Gateway = mongoose.model('Gateway', gatewaySchema);

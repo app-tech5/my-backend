@@ -28,10 +28,10 @@ describe('migration 25-drivers-seed-demo-driver-documents', () => {
       _id: migration.DEMO_DRIVER_ID,
       user: new ObjectId(),
       documents: [
-        { type: 'driver_license', fileUrl: 'https://example.com/license.pdf' },
-        { type: 'insurance', fileUrl: 'https://example.com/insurance.pdf' },
-      ],
-      isApproved: false,
+      { type: 'driver_license', fileUrl: 'https://example.com/license.pdf' },
+      { type: 'insurance', fileUrl: 'https://example.com/insurance.pdf' }],
+
+      isApproved: false
     });
 
     await migration.up(db);
@@ -52,7 +52,7 @@ describe('migration 25-drivers-seed-demo-driver-documents', () => {
       _id: migration.DEMO_DRIVER_ID,
       user: new ObjectId(),
       documents: [{ type: 'identity_card', fileUrl: 'https://example.com/id.pdf' }],
-      isApproved: false,
+      isApproved: false
     });
 
     await migration.up(db);
@@ -64,14 +64,13 @@ describe('migration 25-drivers-seed-demo-driver-documents', () => {
 
   it('restores previous documents on down', async () => {
     const previousDocuments = [
-      { type: 'driver_license', fileUrl: 'https://example.com/license.pdf' },
-    ];
+    { type: 'driver_license', fileUrl: 'https://example.com/license.pdf' }];
 
     await db.collection('drivers').insertOne({
       _id: migration.DEMO_DRIVER_ID,
       user: new ObjectId(),
       documents: previousDocuments,
-      isApproved: false,
+      isApproved: false
     });
 
     await migration.up(db);

@@ -2,47 +2,44 @@ const mongoose = require('mongoose');
 const Transaction = require('../models/Transaction');
 const AppSetting = require('../models/AppSetting');
 
-/**
- * Wallet balance = completed credits − completed customer_payment(platform_credit).
- */
 async function getWalletBalance(userId) {
   const uid = new mongoose.Types.ObjectId(String(userId));
   const rows = await Transaction.aggregate([
-    {
-      $match: {
-        status: 'completed',
-        user: uid,
+  {
+    $match: {
+      status: 'completed',
+      user: uid
+    }
+  },
+  {
+    $group: {
+      _id: null,
+      credit: {
+        $sum: {
+          $cond: [
+          { $in: ['$transaction_type', ['customer_top_up', 'refund', 'adjustment', 'cashback']] },
+          '$amount',
+          0]
+
+        }
       },
-    },
-    {
-      $group: {
-        _id: null,
-        credit: {
-          $sum: {
-            $cond: [
-              { $in: ['$transaction_type', ['customer_top_up', 'refund', 'adjustment', 'cashback']] },
-              '$amount',
-              0,
-            ],
+      debit: {
+        $sum: {
+          $cond: [
+          {
+            $and: [
+            { $eq: ['$transaction_type', 'customer_payment'] },
+            { $eq: ['$payment_method', 'platform_credit'] }]
+
           },
-        },
-        debit: {
-          $sum: {
-            $cond: [
-              {
-                $and: [
-                  { $eq: ['$transaction_type', 'customer_payment'] },
-                  { $eq: ['$payment_method', 'platform_credit'] },
-                ],
-              },
-              '$amount',
-              0,
-            ],
-          },
-        },
-      },
-    },
-  ]);
+          '$amount',
+          0]
+
+        }
+      }
+    }
+  }]
+  );
   const row = rows[0] || { credit: 0, debit: 0 };
   return Math.max(0, Number(row.credit || 0) - Number(row.debit || 0));
 }
@@ -54,7 +51,7 @@ async function creditWallet({
   transactionType = 'refund',
   relatedOrder = null,
   description = '',
-  metadata = {},
+  metadata = {}
 }) {
   const amt = Math.round(Number(amount) * 100) / 100;
   if (!(amt > 0)) {
@@ -69,18 +66,15 @@ async function creditWallet({
     payment_method: 'platform_credit',
     date_completed: new Date(),
     related_order: relatedOrder || undefined,
-    user: userId,
+    user: userId
   });
 
   return {
     transaction: doc,
-    balance: await getWalletBalance(userId),
+    balance: await getWalletBalance(userId)
   };
 }
 
-/**
- * Instant refund to internal wallet when an order is cancelled after payment.
- */
 async function refundOrderToWallet(order, { reason = 'order_cancelled' } = {}) {
   if (!order?._id || !order?.user) {
     return null;
@@ -90,10 +84,10 @@ async function refundOrderToWallet(order, { reason = 'order_cancelled' } = {}) {
   if (!(amount > 0)) return null;
 
   const paid =
-    order.payment?.status === 'paid' ||
-    ['credit_card', 'paypal', 'mobile_money', 'google_pay', 'apple_pay', 'paystack', 'flutterwave', 'razorpay', 'wallet'].includes(
-      order.payment?.method
-    );
+  order.payment?.status === 'paid' ||
+  ['credit_card', 'paypal', 'mobile_money', 'google_pay', 'apple_pay', 'paystack', 'flutterwave', 'razorpay', 'wallet'].includes(
+    order.payment?.method
+  );
   if (!paid && order.payment?.method === 'cash_on_delivery') {
     return null;
   }
@@ -101,16 +95,16 @@ async function refundOrderToWallet(order, { reason = 'order_cancelled' } = {}) {
   const existing = await Transaction.findOne({
     related_order: order._id,
     transaction_type: 'refund',
-    status: 'completed',
+    status: 'completed'
   }).lean();
   if (existing) {
     return { skipped: true, reason: 'already_refunded', transaction: existing };
   }
 
   const currency =
-    order.items?.[0]?.currency ||
-    order.payment?.currency ||
-    'USD';
+  order.items?.[0]?.currency ||
+  order.payment?.currency ||
+  'USD';
 
   return creditWallet({
     userId,
@@ -123,14 +117,11 @@ async function refundOrderToWallet(order, { reason = 'order_cancelled' } = {}) {
       reason,
       orderId: String(order._id),
       originalMethod: order.payment?.method || null,
-      instant: true,
-    },
+      instant: true
+    }
   });
 }
 
-/**
- * Cashback on delivered orders (percent from AppSetting).
- */
 async function applyOrderCashback(order) {
   if (!order?._id || order.status !== 'delivered') return null;
 
@@ -142,7 +133,7 @@ async function applyOrderCashback(order) {
   const existing = await Transaction.findOne({
     related_order: order._id,
     transaction_type: 'cashback',
-    status: 'completed',
+    status: 'completed'
   }).lean();
   if (existing) {
     return { skipped: true, reason: 'already_cashed_back' };
@@ -164,8 +155,8 @@ async function applyOrderCashback(order) {
     description: `Cashback ${percent}%`,
     metadata: {
       percent,
-      orderId: String(order._id),
-    },
+      orderId: String(order._id)
+    }
   });
 }
 
@@ -173,5 +164,5 @@ module.exports = {
   getWalletBalance,
   creditWallet,
   refundOrderToWallet,
-  applyOrderCashback,
+  applyOrderCashback
 };

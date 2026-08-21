@@ -3,7 +3,7 @@ const {
   recommendations,
   eta,
   surge,
-  quote,
+  quote
 } = require('../controllers/intelligenceController');
 
 const router = express.Router();

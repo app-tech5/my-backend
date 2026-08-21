@@ -22,11 +22,11 @@ router.get('/', async (req, res) => {
           newOrders: true,
           orderUpdates: true,
           lowStock: false,
-          marketing: false,
+          marketing: false
         },
         restaurantSettings: {
           autoAcceptOrders: false,
-          preparationTime: 15,
+          preparationTime: 15
         }
       });
       await userSettings.save();

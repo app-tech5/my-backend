@@ -7,75 +7,75 @@ const SponsoredListingSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'Restaurant',
       required: true,
-      index: true,
+      index: true
     },
     name: {
       type: String,
       required: true,
       trim: true,
-      maxlength: 120,
+      maxlength: 120
     },
     placement: {
       type: String,
       enum: ['search', 'home_banner', 'both'],
       default: 'search',
-      index: true,
+      index: true
     },
     status: {
       type: String,
       enum: ['draft', 'pending_payment', 'active', 'paused', 'ended'],
       default: 'draft',
-      index: true,
+      index: true
     },
     bidAmount: {
       type: Number,
       required: true,
       min: 0,
-      default: 0,
+      default: 0
     },
     currency: {
       type: String,
       default: 'USD',
       uppercase: true,
-      trim: true,
+      trim: true
     },
     dailyBudget: {
       type: Number,
       min: 0,
-      default: null,
+      default: null
     },
     priority: {
       type: Number,
       default: 10,
       min: 0,
-      max: 100,
+      max: 100
     },
     headline: {
       type: String,
       trim: true,
       maxlength: 80,
-      default: '',
+      default: ''
     },
     image: {
       type: String,
-      default: '',
+      default: ''
     },
     startAt: {
       type: Date,
       required: true,
-      index: true,
+      index: true
     },
     endAt: {
       type: Date,
       required: true,
-      index: true,
+      index: true
     },
     impressions: { type: Number, default: 0, min: 0 },
     clicks: { type: Number, default: 0, min: 0 },
     createdBy: {
       type: Schema.Types.ObjectId,
-      ref: 'User',
-    },
+      ref: 'User'
+    }
   },
   { timestamps: true, versionKey: false }
 );

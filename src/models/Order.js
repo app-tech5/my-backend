@@ -27,39 +27,39 @@ const orderSchema = new mongoose.Schema(
       }
     },
     items: [
+    {
+      type: { type: String, required: true },
+      item: { type: mongoose.Schema.Types.ObjectId, required: true, refPath: "items.type" },
+      name: { type: String, required: true },
+      image: { type: String, required: true },
+      price: { type: String, required: true },
+      currency: { type: String, required: true },
+      quantity: { type: Number, required: true, min: 1 },
+      price: { type: Number, required: true },
+      extras: [
       {
-        type: { type: String, required: true },
-        item: { type: mongoose.Schema.Types.ObjectId, required: true, refPath: "items.type" },
+        productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product", required: true },
         name: { type: String, required: true },
-        image: { type: String, required: true },
-        price: { type: String, required: true },
-        currency: { type: String, required: true },
-        quantity: { type: Number, required: true, min: 1 },
         price: { type: Number, required: true },
-        extras: [
-          {
-            productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product", required: true },
-            name: { type: String, required: true },
-            price: { type: Number, required: true },
-            quantity: { type: Number, required: true }
-          }
-        ],
-        variants: [
-          {
-            name: { type: String },
-            price: { type: Number },
-            extra: { type: Number },
-            size: { type: String },
-          }
-        ],
-        total: { type: Number, required: true }
-      },
-    ],
+        quantity: { type: Number, required: true }
+      }],
+
+      variants: [
+      {
+        name: { type: String },
+        price: { type: Number },
+        extra: { type: Number },
+        size: { type: String }
+      }],
+
+      total: { type: Number, required: true }
+    }],
+
     totalPrice: { type: Number, required: true },
     subtotal: { type: Number, required: true },
     tax: {
       rate: { type: Number, required: true },
-      amount: { type: Number },
+      amount: { type: Number }
     },
     status: {
       type: String,
@@ -70,32 +70,32 @@ const orderSchema = new mongoose.Schema(
       method: {
         type: String,
         enum: [
-          "credit_card",
-          "mobile_money",
-          "cash_on_delivery",
-          "paypal",
-          "google_pay",
-          "apple_pay",
-          "paystack",
-          "flutterwave",
-          "razorpay",
-          "wallet",
-          "crypto",
-        ],
-        required: true,
+        "credit_card",
+        "mobile_money",
+        "cash_on_delivery",
+        "paypal",
+        "google_pay",
+        "apple_pay",
+        "paystack",
+        "flutterwave",
+        "razorpay",
+        "wallet",
+        "crypto"],
+
+        required: true
       },
       status: { type: String, enum: ["pending", "paid", "failed", "refunded"], default: "pending" },
       transactionId: { type: String },
-      provider: { type: String },
+      provider: { type: String }
     },
     orderSource: {
       type: String,
       enum: ["app", "whatsapp", "ussd", "web", "admin"],
-      default: "app",
+      default: "app"
     },
     channelMeta: {
       type: mongoose.Schema.Types.Mixed,
-      default: {},
+      default: {}
     },
     delivery: {
       type: {
@@ -113,14 +113,14 @@ const orderSchema = new mongoose.Schema(
         completedAt: { type: Date },
         completedLocation: {
           type: { type: String, enum: ["Point"], default: "Point" },
-          coordinates: { type: [Number] },
+          coordinates: { type: [Number] }
         },
         geofenceMeters: { type: Number },
         distanceMeters: { type: Number },
-        geofenceOk: { type: Boolean },
-      },
+        geofenceOk: { type: Boolean }
+      }
     },
-    batchId: { type: String, index: true },
+    batchId: { type: String, index: true }
   },
   { timestamps: true }
 );
@@ -153,9 +153,9 @@ orderSchema.post('findOne', function (order) {
   order.items = order.items.map((item) => {
     const raw = typeof item.toObject === "function" ? item.toObject() : item;
     const populated =
-      raw.item && typeof raw.item === "object" && raw.item.name != null
-        ? raw.item
-        : null;
+    raw.item && typeof raw.item === "object" && raw.item.name != null ?
+    raw.item :
+    null;
     const extras = Array.isArray(raw.extras) ? raw.extras : [];
     const extrasTotal = extras.reduce(
       (sum, extra) => sum + Number(extra.price || 0) * Number(extra.quantity || 1),
@@ -168,11 +168,11 @@ orderSchema.post('findOne', function (order) {
     const computedTotal = quantity * unitPrice + extrasTotal;
     const snapshotTotal = Number(raw.total);
     const total =
-      Number.isFinite(computedTotal) && computedTotal > 0
-        ? computedTotal
-        : Number.isFinite(snapshotTotal)
-          ? snapshotTotal
-          : 0;
+    Number.isFinite(computedTotal) && computedTotal > 0 ?
+    computedTotal :
+    Number.isFinite(snapshotTotal) ?
+    snapshotTotal :
+    0;
 
     return {
       name: populated?.name || raw.name || "Item",
@@ -181,7 +181,7 @@ orderSchema.post('findOne', function (order) {
       quantity,
       extras: extras.map(({ productId, _id, ...rest }) => rest),
       variants: raw.variants || [],
-      total,
+      total
     };
   });
 
@@ -192,11 +192,11 @@ orderSchema.post('findOne', function (order) {
       order.tax.amount = Number(order.tax.rate || 0) * itemsSubtotal;
     }
     order.totalPrice =
-      itemsSubtotal +
-      Number(order.delivery?.deliveryFee || 0) +
-      Number(order.tax?.amount || 0);
+    itemsSubtotal +
+    Number(order.delivery?.deliveryFee || 0) +
+    Number(order.tax?.amount || 0);
   } else {
-    // Keep persisted totals when line items could not be priced from catalog
+
     if (previousSubtotal != null) order.subtotal = previousSubtotal;
     if (order.tax && previousTaxAmount != null) order.tax.amount = previousTaxAmount;
     if (previousTotal != null) order.totalPrice = previousTotal;
@@ -239,7 +239,7 @@ orderSchema.post('findOneAndUpdate', async function (doc) {
     const userId = doc.user?.id || doc.user?._id || doc.user;
     if (userId) {
       io.to(`orders-${userId}`).emit('order-updated', {
-        order: doc,
+        order: doc
       });
     }
     if (doc.driver) {
@@ -247,7 +247,7 @@ orderSchema.post('findOneAndUpdate', async function (doc) {
       if (driver?.userId) {
         const driverUserId = driver.userId.id || driver.userId._id || driver.userId;
         io.to(`orders-${driverUserId}`).emit('order-updated', {
-          order: doc,
+          order: doc
         });
       }
     }
@@ -271,7 +271,7 @@ orderSchema.post('findOneAndUpdate', async function (doc) {
     if (settings?.whatsappNotifyOnStatus !== false) {
       await notifyOrderViaChannels(doc, {
         title: `Order ${String(doc._id).slice(-6)}`,
-        message: `Status: ${doc.status}`,
+        message: `Status: ${doc.status}`
       });
     }
   } catch (e) {
@@ -293,7 +293,7 @@ orderSchema.post('save', async function (doc) {
         relatedEntityModel: 'Order',
         action: 'view_order',
         actionData: { orderId },
-        pushData: { type: 'order', orderId },
+        pushData: { type: 'order', orderId }
       });
     }
   } catch (error) {
@@ -312,24 +312,24 @@ orderSchema.pre('find', async function (next) {
     const hasPriority = !!(benefits?.active && benefits?.prioritySupport);
 
     if (hasPriority) {
-      // Priority members see new pending jobs immediately (+ their assigned ones)
+
       this.where({
         $or: [
-          { driver: driver?._id },
-          { status: 'pending' },
-          { status: 'ready', driver: null },
-        ],
+        { driver: driver?._id },
+        { status: 'pending' },
+        { status: 'ready', driver: null }]
+
       });
     } else {
-      // Others wait a short lead window so priority drivers get first look
+
       const leadMs = (LIMITS.PRIORITY_JOB_LEAD_SECONDS || 90) * 1000;
       const cutoff = new Date(Date.now() - leadMs);
       this.where({
         $or: [
-          { driver: driver?._id },
-          { status: 'pending', createdAt: { $lte: cutoff } },
-          { status: 'ready', driver: null },
-        ],
+        { driver: driver?._id },
+        { status: 'pending', createdAt: { $lte: cutoff } },
+        { status: 'ready', driver: null }]
+
       });
     }
   }

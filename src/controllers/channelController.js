@@ -3,7 +3,7 @@ const {
   handleUssdSession,
   createChannelOrder,
   sendWhatsAppMessage,
-  resolveWhatsAppConfig,
+  resolveWhatsAppConfig
 } = require('../services/channelService');
 const AppSetting = require('../models/AppSetting');
 
@@ -23,9 +23,9 @@ async function ussdWebhook(req, res) {
       sessionId: body.sessionId || body.session_id,
       phoneNumber: body.phoneNumber || body.phone_number || body.msisdn,
       text: body.text || body.ussd_string || '',
-      serviceCode: body.serviceCode || body.service_code,
+      serviceCode: body.serviceCode || body.service_code
     });
-    // Africa's Talking expects plain text CON/END
+
     if (req.query.format === 'json' || req.headers.accept?.includes('json')) {
       return res.json(result);
     }
@@ -48,21 +48,21 @@ async function whatsappWebhookVerify(req, res) {
 }
 
 async function whatsappWebhook(req, res) {
-  // Acknowledge Meta quickly; order intake can be extended from inbound messages
+
   try {
     const entry = req.body?.entry?.[0];
     const changes = entry?.changes?.[0]?.value;
     const messages = changes?.messages || [];
     const statuses = changes?.statuses || [];
     if (messages.length) {
-      // Logged for operators — full conversational checkout is opt-in via Admin keys
+
       console.info(
         '[whatsapp] inbound',
         messages.map((m) => ({
           from: m.from,
           type: m.type,
           text: m?.text?.body || '',
-          timestamp: m.timestamp,
+          timestamp: m.timestamp
         }))
       );
     }
@@ -74,12 +74,12 @@ async function whatsappWebhook(req, res) {
           status: s.status,
           recipient_id: s.recipient_id,
           timestamp: s.timestamp,
-          error: s.errors?.[0]?.message || null,
+          error: s.errors?.[0]?.message || null
         }))
       );
     }
   } catch (_) {
-    /* ignore */
+
   }
   return res.sendStatus(200);
 }
@@ -94,7 +94,7 @@ async function createOrder(req, res) {
       paymentMethod,
       phone,
       channelMeta,
-      userId,
+      userId
     } = req.body || {};
 
     const order = await createChannelOrder({
@@ -105,7 +105,7 @@ async function createOrder(req, res) {
       delivery,
       paymentMethod,
       phone,
-      channelMeta,
+      channelMeta
     });
     return res.status(201).json({ order });
   } catch (error) {
@@ -132,5 +132,5 @@ module.exports = {
   whatsappWebhookVerify,
   whatsappWebhook,
   createOrder,
-  testWhatsApp,
+  testWhatsApp
 };

@@ -1,11 +1,3 @@
-/**
- * Personalization / ops intelligence:
- * - complementary product recommendations (order history + time-of-day + weather)
- * - smart ETA (kitchen load + travel / rush-hour)
- * - surge delivery fee multiplier (demand + drivers + weather)
- *
- * Weather: Open-Meteo (no API key). Routing: OSRM. Heuristic fallbacks when offline.
- */
 
 const Order = require('../models/Order');
 const Product = require('../models/Product');
@@ -16,7 +8,7 @@ const i18n = require('../config/i18n');
 const {
   applyRecommendationProvider,
   applyEtaProvider,
-  applySurgeProvider,
+  applySurgeProvider
 } = require('./ai/recommendationProviders');
 const {
   ACTIVE_ORDER_STATUSES,
@@ -34,7 +26,7 @@ const {
   HOUR_WINDOWS,
   OPEN_METEO_BASE_URL,
   OSRM_BASE_URL,
-  PRODUCT_SELECT_FIELDS,
+  PRODUCT_SELECT_FIELDS
 } = require('../constants/intelligence');
 
 function toNum(v, fallback = 0) {
@@ -43,13 +35,13 @@ function toNum(v, fallback = 0) {
 }
 
 function haversineKm(lat1, lng1, lat2, lng2) {
-  const toRad = (d) => (d * Math.PI) / 180;
+  const toRad = (d) => d * Math.PI / 180;
   const R = 6371;
   const dLat = toRad(lat2 - lat1);
   const dLng = toRad(lng2 - lng1);
   const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  Math.sin(dLat / 2) ** 2 +
+  Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
@@ -76,7 +68,7 @@ function weatherFallback() {
     source: WEATHER_SOURCE.HEURISTIC,
     condition: WEATHER_CONDITION.FAIR,
     temperatureC: LIMITS.DEFAULT_TEMP_C,
-    precipitationMm: 0,
+    precipitationMm: 0
   };
 }
 
@@ -106,8 +98,8 @@ async function fetchWeather(lat, lng) {
   }
   try {
     const url =
-      `${OPEN_METEO_BASE_URL}?latitude=${Number(lat)}&longitude=${Number(lng)}` +
-      `&current=temperature_2m,precipitation,weather_code&timezone=auto`;
+    `${OPEN_METEO_BASE_URL}?latitude=${Number(lat)}&longitude=${Number(lng)}` +
+    `&current=temperature_2m,precipitation,weather_code&timezone=auto`;
     const res = await fetchWithTimeout(url);
     if (!res.ok) return fallback;
     const data = await res.json();
@@ -120,7 +112,7 @@ async function fetchWeather(lat, lng) {
       condition: classifyWeather(temp, precip, code),
       temperatureC: temp,
       precipitationMm: precip,
-      weatherCode: code,
+      weatherCode: code
     };
   } catch {
     return fallback;
@@ -161,18 +153,18 @@ async function buildPairScores(restaurantId, cartProductIds) {
 
   const recent = await Order.find({
     restaurant: restaurantId,
-    status: { $in: [...PAIR_ORDER_STATUSES] },
-  })
-    .select('items')
-    .sort({ createdAt: -1 })
-    .limit(LIMITS.RECENT_ORDERS_FOR_PAIRS)
-    .lean();
+    status: { $in: [...PAIR_ORDER_STATUSES] }
+  }).
+  select('items').
+  sort({ createdAt: -1 }).
+  limit(LIMITS.RECENT_ORDERS_FOR_PAIRS).
+  lean();
 
   const cartSet = new Set((cartProductIds || []).map(String));
   for (const order of recent) {
     const ids = [
-      ...new Set((order.items || []).map((it) => String(it.item)).filter(Boolean)),
-    ];
+    ...new Set((order.items || []).map((it) => String(it.item)).filter(Boolean))];
+
     if (ids.length < 2 && cartSet.size === 0) continue;
     for (const a of ids) {
       for (const b of ids) {
@@ -219,7 +211,7 @@ async function getRecommendations({
   lat,
   lng,
   limit = LIMITS.DEFAULT_RECO_LIMIT,
-  userId,
+  userId
 }) {
   const weather = await fetchWeather(lat, lng);
   const bucket = hourBucket();
@@ -228,41 +220,41 @@ async function getRecommendations({
 
   let historyIds = [];
   if (userId) {
-    const history = await Order.find({ user: userId, status: 'delivered' })
-      .select('items')
-      .sort({ createdAt: -1 })
-      .limit(LIMITS.USER_HISTORY_ORDERS)
-      .lean();
+    const history = await Order.find({ user: userId, status: 'delivered' }).
+    select('items').
+    sort({ createdAt: -1 }).
+    limit(LIMITS.USER_HISTORY_ORDERS).
+    lean();
     historyIds = history.flatMap((o) => (o.items || []).map((it) => String(it.item)));
   }
 
   const cartIds = new Set([
-    ...productIds.map(String),
-    ...historyIds.slice(0, LIMITS.USER_HISTORY_IDS),
-  ]);
+  ...productIds.map(String),
+  ...historyIds.slice(0, LIMITS.USER_HISTORY_IDS)]
+  );
   const pairScores = await buildPairScores(restaurantId, [...cartIds]);
 
   const query = { availability: true };
   if (restaurantId) query.restaurant = restaurantId;
 
-  const products = await Product.find(query)
-    .select(PRODUCT_SELECT_FIELDS)
-    .limit(LIMITS.PRODUCT_CANDIDATES)
-    .lean();
+  const products = await Product.find(query).
+  select(PRODUCT_SELECT_FIELDS).
+  limit(LIMITS.PRODUCT_CANDIDATES).
+  lean();
 
-  const ranked = products
-    .map((p) => ({
-      product: p,
-      score: scoreProduct(p, { cartIds, pairScores, timeTags, weatherTags }),
-    }))
-    .filter((r) => Number.isFinite(r.score) && r.score > -Infinity)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, clampRecoLimit(limit));
+  const ranked = products.
+  map((p) => ({
+    product: p,
+    score: scoreProduct(p, { cartIds, pairScores, timeTags, weatherTags })
+  })).
+  filter((r) => Number.isFinite(r.score) && r.score > -Infinity).
+  sort((a, b) => b.score - a.score).
+  slice(0, clampRecoLimit(limit));
 
   const builtinItems = ranked.map((r) => ({
     ...r.product,
     recommendationScore: Number(r.score.toFixed(2)),
-    reason: buildRecoReason(r.product, { bucket, weather, pairScores }),
+    reason: buildRecoReason(r.product, { bucket, weather, pairScores })
   }));
 
   const providerResult = await applyRecommendationProvider({
@@ -273,18 +265,18 @@ async function getRecommendations({
     historyIds,
     weather,
     bucket,
-    limit: clampRecoLimit(limit),
+    limit: clampRecoLimit(limit)
   });
 
   const items = providerResult.items.map((item) => {
     const { aiReason, ...rest } = item;
     return {
       ...rest,
-      // Keep original deterministic explanation unless external provider gave one.
+
       reason:
-        typeof aiReason === 'string' && aiReason
-          ? aiReason
-          : item.reason || buildRecoReason(item, { bucket, weather, pairScores }),
+      typeof aiReason === 'string' && aiReason ?
+      aiReason :
+      item.reason || buildRecoReason(item, { bucket, weather, pairScores })
     };
   });
 
@@ -298,17 +290,17 @@ async function getRecommendations({
       recommendationProvider: providerResult.provider,
       recommendationMode: providerResult.mode,
       recommendationModel: providerResult.model || null,
-      recommendationFallbackError: providerResult.fallbackError || null,
-    },
+      recommendationFallbackError: providerResult.fallbackError || null
+    }
   };
 }
 
 async function fetchRouteDurationMinutes(fromLat, fromLng, toLat, toLng) {
   try {
     const url =
-      `${OSRM_BASE_URL}/` +
-      `${Number(fromLng)},${Number(fromLat)};${Number(toLng)},${Number(toLat)}` +
-      `?overview=false`;
+    `${OSRM_BASE_URL}/` +
+    `${Number(fromLng)},${Number(fromLat)};${Number(toLng)},${Number(toLat)}` +
+    `?overview=false`;
     const res = await fetchWithTimeout(url);
     if (!res.ok) return null;
     const data = await res.json();
@@ -328,17 +320,17 @@ function weatherExtraMinutes(condition) {
 
 async function getSmartEta({ restaurantId, lat, lng }) {
   const setting = await getDeliverySettingForRestaurant(restaurantId);
-  const restaurant = restaurantId
-    ? await Restaurant.findById(restaurantId).select('latitude longitude name').lean()
-    : null;
+  const restaurant = restaurantId ?
+  await Restaurant.findById(restaurantId).select('latitude longitude name').lean() :
+  null;
 
   const basePrep = toNum(setting?.deliveryPreparationTime, LIMITS.DEFAULT_PREP_MINUTES);
-  const kitchenLoad = restaurantId
-    ? await Order.countDocuments({
-        restaurant: restaurantId,
-        status: { $in: [...KITCHEN_STATUSES] },
-      })
-    : 0;
+  const kitchenLoad = restaurantId ?
+  await Order.countDocuments({
+    restaurant: restaurantId,
+    status: { $in: [...KITCHEN_STATUSES] }
+  }) :
+  0;
 
   const kitchenExtra = Math.min(
     LIMITS.MAX_KITCHEN_EXTRA_MINUTES,
@@ -348,12 +340,12 @@ async function getSmartEta({ restaurantId, lat, lng }) {
   let distanceKm = null;
   let routeMinutes = null;
   if (
-    restaurant &&
-    lat != null &&
-    lng != null &&
-    restaurant.latitude != null &&
-    restaurant.longitude != null
-  ) {
+  restaurant &&
+  lat != null &&
+  lng != null &&
+  restaurant.latitude != null &&
+  restaurant.longitude != null)
+  {
     distanceKm = haversineKm(
       toNum(lat),
       toNum(lng),
@@ -369,13 +361,13 @@ async function getSmartEta({ restaurantId, lat, lng }) {
   }
 
   const rush = isRushHour();
-  const travelMinPerKm = rush
-    ? LIMITS.RUSH_TRAVEL_MIN_PER_KM
-    : LIMITS.NORMAL_TRAVEL_MIN_PER_KM;
+  const travelMinPerKm = rush ?
+  LIMITS.RUSH_TRAVEL_MIN_PER_KM :
+  LIMITS.NORMAL_TRAVEL_MIN_PER_KM;
   const heuristicTravel =
-    distanceKm != null
-      ? Math.max(LIMITS.MIN_TRAVEL_MINUTES, Math.round(distanceKm * travelMinPerKm))
-      : LIMITS.FALLBACK_TRAVEL_MINUTES;
+  distanceKm != null ?
+  Math.max(LIMITS.MIN_TRAVEL_MINUTES, Math.round(distanceKm * travelMinPerKm)) :
+  LIMITS.FALLBACK_TRAVEL_MINUTES;
 
   let travelMinutes = routeMinutes != null ? routeMinutes : heuristicTravel;
   if (routeMinutes != null && rush) {
@@ -389,8 +381,8 @@ async function getSmartEta({ restaurantId, lat, lng }) {
     LIMITS.MIN_ETA_MINUTES,
     Math.round(
       basePrep * LIMITS.PREP_MIN_FACTOR +
-        kitchenExtra * LIMITS.KITCHEN_MIN_FACTOR +
-        travelMinutes * LIMITS.TRAVEL_MIN_FACTOR
+      kitchenExtra * LIMITS.KITCHEN_MIN_FACTOR +
+      travelMinutes * LIMITS.TRAVEL_MIN_FACTOR
     )
   );
   const maxMinutes = Math.max(
@@ -412,15 +404,15 @@ async function getSmartEta({ restaurantId, lat, lng }) {
       routingSource: routeMinutes != null ? ROUTING_SOURCE.OSRM : ROUTING_SOURCE.HEURISTIC,
       rushHour: rush,
       weatherExtraMinutes: weatherExtra,
-      weather,
-    },
+      weather
+    }
   };
   const providerResult = await applyEtaProvider({ builtinResult });
   return {
     ...providerResult.eta,
     provider: providerResult.provider,
     providerMode: providerResult.mode,
-    providerFallbackError: providerResult.fallbackError || null,
+    providerFallbackError: providerResult.fallbackError || null
   };
 }
 
@@ -434,22 +426,22 @@ async function getSurgePricing({ restaurantId, lat, lng }) {
   const since = new Date(Date.now() - LIMITS.DEMAND_WINDOW_MS);
   const demandQuery = {
     status: { $in: [...ACTIVE_ORDER_STATUSES] },
-    createdAt: { $gte: since },
+    createdAt: { $gte: since }
   };
   if (restaurantId) demandQuery.restaurant = restaurantId;
 
   const [activeOrders, onlineDrivers, weather] = await Promise.all([
-    Order.countDocuments(demandQuery),
-    Driver.countDocuments({ status: { $in: [...ONLINE_DRIVER_STATUSES] } }),
-    fetchWeather(lat, lng),
-  ]);
+  Order.countDocuments(demandQuery),
+  Driver.countDocuments({ status: { $in: [...ONLINE_DRIVER_STATUSES] } }),
+  fetchWeather(lat, lng)]
+  );
 
   const demandRatio = computeDemandRatio(activeOrders, onlineDrivers);
   let multiplier = 1;
   const reasons = [];
 
   const noDriversHighDemand =
-    onlineDrivers === 0 && activeOrders >= LIMITS.SURGE_NO_DRIVER_HIGH_ORDERS;
+  onlineDrivers === 0 && activeOrders >= LIMITS.SURGE_NO_DRIVER_HIGH_ORDERS;
   if (demandRatio >= LIMITS.SURGE_HIGH_DEMAND_RATIO || noDriversHighDemand) {
     multiplier += LIMITS.SURGE_HIGH_DEMAND_BONUS;
     reasons.push(i18n.__('intelligence_surge_high_demand'));
@@ -467,9 +459,9 @@ async function getSurgePricing({ restaurantId, lat, lng }) {
     multiplier += LIMITS.SURGE_RAIN_BONUS;
     reasons.push(i18n.__('intelligence_surge_weather_rain'));
   } else if (
-    weather.condition === WEATHER_CONDITION.COLD ||
-    weather.condition === WEATHER_CONDITION.HOT
-  ) {
+  weather.condition === WEATHER_CONDITION.COLD ||
+  weather.condition === WEATHER_CONDITION.HOT)
+  {
     multiplier += LIMITS.SURGE_EXTREME_WEATHER_BONUS;
     reasons.push(i18n.__('intelligence_surge_weather', weather.condition));
   }
@@ -485,24 +477,24 @@ async function getSurgePricing({ restaurantId, lat, lng }) {
   const builtinResult = {
     active,
     multiplier: active ? multiplier : 1,
-    label: active
-      ? i18n.__('intelligence_surge_fee', multiplier.toFixed(2))
-      : i18n.__('intelligence_surge_standard'),
+    label: active ?
+    i18n.__('intelligence_surge_fee', multiplier.toFixed(2)) :
+    i18n.__('intelligence_surge_standard'),
     reasons: active ? reasons : [],
     factors: {
       activeOrdersLastHour: activeOrders,
       onlineDrivers,
       demandRatio: Number(demandRatio.toFixed(2)),
       weather,
-      rushHour: isRushHour(),
-    },
+      rushHour: isRushHour()
+    }
   };
   const providerResult = await applySurgeProvider({ builtinResult });
   return {
     ...providerResult.surge,
     provider: providerResult.provider,
     providerMode: providerResult.mode,
-    providerFallbackError: providerResult.fallbackError || null,
+    providerFallbackError: providerResult.fallbackError || null
   };
 }
 
@@ -512,13 +504,13 @@ function computeBaseFee(setting, distanceKm, subtotal) {
   if (setting?.deliveryFeeType === 'FREE' || setting?.freeDeliveryEnabled) {
     baseFee = 0;
   } else if (
-    ['DYNAMIC', 'RESTAURANT_DEFINED'].includes(setting?.deliveryFeeType) &&
-    distanceKm != null
-  ) {
+  ['DYNAMIC', 'RESTAURANT_DEFINED'].includes(setting?.deliveryFeeType) &&
+  distanceKm != null)
+  {
     const dyn = setting.dynamicDeliveryFee || {};
     baseFee =
-      toNum(dyn.baseFee, LIMITS.DEFAULT_DYNAMIC_BASE_FEE) +
-      distanceKm * toNum(dyn.perKmFee, LIMITS.DEFAULT_DYNAMIC_PER_KM);
+    toNum(dyn.baseFee, LIMITS.DEFAULT_DYNAMIC_BASE_FEE) +
+    distanceKm * toNum(dyn.perKmFee, LIMITS.DEFAULT_DYNAMIC_PER_KM);
     baseFee = Math.min(
       toNum(dyn.maxFee, LIMITS.DEFAULT_DYNAMIC_MAX_FEE),
       Math.max(toNum(dyn.minFee, LIMITS.DEFAULT_DYNAMIC_MIN_FEE), baseFee)
@@ -526,9 +518,9 @@ function computeBaseFee(setting, distanceKm, subtotal) {
   }
 
   if (
-    setting?.freeDeliveryThreshold != null &&
-    toNum(subtotal) >= toNum(setting.freeDeliveryThreshold, Infinity)
-  ) {
+  setting?.freeDeliveryThreshold != null &&
+  toNum(subtotal) >= toNum(setting.freeDeliveryThreshold, Infinity))
+  {
     baseFee = 0;
   }
 
@@ -541,21 +533,21 @@ async function getDeliveryQuote({
   lng,
   subtotal = 0,
   productIds = [],
-  userId,
+  userId
 }) {
   const [setting, eta, surge, recommendations] = await Promise.all([
-    getDeliverySettingForRestaurant(restaurantId),
-    getSmartEta({ restaurantId, lat, lng }),
-    getSurgePricing({ restaurantId, lat, lng }),
-    getRecommendations({
-      restaurantId,
-      productIds,
-      lat,
-      lng,
-      userId,
-      limit: LIMITS.DEFAULT_RECO_LIMIT,
-    }),
-  ]);
+  getDeliverySettingForRestaurant(restaurantId),
+  getSmartEta({ restaurantId, lat, lng }),
+  getSurgePricing({ restaurantId, lat, lng }),
+  getRecommendations({
+    restaurantId,
+    productIds,
+    lat,
+    lng,
+    userId,
+    limit: LIMITS.DEFAULT_RECO_LIMIT
+  })]
+  );
 
   const baseFee = computeBaseFee(setting, eta.factors.distanceKm, subtotal);
   const multiplier = surge.active ? surge.multiplier : 1;
@@ -568,15 +560,15 @@ async function getDeliveryQuote({
     eta,
     recommendations: recommendations.items,
     recommendationContext: recommendations.context,
-    deliverySetting: setting
-      ? {
-          _id: setting._id,
-          deliveryFeeType: setting.deliveryFeeType,
-          fixedDeliveryFee: setting.fixedDeliveryFee,
-          freeDeliveryThreshold: setting.freeDeliveryThreshold,
-          deliveryPreparationTime: setting.deliveryPreparationTime,
-        }
-      : null,
+    deliverySetting: setting ?
+    {
+      _id: setting._id,
+      deliveryFeeType: setting.deliveryFeeType,
+      fixedDeliveryFee: setting.fixedDeliveryFee,
+      freeDeliveryThreshold: setting.freeDeliveryThreshold,
+      deliveryPreparationTime: setting.deliveryPreparationTime
+    } :
+    null
   };
 }
 
@@ -588,5 +580,5 @@ module.exports = {
   fetchWeather,
   haversineKm,
   hourBucket,
-  isRushHour,
+  isRushHour
 };

@@ -5,18 +5,18 @@ const authMiddleware = (req, res, next) => {
   if (!token) {
     const authHeader = req.headers.authorization;
     if (authHeader && authHeader.startsWith('Bearer ')) {
-      token = authHeader.substring(7); 
+      token = authHeader.substring(7);
     }
   }
   if (!token) {
     return res.status(401).json({ message: i18n.__("access_denied_missing_token") });
   }
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET); 
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     if (decoded.isActive === false) {
       return res.status(403).json({ message: i18n.__("account_disabled") });
     }
-    req.user = decoded; 
+    req.user = decoded;
     next();
   } catch (error) {
     res.status(403).json({ message: i18n.__("invalid_token") });

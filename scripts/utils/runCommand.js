@@ -3,7 +3,7 @@ const { spawnSync } = require('child_process');
 function runCommand(command, args, options = {}) {
   const result = spawnSync(command, args, {
     stdio: 'inherit',
-    ...options,
+    ...options
   });
 
   if (result.error) {

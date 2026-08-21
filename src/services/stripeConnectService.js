@@ -26,13 +26,13 @@ async function ensureConnectAccount(userId) {
     country: CONNECT_COUNTRY,
     email: user.email || undefined,
     capabilities: {
-      transfers: { requested: true },
+      transfers: { requested: true }
     },
     business_type: 'individual',
     metadata: {
       userId: String(user._id),
-      role: user.role || 'delivery',
-    },
+      role: user.role || 'delivery'
+    }
   });
 
   user.stripeConnectAccountId = account.id;
@@ -48,13 +48,13 @@ async function createOnboardingLink(userId, { refreshUrl, returnUrl }) {
     account: accountId,
     refresh_url: refreshUrl,
     return_url: returnUrl,
-    type: 'account_onboarding',
+    type: 'account_onboarding'
   });
 
   return {
     accountId,
     url: accountLink.url,
-    expiresAt: accountLink.expires_at,
+    expiresAt: accountLink.expires_at
   };
 }
 
@@ -72,14 +72,14 @@ async function createAccountUpdateLink(userId, { refreshUrl, returnUrl }) {
     account: user.stripeConnectAccountId,
     refresh_url: refreshUrl,
     return_url: returnUrl,
-    type: linkType,
+    type: linkType
   });
 
   return {
     accountId: user.stripeConnectAccountId,
     url: accountLink.url,
     expiresAt: accountLink.expires_at,
-    linkType,
+    linkType
   };
 }
 
@@ -92,7 +92,7 @@ async function retrieveConnectAccount(userId) {
       accountId: null,
       detailsSubmitted: false,
       payoutsEnabled: false,
-      chargesEnabled: false,
+      chargesEnabled: false
     };
   }
 
@@ -103,7 +103,7 @@ async function retrieveConnectAccount(userId) {
     accountId: account.id,
     detailsSubmitted: Boolean(account.details_submitted),
     payoutsEnabled: Boolean(account.payouts_enabled),
-    chargesEnabled: Boolean(account.charges_enabled),
+    chargesEnabled: Boolean(account.charges_enabled)
   };
 }
 
@@ -122,7 +122,7 @@ async function syncConnectPayoutMethod(userId) {
   const bankAccount = externalAccounts.data[0] || null;
 
   const verificationStatus =
-    account.payouts_enabled && account.details_submitted ? 'verified' : 'pending';
+  account.payouts_enabled && account.details_submitted ? 'verified' : 'pending';
 
   const payload = {
     id: `stripe_connect_${user.stripeConnectAccountId}`,
@@ -134,27 +134,27 @@ async function syncConnectPayoutMethod(userId) {
     isActive: true,
     verificationStatus,
     verificationDate: verificationStatus === 'verified' ? new Date() : null,
-    bankDetails: bankAccount
-      ? {
-          accountHolderName: bankAccount.account_holder_name || user.name || '',
-          ibanLast4: bankAccount.last4 || '',
-          bankName: bankAccount.bank_name || '',
-        }
-      : {
-          accountHolderName: user.name || '',
-          ibanLast4: '',
-          bankName: '',
-        },
+    bankDetails: bankAccount ?
+    {
+      accountHolderName: bankAccount.account_holder_name || user.name || '',
+      ibanLast4: bankAccount.last4 || '',
+      bankName: bankAccount.bank_name || ''
+    } :
+    {
+      accountHolderName: user.name || '',
+      ibanLast4: '',
+      bankName: ''
+    }
   };
 
   const existing = await PaymentMethod.findOne({
     user: user._id,
     purpose: 'payout',
     $or: [
-      { stripeConnectAccountId: user.stripeConnectAccountId },
-      { id: payload.id },
-      { id: 'demo_payout_stripe_connect' },
-    ],
+    { stripeConnectAccountId: user.stripeConnectAccountId },
+    { id: payload.id },
+    { id: 'demo_payout_stripe_connect' }]
+
   });
 
   await PaymentMethod.updateMany(
@@ -197,8 +197,8 @@ async function transferToDriver(userId, { amount, currency = 'eur', metadata = {
     destination: user.stripeConnectAccountId,
     metadata: {
       userId: String(user._id),
-      ...metadata,
-    },
+      ...metadata
+    }
   });
 
   return transfer;
@@ -210,5 +210,5 @@ module.exports = {
   createAccountUpdateLink,
   retrieveConnectAccount,
   syncConnectPayoutMethod,
-  transferToDriver,
+  transferToDriver
 };

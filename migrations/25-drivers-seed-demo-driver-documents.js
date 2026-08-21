@@ -1,10 +1,3 @@
-/**
- * Remplace les documents placeholder (example.com) du driver démo
- * par des fichiers image servis depuis /api/public/driver-documents/.
- *
- * up   → sauvegarde l'état actuel puis applique les documents démo
- * down → restaure documents + isApproved depuis la sauvegarde
- */
 
 const fs = require('fs');
 const path = require('path');
@@ -15,23 +8,21 @@ const BACKUP_COLLECTION = '_migration_25_demo_driver_document_backups';
 const MIGRATION_TAG = 'migration_25_demo_driver_documents';
 
 const DEMO_DOCUMENT_FILES = [
-  'demo-driver-license.jpg',
-  'demo-vehicle-insurance.jpg',
-  'demo-identity-card.jpg',
-];
+'demo-driver-license.jpg',
+'demo-vehicle-insurance.jpg',
+'demo-identity-card.jpg'];
 
 const DEMO_DOCUMENT_TYPES = [
-  'driver_license',
-  'insurance',
-  'identity_card',
-];
+'driver_license',
+'insurance',
+'identity_card'];
 
 const PUBLIC_DOCUMENTS_DIR = path.join(__dirname, '../public/driver-documents');
 
 function resolvePublicBaseUrl() {
   const fromEnv =
-    process.env.PUBLIC_BASE_URL ||
-    process.env.API_BASE_URL?.replace(/\/api\/?$/, '');
+  process.env.PUBLIC_BASE_URL ||
+  process.env.API_BASE_URL?.replace(/\/api\/?$/, '');
 
   return String(fromEnv || 'http://localhost:5000').replace(/\/$/, '');
 }
@@ -41,7 +32,7 @@ function buildDemoDriverDocuments(baseUrl = resolvePublicBaseUrl()) {
 
   return DEMO_DOCUMENT_TYPES.map((type, index) => ({
     type,
-    fileUrl: `${normalizedBaseUrl}/api/public/driver-documents/${DEMO_DOCUMENT_FILES[index]}`,
+    fileUrl: `${normalizedBaseUrl}/api/public/driver-documents/${DEMO_DOCUMENT_FILES[index]}`
   }));
 }
 
@@ -51,7 +42,7 @@ function documentsMatchSeed(documents, seeds) {
   }
 
   return seeds.every((seed) =>
-    documents.some((doc) => doc.type === seed.type && doc.fileUrl === seed.fileUrl)
+  documents.some((doc) => doc.type === seed.type && doc.fileUrl === seed.fileUrl)
   );
 }
 
@@ -91,7 +82,7 @@ async function up(db) {
 
   const existingBackup = await backupCol.findOne({
     driverId: DEMO_DRIVER_ID,
-    migrationTag: MIGRATION_TAG,
+    migrationTag: MIGRATION_TAG
   });
 
   if (!existingBackup) {
@@ -100,7 +91,7 @@ async function up(db) {
       migrationTag: MIGRATION_TAG,
       previousDocuments: driver.documents || [],
       previousIsApproved: driver.isApproved === true,
-      backedUpAt: new Date(),
+      backedUpAt: new Date()
     });
   }
 
@@ -109,8 +100,8 @@ async function up(db) {
     {
       $set: {
         documents: demoDocuments,
-        isApproved: true,
-      },
+        isApproved: true
+      }
     }
   );
 
@@ -123,7 +114,7 @@ async function down(db) {
 
   const backup = await backupCol.findOne({
     driverId: DEMO_DRIVER_ID,
-    migrationTag: MIGRATION_TAG,
+    migrationTag: MIGRATION_TAG
   });
 
   if (!backup) {
@@ -136,8 +127,8 @@ async function down(db) {
     {
       $set: {
         documents: backup.previousDocuments || [],
-        isApproved: backup.previousIsApproved === true,
-      },
+        isApproved: backup.previousIsApproved === true
+      }
     }
   );
 
@@ -154,5 +145,5 @@ module.exports = {
   buildDemoDriverDocuments,
   documentsMatchSeed,
   up,
-  down,
+  down
 };

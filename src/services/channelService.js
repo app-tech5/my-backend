@@ -5,13 +5,13 @@ const Restaurant = require('../models/Restaurant');
 
 function resolveWhatsAppConfig(settings) {
   const phoneNumberId =
-    settings?.whatsappPhoneNumberId || process.env.WHATSAPP_PHONE_NUMBER_ID || '';
+  settings?.whatsappPhoneNumberId || process.env.WHATSAPP_PHONE_NUMBER_ID || '';
   const accessToken =
-    settings?.whatsappAccessToken || process.env.WHATSAPP_ACCESS_TOKEN || '';
+  settings?.whatsappAccessToken || process.env.WHATSAPP_ACCESS_TOKEN || '';
   const verifyToken =
-    settings?.whatsappVerifyToken || process.env.WHATSAPP_VERIFY_TOKEN || 'goodfood_whatsapp_verify';
+  settings?.whatsappVerifyToken || process.env.WHATSAPP_VERIFY_TOKEN || 'goodfood_whatsapp_verify';
   const templateLang =
-    settings?.whatsappTemplateLang || process.env.WHATSAPP_TEMPLATE_LANG || 'en';
+  settings?.whatsappTemplateLang || process.env.WHATSAPP_TEMPLATE_LANG || 'en';
 
   return {
     enabled: !!settings?.whatsappEnabled,
@@ -19,7 +19,7 @@ function resolveWhatsAppConfig(settings) {
     accessToken,
     verifyToken,
     templateLang,
-    configured: !!(phoneNumberId && accessToken),
+    configured: !!(phoneNumberId && accessToken)
   };
 }
 
@@ -30,24 +30,21 @@ async function getChannelConfig() {
     whatsapp: {
       enabled: wa.enabled,
       phoneNumberId: wa.phoneNumberId,
-      // never expose token to clients
+
       configured: wa.configured,
-      templateLang: wa.templateLang,
+      templateLang: wa.templateLang
     },
     ussd: {
       enabled: !!settings?.ussdEnabled,
       shortCode: settings?.ussdShortCode || '',
-      configured: !!(settings?.ussdApiKey && settings?.ussdShortCode),
+      configured: !!(settings?.ussdApiKey && settings?.ussdShortCode)
     },
     webOrdering: {
-      enabled: settings?.webOrderingEnabled !== false,
-    },
+      enabled: settings?.webOrderingEnabled !== false
+    }
   };
 }
 
-/**
- * Send a WhatsApp Cloud API template/text message when credentials are set.
- */
 async function sendWhatsAppMessage({ to, body, templateName, templateLang = 'en', components }) {
   const settings = await AppSetting.findOne().lean();
   const wa = resolveWhatsAppConfig(settings);
@@ -65,31 +62,31 @@ async function sendWhatsAppMessage({ to, body, templateName, templateLang = 'en'
     return { skipped: true, reason: 'missing_phone' };
   }
 
-  const payload = templateName
-    ? {
-        messaging_product: 'whatsapp',
-        to: toDigits,
-        type: 'template',
-        template: {
-          name: templateName,
-          language: { code: templateLang || wa.templateLang },
-          components: components || [],
-        },
-      }
-    : {
-        messaging_product: 'whatsapp',
-        to: toDigits,
-        type: 'text',
-        text: { body: String(body || '').slice(0, 4096) },
-      };
+  const payload = templateName ?
+  {
+    messaging_product: 'whatsapp',
+    to: toDigits,
+    type: 'template',
+    template: {
+      name: templateName,
+      language: { code: templateLang || wa.templateLang },
+      components: components || []
+    }
+  } :
+  {
+    messaging_product: 'whatsapp',
+    to: toDigits,
+    type: 'text',
+    text: { body: String(body || '').slice(0, 4096) }
+  };
 
   const res = await fetch(`https://graph.facebook.com/v19.0/${phoneNumberId}/messages`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
     },
-    body: JSON.stringify(payload),
+    body: JSON.stringify(payload)
   });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
@@ -99,7 +96,7 @@ async function sendWhatsAppMessage({ to, body, templateName, templateLang = 'en'
     ok: true,
     messageId: data?.messages?.[0]?.id || null,
     contactWaId: data?.contacts?.[0]?.wa_id || null,
-    data,
+    data
   };
 }
 
@@ -111,39 +108,35 @@ async function notifyOrderViaChannels(order, { title, message }) {
   if (settings?.whatsappNotifyOnStatus !== false && user?.phone) {
     results.whatsapp = await sendWhatsAppMessage({
       to: user.phone,
-      body: `${title}\n${message}`,
+      body: `${title}\n${message}`
     });
   }
   return results;
 }
 
-/**
- * USSD session handler (Africa's Talking / similar aggregators).
- * Menu: 1=reorder last, 2=status, 0=end
- */
 async function handleUssdSession({ sessionId, phoneNumber, text = '', serviceCode }) {
   const settings = await AppSetting.findOne().lean();
   if (!settings?.ussdEnabled) {
     return { response: 'END Service unavailable', sessionId };
   }
 
-  const parts = String(text || '')
-    .split('*')
-    .map((s) => s.trim())
-    .filter(Boolean);
+  const parts = String(text || '').
+  split('*').
+  map((s) => s.trim()).
+  filter(Boolean);
   const choice = parts[parts.length - 1] || '';
 
   const user = await User.findOne({
     phone: { $regex: String(phoneNumber || '').replace(/\D/g, '').slice(-9) + '$' },
-    role: 'customer',
+    role: 'customer'
   }).lean();
 
   if (!choice) {
     return {
       response:
-        'CON Good Food\n1. Last order status\n2. Repeat last order\n3. Help\n0. Exit',
+      'CON Good Food\n1. Last order status\n2. Repeat last order\n3. Help\n0. Exit',
       sessionId,
-      serviceCode,
+      serviceCode
     };
   }
 
@@ -161,7 +154,7 @@ async function handleUssdSession({ sessionId, phoneNumber, text = '', serviceCod
     }
     return {
       response: `END Order ${String(last._id).slice(-6)}: ${last.status}. Total ${last.totalPrice}`,
-      sessionId,
+      sessionId
     };
   }
 
@@ -169,13 +162,13 @@ async function handleUssdSession({ sessionId, phoneNumber, text = '', serviceCod
     if (!user) {
       return { response: 'END Link your phone in the customer app first.', sessionId };
     }
-    const last = await Order.findOne({ user: user._id, status: 'delivered' })
-      .sort({ createdAt: -1 })
-      .lean();
+    const last = await Order.findOne({ user: user._id, status: 'delivered' }).
+    sort({ createdAt: -1 }).
+    lean();
     if (!last) {
       return { response: 'END No previous order to repeat. Order in the app or WhatsApp.', sessionId };
     }
-    // Create a pending copy marked as ussd channel — restaurant must confirm
+
     const clone = await Order.create({
       user: last.user,
       restaurant: last.restaurant,
@@ -186,32 +179,29 @@ async function handleUssdSession({ sessionId, phoneNumber, text = '', serviceCod
       status: 'pending',
       payment: {
         method: 'cash_on_delivery',
-        status: 'pending',
+        status: 'pending'
       },
       delivery: last.delivery,
       orderSource: 'ussd',
-      channelMeta: { sessionId, phoneNumber, serviceCode },
+      channelMeta: { sessionId, phoneNumber, serviceCode }
     });
     return {
       response: `END Repeat order placed (#${String(clone._id).slice(-6)}). Pay on delivery. Track in the app.`,
       sessionId,
-      orderId: clone._id,
+      orderId: clone._id
     };
   }
 
   if (choice === '3') {
     return {
       response: 'END Help: open the Good Food app, or WhatsApp the support number from Admin settings.',
-      sessionId,
+      sessionId
     };
   }
 
   return { response: 'END Invalid option.', sessionId };
 }
 
-/**
- * Lightweight web / WhatsApp catalog order intake (admin or middleware).
- */
 async function createChannelOrder({
   source,
   userId,
@@ -220,7 +210,7 @@ async function createChannelOrder({
   delivery,
   paymentMethod = 'cash_on_delivery',
   phone,
-  channelMeta = {},
+  channelMeta = {}
 }) {
   const allowed = ['whatsapp', 'ussd', 'web', 'admin'];
   if (!allowed.includes(source)) {
@@ -250,7 +240,7 @@ async function createChannelOrder({
     quantity: Number(it.quantity || 1),
     extras: it.extras || [],
     variants: it.variants || [],
-    total: Number(it.total ?? Number(it.price) * Number(it.quantity || 1)),
+    total: Number(it.total ?? Number(it.price) * Number(it.quantity || 1))
   }));
 
   const { assertPaymentMethodAllowed } = require('./paymentEligibilityService');
@@ -259,14 +249,14 @@ async function createChannelOrder({
   await assertPaymentMethodAllowed(paymentMethod);
 
   const rawSubtotal = normalizedItems.reduce((s, it) => s + Number(it.total || 0), 0);
-  const taxRate = Number(restaurant.tax?.rate ?? 0) > 1
-    ? Number(restaurant.tax.rate) / 100
-    : Number(restaurant.tax?.rate || 0);
+  const taxRate = Number(restaurant.tax?.rate ?? 0) > 1 ?
+  Number(restaurant.tax.rate) / 100 :
+  Number(restaurant.tax?.rate || 0);
   const priced = await priceOrderForCustomer({
     userId: user._id,
     subtotal: rawSubtotal,
     deliveryFee: Number(delivery?.deliveryFee || 0),
-    taxRate,
+    taxRate
   });
 
   const order = await Order.create({
@@ -279,26 +269,26 @@ async function createChannelOrder({
     status: 'pending',
     payment: {
       method: paymentMethod,
-      status: paymentMethod === 'cash_on_delivery' ? 'pending' : 'pending',
+      status: paymentMethod === 'cash_on_delivery' ? 'pending' : 'pending'
     },
     delivery: {
       ...(delivery || { type: 'delivery', address: user.address || '' }),
-      deliveryFee: priced.deliveryFee,
+      deliveryFee: priced.deliveryFee
     },
     orderSource: source,
     channelMeta: {
       ...channelMeta,
-      ...(priced.discountAmount > 0 || priced.memberFreeDelivery
-        ? {
-            membership: {
-              discountPercent: priced.discountPercent,
-              discountAmount: priced.discountAmount,
-              freeDelivery: priced.memberFreeDelivery,
-              planName: priced.benefits?.planName,
-            },
-          }
-        : {}),
-    },
+      ...(priced.discountAmount > 0 || priced.memberFreeDelivery ?
+      {
+        membership: {
+          discountPercent: priced.discountPercent,
+          discountAmount: priced.discountAmount,
+          freeDelivery: priced.memberFreeDelivery,
+          planName: priced.benefits?.planName
+        }
+      } :
+      {})
+    }
   });
 
   return order;
@@ -310,5 +300,5 @@ module.exports = {
   sendWhatsAppMessage,
   notifyOrderViaChannels,
   handleUssdSession,
-  createChannelOrder,
+  createChannelOrder
 };

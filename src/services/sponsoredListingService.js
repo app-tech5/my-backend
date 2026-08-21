@@ -19,17 +19,17 @@ function serializeListing(doc) {
     impressions: Number(doc.impressions) || 0,
     clicks: Number(doc.clicks) || 0,
     restaurantId:
-      restaurant && restaurant._id
-        ? String(restaurant._id)
-        : restaurant
-          ? String(restaurant)
-          : null,
+    restaurant && restaurant._id ?
+    String(restaurant._id) :
+    restaurant ?
+    String(restaurant) :
+    null,
     restaurantName:
-      restaurant && restaurant.name ? restaurant.name : null,
+    restaurant && restaurant.name ? restaurant.name : null,
     restaurantImage:
-      restaurant && (restaurant.image || restaurant.coverImage)
-        ? restaurant.image || restaurant.coverImage
-        : null,
+    restaurant && (restaurant.image || restaurant.coverImage) ?
+    restaurant.image || restaurant.coverImage :
+    null
   };
 }
 
@@ -38,7 +38,7 @@ async function getActiveListings({ placement } = {}) {
   const filter = {
     status: 'active',
     startAt: { $lte: now },
-    endAt: { $gte: now },
+    endAt: { $gte: now }
   };
   if (placement === 'search') {
     filter.placement = { $in: ['search', 'both'] };
@@ -46,20 +46,20 @@ async function getActiveListings({ placement } = {}) {
     filter.placement = { $in: ['home_banner', 'both'] };
   }
 
-  const docs = await SponsoredListing.find(filter)
-    .populate('restaurant', 'name image coverImage isActivated is_closed')
-    .sort({ priority: -1, bidAmount: -1 })
-    .limit(50);
+  const docs = await SponsoredListing.find(filter).
+  populate('restaurant', 'name image coverImage isActivated is_closed').
+  sort({ priority: -1, bidAmount: -1 }).
+  limit(50);
 
-  return docs
-    .filter((d) => d.restaurant && d.restaurant.isActivated !== false)
-    .map(serializeListing);
+  return docs.
+  filter((d) => d.restaurant && d.restaurant.isActivated !== false).
+  map(serializeListing);
 }
 
 async function listForRestaurant(restaurantId) {
-  const docs = await SponsoredListing.find({ restaurant: restaurantId })
-    .sort({ createdAt: -1 })
-    .populate('restaurant', 'name image');
+  const docs = await SponsoredListing.find({ restaurant: restaurantId }).
+  sort({ createdAt: -1 }).
+  populate('restaurant', 'name image');
   return docs.map(serializeListing);
 }
 
@@ -72,7 +72,7 @@ async function createListing(payload) {
 async function activateListing(id, restaurantId) {
   const doc = await SponsoredListing.findOne({
     _id: id,
-    ...(restaurantId ? { restaurant: restaurantId } : {}),
+    ...(restaurantId ? { restaurant: restaurantId } : {})
   });
   if (!doc) return null;
   doc.status = 'active';
@@ -93,5 +93,5 @@ module.exports = {
   listForRestaurant,
   createListing,
   activateListing,
-  trackEvent,
+  trackEvent
 };

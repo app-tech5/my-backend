@@ -32,45 +32,45 @@ describe('migration 21-orders-reassign-non-customer-users-to-customers', () => {
     const customerC = new ObjectId();
 
     await db.collection('users').insertMany([
-      {
-        _id: driverUserId,
-        role: 'delivery',
-        name: 'Jean Dupont',
-        address: 'Driver addr',
-        location: { latitude: 48.99, longitude: 2.41 },
-      },
-      {
-        _id: customerA,
-        role: 'customer',
-        name: 'Alice',
-        address: '10 Rue A, 75001 Paris',
-        location: { latitude: 48.86, longitude: 2.34 },
-      },
-      {
-        _id: customerB,
-        role: 'customer',
-        name: 'Bob',
-        address: '20 Rue B, 75002 Paris',
-        location: { latitude: 48.87, longitude: 2.35 },
-      },
-      {
-        _id: customerC,
-        role: 'customer',
-        name: 'Carol',
-        address: '30 Rue C, 75003 Paris',
-        location: { latitude: 48.88, longitude: 2.36 },
-      },
-    ]);
+    {
+      _id: driverUserId,
+      role: 'delivery',
+      name: 'Jean Dupont',
+      address: 'Driver addr',
+      location: { latitude: 48.99, longitude: 2.41 }
+    },
+    {
+      _id: customerA,
+      role: 'customer',
+      name: 'Alice',
+      address: '10 Rue A, 75001 Paris',
+      location: { latitude: 48.86, longitude: 2.34 }
+    },
+    {
+      _id: customerB,
+      role: 'customer',
+      name: 'Bob',
+      address: '20 Rue B, 75002 Paris',
+      location: { latitude: 48.87, longitude: 2.35 }
+    },
+    {
+      _id: customerC,
+      role: 'customer',
+      name: 'Carol',
+      address: '30 Rue C, 75003 Paris',
+      location: { latitude: 48.88, longitude: 2.36 }
+    }]
+    );
 
     await db.collection('drivers').insertOne({
       _id: driverProfileId,
-      userId: driverUserId,
+      userId: driverUserId
     });
 
     await db.collection('restaurants').insertOne({
       _id: restaurantId,
       latitude: '48.8729866',
-      longitude: '2.3409458',
+      longitude: '2.3409458'
     });
 
     await db.collection('deliverysettings').insertOne({
@@ -78,7 +78,7 @@ describe('migration 21-orders-reassign-non-customer-users-to-customers', () => {
       isDeliveryEnabled: true,
       deliveryFeeType: 'FIXED',
       fixedDeliveryFee: 3.5,
-      freeDeliveryThreshold: 25,
+      freeDeliveryThreshold: 25
     });
 
     const orderIds = Array.from({ length: 6 }, () => new ObjectId());
@@ -91,7 +91,7 @@ describe('migration 21-orders-reassign-non-customer-users-to-customers', () => {
         subtotal: 10,
         tax: { rate: 0.1, amount: 1 },
         delivery: { type: 'delivery', address: 'Wrong', deliveryFee: 0 },
-        totalPrice: 11,
+        totalPrice: 11
       }))
     );
 
@@ -115,7 +115,7 @@ describe('migration 21-orders-reassign-non-customer-users-to-customers', () => {
       _id: customerId,
       role: 'customer',
       name: 'Alice',
-      address: 'Paris',
+      address: 'Paris'
     });
 
     await db.collection('orders').insertOne({
@@ -124,7 +124,7 @@ describe('migration 21-orders-reassign-non-customer-users-to-customers', () => {
       subtotal: 10,
       tax: { rate: 0.1, amount: 1 },
       delivery: { type: 'delivery', deliveryFee: 3 },
-      totalPrice: 14,
+      totalPrice: 14
     });
 
     await migration.up(db);
@@ -139,9 +139,9 @@ describe('migration 21-orders-reassign-non-customer-users-to-customers', () => {
     const orderId = new ObjectId();
 
     await db.collection('users').insertMany([
-      { _id: driverUserId, role: 'delivery', name: 'Driver' },
-      { _id: customerId, role: 'customer', name: 'Alice', address: 'Paris' },
-    ]);
+    { _id: driverUserId, role: 'delivery', name: 'Driver' },
+    { _id: customerId, role: 'customer', name: 'Alice', address: 'Paris' }]
+    );
 
     await db.collection('orders').insertOne({
       _id: orderId,
@@ -149,7 +149,7 @@ describe('migration 21-orders-reassign-non-customer-users-to-customers', () => {
       subtotal: 10,
       tax: { rate: 0.1, amount: 1 },
       delivery: { type: 'delivery', deliveryFee: 0 },
-      totalPrice: 11,
+      totalPrice: 11
     });
 
     await migration.up(db);

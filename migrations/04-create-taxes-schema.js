@@ -7,17 +7,16 @@ module.exports = {
     } catch (e) {
       if (e.codeName !== "NamespaceNotFound") throw e;
     }
-    
-    const taxLocations = [
-      { location: "France", name: "VAT", baseRate: 20 },
-      { location: "Germany", name: "VAT (MwSt)", baseRate: 19 },
-      { location: "United States", name: "Sales Tax", baseRate: 7.25 }
-    ];
 
-    const mockTaxes = taxLocations.map(loc => ({
+    const taxLocations = [
+    { location: "France", name: "VAT", baseRate: 20 },
+    { location: "Germany", name: "VAT (MwSt)", baseRate: 19 },
+    { location: "United States", name: "Sales Tax", baseRate: 7.25 }];
+
+    const mockTaxes = taxLocations.map((loc) => ({
       location: loc.location,
       name: loc.name,
-      rate: loc.baseRate, 
+      rate: loc.baseRate,
       created_at: new Date(),
       updated_at: new Date()
     }));

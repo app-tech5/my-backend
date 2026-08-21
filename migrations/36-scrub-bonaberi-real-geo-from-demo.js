@@ -1,11 +1,3 @@
-/**
- * Scrub real-world Bonabéri / Douala geo from demo data.
- *
- * - Demo Kitchen restaurant was reverse-geocoded to Cameroun coords
- * - driver2 live location still pointed at Bonabéri
- *
- * Relocate both to coherent Paris demo coordinates.
- */
 
 const { ObjectId } = require('mongodb');
 
@@ -20,13 +12,12 @@ const PARIS_RESTAURANT = {
   longitude: '2.3373234',
   address: 'Place du Musée du Louvre, 75001 Paris',
   city: 'Paris',
-  country: 'France',
+  country: 'France'
 };
 
-// GeoJSON [longitude, latitude]
 const PARIS_DRIVER_POINT = {
   type: 'Point',
-  coordinates: [2.3409458, 48.8729866],
+  coordinates: [2.3409458, 48.8729866]
 };
 
 function isCameroonishCoords(lon, lat) {
@@ -60,14 +51,14 @@ module.exports = {
     const drivers = db.collection('drivers');
 
     const restaurant = await restaurants.findOne({
-      _id: new ObjectId(DEMO_KITCHEN_ID),
+      _id: new ObjectId(DEMO_KITCHEN_ID)
     });
 
     if (
-      restaurant &&
-      (isCameroonishCoords(restaurant.longitude, restaurant.latitude) ||
-        hasBonaberiText(restaurant))
-    ) {
+    restaurant && (
+    isCameroonishCoords(restaurant.longitude, restaurant.latitude) ||
+    hasBonaberiText(restaurant)))
+    {
       await backups.insertOne({
         seedKey: SEED_KEY,
         kind: 'restaurant',
@@ -78,20 +69,20 @@ module.exports = {
           address: restaurant.address,
           city: restaurant.city,
           country: restaurant.country,
-          migrationSeedPrevious: restaurant.migrationSeedPrevious || null,
+          migrationSeedPrevious: restaurant.migrationSeedPrevious || null
         },
-        createdAt: new Date(),
+        createdAt: new Date()
       });
 
       await restaurants.updateOne(
         { _id: restaurant._id },
         {
           $set: {
-            ...PARIS_RESTAURANT,
+            ...PARIS_RESTAURANT
           },
           $unset: {
-            migrationSeedPrevious: '',
-          },
+            migrationSeedPrevious: ''
+          }
         }
       );
       console.log(`✅ Demo Kitchen relocated to Paris (${DEMO_KITCHEN_ID})`);
@@ -102,25 +93,25 @@ module.exports = {
     const driver = await drivers.findOne({ _id: new ObjectId(DRIVER2_ID) });
     const driverCoords = driver?.location?.coordinates || [];
     if (
-      driver &&
-      isCameroonishCoords(driverCoords[0], driverCoords[1])
-    ) {
+    driver &&
+    isCameroonishCoords(driverCoords[0], driverCoords[1]))
+    {
       await backups.insertOne({
         seedKey: SEED_KEY,
         kind: 'driver',
         _id: driver._id,
         previous: {
-          location: driver.location,
+          location: driver.location
         },
-        createdAt: new Date(),
+        createdAt: new Date()
       });
 
       await drivers.updateOne(
         { _id: driver._id },
         {
           $set: {
-            location: PARIS_DRIVER_POINT,
-          },
+            location: PARIS_DRIVER_POINT
+          }
         }
       );
       console.log(`✅ Driver2 location relocated to Paris (${DRIVER2_ID})`);
@@ -128,26 +119,25 @@ module.exports = {
       console.log('ℹ️ Driver2 location already Paris-safe (skipped)');
     }
 
-    // Catch-all: any remaining Cameroon-ish restaurant/driver rows
-    const extraRestaurants = await restaurants
-      .find({})
-      .project({
-        name: 1,
-        address: 1,
-        city: 1,
-        country: 1,
-        latitude: 1,
-        longitude: 1,
-      })
-      .toArray();
+    const extraRestaurants = await restaurants.
+    find({}).
+    project({
+      name: 1,
+      address: 1,
+      city: 1,
+      country: 1,
+      latitude: 1,
+      longitude: 1
+    }).
+    toArray();
 
     let extraRestFixed = 0;
     for (const row of extraRestaurants) {
       if (String(row._id) === DEMO_KITCHEN_ID) continue;
       if (
-        !isCameroonishCoords(row.longitude, row.latitude) &&
-        !hasBonaberiText(row)
-      ) {
+      !isCameroonishCoords(row.longitude, row.latitude) &&
+      !hasBonaberiText(row))
+      {
         continue;
       }
       await backups.insertOne({
@@ -159,9 +149,9 @@ module.exports = {
           longitude: row.longitude,
           address: row.address,
           city: row.city,
-          country: row.country,
+          country: row.country
         },
-        createdAt: new Date(),
+        createdAt: new Date()
       });
       await restaurants.updateOne(
         { _id: row._id },
@@ -170,10 +160,10 @@ module.exports = {
       extraRestFixed += 1;
     }
 
-    const extraDrivers = await drivers
-      .find({})
-      .project({ location: 1 })
-      .toArray();
+    const extraDrivers = await drivers.
+    find({}).
+    project({ location: 1 }).
+    toArray();
     let extraDriversFixed = 0;
     for (const row of extraDrivers) {
       if (String(row._id) === DRIVER2_ID) continue;
@@ -184,7 +174,7 @@ module.exports = {
         kind: 'driver_extra',
         _id: row._id,
         previous: { location: row.location },
-        createdAt: new Date(),
+        createdAt: new Date()
       });
       await drivers.updateOne(
         { _id: row._id },
@@ -201,10 +191,10 @@ module.exports = {
   },
 
   async down(db) {
-    const backups = await db
-      .collection(BACKUP_COLLECTION)
-      .find({ seedKey: SEED_KEY })
-      .toArray();
+    const backups = await db.
+    collection(BACKUP_COLLECTION).
+    find({ seedKey: SEED_KEY }).
+    toArray();
 
     for (const backup of backups) {
       if (backup.kind === 'restaurant' || backup.kind === 'restaurant_extra') {
@@ -228,5 +218,5 @@ module.exports = {
 
     await db.collection(BACKUP_COLLECTION).deleteMany({ seedKey: SEED_KEY });
     console.log(`↩️ Migration 36 rolled back (${backups.length} doc(s))`);
-  },
+  }
 };

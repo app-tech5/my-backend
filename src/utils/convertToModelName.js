@@ -23,7 +23,7 @@ const convertToModelName = (collectionName) => {
   }
   return (
     pluralize.singular(collectionName).charAt(0).toUpperCase() +
-    pluralize.singular(collectionName).slice(1)
-  );
+    pluralize.singular(collectionName).slice(1));
+
 };
 module.exports = convertToModelName;

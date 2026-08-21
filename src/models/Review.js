@@ -15,7 +15,7 @@ const reviewSchema = new Schema({
   order: {
     type: Schema.Types.ObjectId,
     ref: 'Order',
-    required: false 
+    required: false
   },
   rating: {
     type: Number,
@@ -24,7 +24,7 @@ const reviewSchema = new Schema({
     max: 5,
     validate: {
       validator: Number.isInteger,
-      message: props => i18n.__('rating_must_be_integer_between_1_and_5', props.value)
+      message: (props) => i18n.__('rating_must_be_integer_between_1_and_5', props.value)
     }
   },
   comment: {
@@ -34,10 +34,10 @@ const reviewSchema = new Schema({
     trim: true
   },
   photos: [{
-    type: String, 
+    type: String,
     validate: {
-      validator: function(array) {
-        return array.length <= 5; 
+      validator: function (array) {
+        return array.length <= 5;
       },
       message: i18n.__('maximum_5_photos_per_review')
     }
@@ -84,7 +84,7 @@ const reviewSchema = new Schema({
     },
     by: {
       type: Schema.Types.ObjectId,
-      ref: 'User' 
+      ref: 'User'
     }
   },
   status: {
@@ -94,7 +94,7 @@ const reviewSchema = new Schema({
   },
   flaggedReason: {
     type: String,
-    required: function() {
+    required: function () {
       return this.status === 'flagged';
     }
   }
@@ -104,20 +104,20 @@ const reviewSchema = new Schema({
   toObject: { virtuals: true }
 });
 reviewSchema.pre("find", function () {
-    this.populate([
-      {
-        path: "user",
-        select: "name", 
-      },
-      {
-        path: "restaurant",
-        select: "name", 
-      },
-    ]);
-  });
+  this.populate([
+  {
+    path: "user",
+    select: "name"
+  },
+  {
+    path: "restaurant",
+    select: "name"
+  }]
+  );
+});
 reviewSchema.index({ restaurant: 1, status: 1 });
-reviewSchema.index({ user: 1, restaurant: 1 }, { unique: true }); 
-reviewSchema.pre('save', async function(next) {
+reviewSchema.index({ user: 1, restaurant: 1 }, { unique: true });
+reviewSchema.pre('save', async function (next) {
   if (this.isNew) {
     const Order = mongoose.model('Order');
     const hasOrdered = await Order.exists({
@@ -131,26 +131,26 @@ reviewSchema.pre('save', async function(next) {
   }
   next();
 });
-reviewSchema.statics.calculateAverageRating = async function(restaurantId) {
+reviewSchema.statics.calculateAverageRating = async function (restaurantId) {
   const result = await this.aggregate([
-    {
-      $match: { 
-        restaurant: restaurantId,
-        status: 'approved' 
-      }
-    },
-    {
-      $group: {
-        _id: '$restaurant',
-        averageRating: { $avg: '$rating' },
-        foodQualityAvg: { $avg: '$foodQuality' },
-        deliveryTimeAvg: { $avg: '$deliveryTime' },
-        packagingAvg: { $avg: '$packaging' },
-        deliveryServiceAvg: { $avg: '$deliveryService' },
-        reviewCount: { $sum: 1 }
-      }
+  {
+    $match: {
+      restaurant: restaurantId,
+      status: 'approved'
     }
-  ]);
+  },
+  {
+    $group: {
+      _id: '$restaurant',
+      averageRating: { $avg: '$rating' },
+      foodQualityAvg: { $avg: '$foodQuality' },
+      deliveryTimeAvg: { $avg: '$deliveryTime' },
+      packagingAvg: { $avg: '$packaging' },
+      deliveryServiceAvg: { $avg: '$deliveryService' },
+      reviewCount: { $sum: 1 }
+    }
+  }]
+  );
   try {
     const Restaurant = mongoose.model('Restaurant');
     await Restaurant.findByIdAndUpdate(restaurantId, {
@@ -165,10 +165,10 @@ reviewSchema.statics.calculateAverageRating = async function(restaurantId) {
     console.error(i18n.__('error_updating_average_ratings'), err);
   }
 };
-reviewSchema.post('save', function() {
+reviewSchema.post('save', function () {
   this.constructor.calculateAverageRating(this.restaurant);
 });
-reviewSchema.post('remove', function() {
+reviewSchema.post('remove', function () {
   this.constructor.calculateAverageRating(this.restaurant);
 });
 const Review = mongoose.model('Review', reviewSchema);

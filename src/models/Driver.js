@@ -4,39 +4,39 @@ const autopopulate = require("mongoose-autopopulate");
 const DriverSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true,
-        default: new mongoose.Types.ObjectId()
-     }, 
+      default: new mongoose.Types.ObjectId()
+    },
     currentOrder: { type: Schema.Types.ObjectId, ref: "Order", default: null },
-    licenseNumber: { type: String, required: true, unique: true, default: "" }, 
+    licenseNumber: { type: String, required: true, unique: true, default: "" },
     users: { type: Object, default: { value: "", label: "" } },
     vehicle: {
-        type: Object,
+      type: Object,
       default: {
         type: "",
         model: "",
         licensePlate: ""
       }
     },
-      location: {
-        type: { type: String, default: "Point",
-            enum: ["Point"],
-            required: true
-        }, 
-        coordinates: { type: [Number], default: [0, 0], required: true }, 
+    location: {
+      type: { type: String, default: "Point",
+        enum: ["Point"],
+        required: true
       },
+      coordinates: { type: [Number], default: [0, 0], required: true }
+    },
     status: {
       type: String,
-      default: "offline",
-    }, 
-    rating: { type: Number, default: 0, min: 0, max: 5 }, 
-    totalDeliveries: { type: Number, default: 0 }, 
+      default: "offline"
+    },
+    rating: { type: Number, default: 0, min: 0, max: 5 },
+    totalDeliveries: { type: Number, default: 0 },
     documents: [
-      {
-        type: { type: String, required: true }, 
-        fileUrl: { type: String, required: true }, 
-      },
-    ],
-    isApproved: { type: Boolean, default: false }, 
+    {
+      type: { type: String, required: true },
+      fileUrl: { type: String, required: true }
+    }],
+
+    isApproved: { type: Boolean, default: false }
   },
   { id: false, timestamps: true }
 );
@@ -48,7 +48,7 @@ DriverSchema.set("toObject", { virtuals: true });
 
 const USER_ID_POPULATE = {
   path: "userId",
-  select: "name email phone image value label",
+  select: "name email phone image value label"
 };
 
 const ONLINE_STATUSES = ["available", "busy", "on_delivery"];
@@ -58,7 +58,7 @@ function transformUsersField(doc) {
   doc.userId = doc.users.value;
   doc.users = {
     value: doc.users.value,
-    label: doc.users.label,
+    label: doc.users.label
   };
   doc.updatedAt = Date.now();
 }
@@ -91,7 +91,7 @@ DriverSchema.post("findOneAndUpdate", async function (doc) {
   } catch (error) {
     if (doc.currentOrder && global.io) {
       global.io.to(`order-${doc.currentOrder}`).emit("driver-location-updated", {
-        location: doc.location,
+        location: doc.location
       });
     }
   }

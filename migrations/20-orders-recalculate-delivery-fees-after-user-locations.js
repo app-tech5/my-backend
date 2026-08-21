@@ -1,17 +1,8 @@
-/**
- * Recalcule `delivery.deliveryFee` (et totaux) pour les commandes delivery
- * dont le client a maintenant une `location` valide (après migration 19).
- *
- * Corrige les fees figés au `fixedDeliveryFee` quand la migration 16 n'avait
- * pas pu calculer la distance.
- *
- * Logique fee : même règles que migration 16 (app client, promos incluses).
- */
 
 const {
   toFiniteNumber,
   resolveDeliveryFee,
-  recalculateOrderTotals,
+  recalculateOrderTotals
 } = require('./16-orders-fix-absurd-delivery-fees');
 
 const { hasValidLocation } = require('./19-users-backfill-paris-locations');
@@ -47,9 +38,9 @@ async function up(db) {
     deliverySettings.map((setting) => [String(setting.restaurant), setting])
   );
 
-  const orders = await ordersCol
-    .find({ 'delivery.type': 'delivery' })
-    .toArray();
+  const orders = await ordersCol.
+  find({ 'delivery.type': 'delivery' }).
+  toArray();
 
   let updatedCount = 0;
 
@@ -92,10 +83,10 @@ async function up(db) {
             subtotal: order.subtotal,
             taxAmount: order.tax?.amount,
             deliveryFee: order.delivery?.deliveryFee,
-            totalPrice: order.totalPrice,
+            totalPrice: order.totalPrice
           },
-          migratedAt: new Date(),
-        },
+          migratedAt: new Date()
+        }
       },
       { upsert: true }
     );
@@ -108,8 +99,8 @@ async function up(db) {
           'tax.amount': taxAmount,
           'delivery.deliveryFee': deliveryFee,
           totalPrice,
-          updatedAt: new Date(),
-        },
+          updatedAt: new Date()
+        }
       }
     );
 
@@ -134,8 +125,8 @@ async function down(db) {
           'tax.amount': backup.previous.taxAmount,
           'delivery.deliveryFee': backup.previous.deliveryFee,
           totalPrice: backup.previous.totalPrice,
-          updatedAt: new Date(),
-        },
+          updatedAt: new Date()
+        }
       }
     );
   }
@@ -148,5 +139,5 @@ module.exports = {
   BACKUP_COLLECTION,
   shouldRecalculateDeliveryFee,
   up,
-  down,
+  down
 };

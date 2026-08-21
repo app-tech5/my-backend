@@ -4,7 +4,6 @@ const loadModels = require('../utils/loadModels');
 function startCleanupCron() {
   const hours = Number(process.env.CLEANUP_CRON_HOURS) || 24;
   const intervalMs = hours * 60 * 60 * 1000;
-  // const intervalMs = 60 * 1000;
 
   const run = async () => {
     try {

@@ -12,14 +12,14 @@ const stripePaymentController = {
 
     if (!paymentMethodId || typeof paymentMethodId !== 'string') {
       return res.status(400).json({
-        message: 'paymentMethodId is required',
+        message: 'paymentMethodId is required'
       });
     }
 
     const user = await User.findById(req.user?.id);
     if (!user) {
       return res.status(404).json({
-        message: 'user not found',
+        message: 'user not found'
       });
     }
 
@@ -27,7 +27,7 @@ const stripePaymentController = {
 
     return res.status(200).json({
       stripeCustomerId,
-      paymentMethodId,
+      paymentMethodId
     });
   },
   removePaymentMethod: async (req, res) => {
@@ -38,12 +38,12 @@ const stripePaymentController = {
     const { paymentMethodId } = req.body || {};
     if (!paymentMethodId || typeof paymentMethodId !== 'string') {
       return res.status(400).json({
-        message: 'paymentMethodId is required',
+        message: 'paymentMethodId is required'
       });
     }
     await detachPaymentMethod(paymentMethodId);
     return res.status(200).json({
-      message: 'paymentMethod removed successfully',
+      message: 'paymentMethod removed successfully'
     });
   },
 
@@ -55,40 +55,40 @@ const stripePaymentController = {
       const { amount, currency = 'eur' } = req.body || {};
 
       if (
-        amount === undefined ||
-        amount === null ||
-        typeof amount !== 'number' ||
-        !Number.isInteger(amount) ||
-        amount <= 0
-      ) {
+      amount === undefined ||
+      amount === null ||
+      typeof amount !== 'number' ||
+      !Number.isInteger(amount) ||
+      amount <= 0)
+      {
         return res.status(400).json({
-          message: 'amount must be a positive integer (smallest currency unit, e.g. cents)',
+          message: 'amount must be a positive integer (smallest currency unit, e.g. cents)'
         });
       }
 
       if (currency !== undefined && (typeof currency !== 'string' || currency.length !== 3)) {
         return res.status(400).json({
-          message: 'currency must be a 3-letter ISO code (e.g. eur)',
+          message: 'currency must be a 3-letter ISO code (e.g. eur)'
         });
       }
 
       const user = await User.findById(req.user?.id);
       if (!user) {
         return res.status(404).json({
-          message: 'user not found',
+          message: 'user not found'
         });
       }
 
       if (!user.stripeCustomerId) {
         return res.status(400).json({
-          message: 'stripeCustomerId not found for user. Add a card first.',
+          message: 'stripeCustomerId not found for user. Add a card first.'
         });
       }
 
       const paymentIntent = await stripe.paymentIntents.create({
         amount,
         currency: currency.toLowerCase(),
-        customer: user.stripeCustomerId,
+        customer: user.stripeCustomerId
       });
 
       return res.status(200).json(paymentIntent);
@@ -96,7 +96,7 @@ const stripePaymentController = {
       const status = error.status || 500;
       return res.status(status).json({ message: error.message });
     }
-  },
+  }
 };
 
 module.exports = stripePaymentController;

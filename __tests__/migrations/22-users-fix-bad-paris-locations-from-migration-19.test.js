@@ -27,21 +27,21 @@ describe('migration 22-users-fix-bad-paris-locations-from-migration-19', () => {
     expect(
       migration.isBadParisBackfillLocation({
         address: '275 Rue de la Boétie, 75009 Paris',
-        location: { latitude: 48.9453786, longitude: 2.5148597 },
+        location: { latitude: 48.9453786, longitude: 2.5148597 }
       })
     ).toBe(true);
 
     expect(
       migration.isBadParisBackfillLocation({
         address: '4 undefined, 75040 Paris',
-        location: { latitude: 48.838278, longitude: 2.5663404 },
+        location: { latitude: 48.838278, longitude: 2.5663404 }
       })
     ).toBe(true);
 
     expect(
       migration.isBadParisBackfillLocation({
         address: '1 Rue Rossini, 75009 Paris',
-        location: { latitude: 48.8729866, longitude: 2.3409458 },
+        location: { latitude: 48.8729866, longitude: 2.3409458 }
       })
     ).toBe(false);
   });
@@ -52,21 +52,21 @@ describe('migration 22-users-fix-bad-paris-locations-from-migration-19', () => {
     const badId = new ObjectId();
 
     await usersCol.insertMany([
-      {
-        _id: goodId,
-        role: 'customer',
-        name: 'Good User',
-        address: '1 Rue Rossini, 75009 Paris',
-        location: { latitude: 48.8729866, longitude: 2.3409458 },
-      },
-      {
-        _id: badId,
-        role: 'customer',
-        name: 'Bad User',
-        address: '275 Rue de la Boétie, 75009 Paris',
-        location: { latitude: 48.9453786, longitude: 2.5148597 },
-      },
-    ]);
+    {
+      _id: goodId,
+      role: 'customer',
+      name: 'Good User',
+      address: '1 Rue Rossini, 75009 Paris',
+      location: { latitude: 48.8729866, longitude: 2.3409458 }
+    },
+    {
+      _id: badId,
+      role: 'customer',
+      name: 'Bad User',
+      address: '275 Rue de la Boétie, 75009 Paris',
+      location: { latitude: 48.9453786, longitude: 2.5148597 }
+    }]
+    );
 
     await migration.up(db);
 
@@ -88,14 +88,14 @@ describe('migration 22-users-fix-bad-paris-locations-from-migration-19', () => {
     await db.collection('restaurants').insertOne({
       _id: restaurantId,
       latitude: '48.8715899',
-      longitude: '2.3487251',
+      longitude: '2.3487251'
     });
 
     await db.collection('users').insertOne({
       _id: userId,
       role: 'customer',
       address: '158 Rue de Tolbiac, 75034 Paris',
-      location: { latitude: 48.9450708, longitude: 2.5323919 },
+      location: { latitude: 48.9450708, longitude: 2.5323919 }
     });
 
     await db.collection('deliverysettings').insertOne({
@@ -108,8 +108,8 @@ describe('migration 22-users-fix-bad-paris-locations-from-migration-19', () => {
         baseFee: 2.7,
         perKmFee: 0.8,
         minFee: 2.5,
-        maxFee: 15,
-      },
+        maxFee: 15
+      }
     });
 
     await db.collection('orders').insertOne({
@@ -120,7 +120,7 @@ describe('migration 22-users-fix-bad-paris-locations-from-migration-19', () => {
       tax: { amount: 2 },
       delivery: { type: 'delivery', deliveryFee: 5.65 },
       totalPrice: 27.65,
-      items: [{ price: 20, quantity: 1 }],
+      items: [{ price: 20, quantity: 1 }]
     });
 
     await migration.up(db);
@@ -139,7 +139,7 @@ describe('migration 22-users-fix-bad-paris-locations-from-migration-19', () => {
       role: 'customer',
       name: 'Bad User',
       address: '55 undefined, 75025 Paris',
-      location: { latitude: 48.9318756, longitude: 2.4416909 },
+      location: { latitude: 48.9318756, longitude: 2.4416909 }
     });
 
     await migration.up(db);

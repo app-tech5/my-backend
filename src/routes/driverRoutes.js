@@ -7,7 +7,7 @@ const router = express.Router();
 router.use(i18n.init);
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]; 
+  const token = authHeader && authHeader.split(' ')[1];
   if (!token) {
     return res.status(401).json({ message: res.__('missing_token') });
   }
@@ -21,8 +21,8 @@ const authenticateToken = (req, res, next) => {
 };
 router.get('/profile', authenticateToken, async (req, res) => {
   try {
-    const driver = await Driver.findOne({ userId: req.user.id })
-      .populate('userId', 'name email phone image');
+    const driver = await Driver.findOne({ userId: req.user.id }).
+    populate('userId', 'name email phone image');
     if (!driver) {
       return res.status(404).json({
         message: res.__('driver_profile_not_found'),
@@ -58,7 +58,7 @@ router.post('/', authenticateToken, async (req, res) => {
       status: 'offline',
       location: {
         type: 'Point',
-        coordinates: [0, 0] 
+        coordinates: [0, 0]
       }
     });
     await newDriver.save();

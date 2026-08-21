@@ -1,7 +1,3 @@
-/**
- * Retire le driver des commandes `pending` mal seedées (faker :
- * driver assigné alors que la commande n'a pas encore été acceptée).
- */
 
 module.exports = {
   async up(db) {
@@ -10,18 +6,18 @@ module.exports = {
     await ordersCol.updateMany(
       {
         status: "pending",
-        driver: { $exists: true, $ne: null },
+        driver: { $exists: true, $ne: null }
       },
       {
         $set: {
           driver: null,
-          updatedAt: new Date(),
-        },
+          updatedAt: new Date()
+        }
       }
     );
   },
 
   async down() {
-    // Assignations d'origine non récupérables de façon déterministe.
-  },
+
+  }
 };

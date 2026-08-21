@@ -39,10 +39,10 @@ router.get('/restaurant', requireRestaurant, async (req, res) => {
     if (status) {
       filter.status = status;
     }
-    const orders = await Order.find(filter)
-      .populate('user', 'name phone')
-      .sort({ createdAt: -1 })
-      .limit(50);
+    const orders = await Order.find(filter).
+    populate('user', 'name phone').
+    sort({ createdAt: -1 }).
+    limit(50);
     res.json({
       success: true,
       data: orders

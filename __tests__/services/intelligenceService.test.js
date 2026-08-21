@@ -4,7 +4,7 @@ const {
   haversineKm,
   getRecommendations,
   getSmartEta,
-  getSurgePricing,
+  getSurgePricing
 } = require('../../src/services/intelligenceService');
 
 describe('intelligenceService helpers', () => {
@@ -40,38 +40,38 @@ describe('intelligenceService APIs (mocked models)', () => {
         sort: () => ({
           limit: () => ({
             lean: async () => [
-              {
-                items: [
-                  { item: 'aaaaaaaaaaaaaaaaaaaaaaaa' },
-                  { item: 'bbbbbbbbbbbbbbbbbbbbbbbb' },
-                ],
-              },
-            ],
-          }),
-        }),
-      }),
+            {
+              items: [
+              { item: 'aaaaaaaaaaaaaaaaaaaaaaaa' },
+              { item: 'bbbbbbbbbbbbbbbbbbbbbbbb' }]
+
+            }]
+
+          })
+        })
+      })
     });
     jest.spyOn(Product, 'find').mockReturnValue({
       select: () => ({
         limit: () => ({
           lean: async () => [
-            {
-              _id: 'bbbbbbbbbbbbbbbbbbbbbbbb',
-              name: 'Soup Bowl',
-              tags: ['soup', 'comfort'],
-              rating: { average: 4.5, count: 20 },
-              discount: { isActive: false },
-            },
-            {
-              _id: 'cccccccccccccccccccccccc',
-              name: 'Iced Juice',
-              tags: ['drink', 'cold'],
-              rating: { average: 4.1, count: 8 },
-              discount: { isActive: false },
-            },
-          ],
-        }),
-      }),
+          {
+            _id: 'bbbbbbbbbbbbbbbbbbbbbbbb',
+            name: 'Soup Bowl',
+            tags: ['soup', 'comfort'],
+            rating: { average: 4.5, count: 20 },
+            discount: { isActive: false }
+          },
+          {
+            _id: 'cccccccccccccccccccccccc',
+            name: 'Iced Juice',
+            tags: ['drink', 'cold'],
+            rating: { average: 4.1, count: 8 },
+            discount: { isActive: false }
+          }]
+
+        })
+      })
     });
 
     const result = await getRecommendations({
@@ -79,7 +79,7 @@ describe('intelligenceService APIs (mocked models)', () => {
       productIds: ['aaaaaaaaaaaaaaaaaaaaaaaa'],
       lat: 48.85,
       lng: 2.35,
-      limit: 5,
+      limit: 5
     });
     expect(result.items.length).toBeGreaterThan(0);
     expect(result.context.timeOfDay).toBeTruthy();
@@ -88,23 +88,23 @@ describe('intelligenceService APIs (mocked models)', () => {
 
   test('getSmartEta includes kitchen and travel factors', async () => {
     jest.spyOn(DeliverySetting, 'findOne').mockReturnValue({
-      lean: async () => ({ deliveryPreparationTime: 25 }),
+      lean: async () => ({ deliveryPreparationTime: 25 })
     });
     jest.spyOn(Restaurant, 'findById').mockReturnValue({
       select: () => ({
         lean: async () => ({
           latitude: 48.86,
           longitude: 2.35,
-          name: 'Demo',
-        }),
-      }),
+          name: 'Demo'
+        })
+      })
     });
     jest.spyOn(Order, 'countDocuments').mockResolvedValue(3);
 
     const eta = await getSmartEta({
       restaurantId: 'rrrrrrrrrrrrrrrrrrrrrrrr',
       lat: 48.85,
-      lng: 2.34,
+      lng: 2.34
     });
     expect(eta.minMinutes).toBeGreaterThan(0);
     expect(eta.maxMinutes).toBeGreaterThanOrEqual(eta.minMinutes);
@@ -117,7 +117,7 @@ describe('intelligenceService APIs (mocked models)', () => {
     const surge = await getSurgePricing({
       restaurantId: 'rrrrrrrrrrrrrrrrrrrrrrrr',
       lat: 48.85,
-      lng: 2.35,
+      lng: 2.35
     });
     expect(surge.multiplier).toBeGreaterThanOrEqual(1);
     expect(typeof surge.active).toBe('boolean');

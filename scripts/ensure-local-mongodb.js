@@ -7,7 +7,6 @@ const mongoUri = process.env.MONGO_URI || '';
 const containerName = process.env.MONGO_DOCKER_CONTAINER || 'mongodb';
 const isLocalMongo = /(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?(?:[/?]|$)/i.test(mongoUri);
 
-// Hosting services must use their configured database, not a local Docker daemon.
 if (process.env.NODE_ENV === 'production' || !isLocalMongo) {
   console.log('MongoDB Docker local ignoré (base distante ou environnement de production).');
   process.exit(0);
@@ -30,7 +29,7 @@ function isDockerReady() {
 }
 
 function wait(milliseconds) {
-  return new Promise(resolve => setTimeout(resolve, milliseconds));
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
 function launchDockerDesktop() {
@@ -87,7 +86,7 @@ async function main() {
   runDocker(['start', containerName]);
 }
 
-main().catch(error => {
+main().catch((error) => {
   console.error(`Préparation de MongoDB impossible : ${error.message}`);
   process.exit(1);
 });

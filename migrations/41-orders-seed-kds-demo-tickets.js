@@ -1,10 +1,3 @@
-/**
- * Seed Kitchen Display tickets for demo restaurant (demo@restaurant.com).
- * Creates fresh pending / preparing / ready orders so KDS is not empty.
- *
- * up   → insert KDS demo orders (idempotent via migrationSeedKey)
- * down → delete those seeded orders
- */
 
 const { ObjectId } = require('mongodb');
 
@@ -12,74 +5,73 @@ const SEED_KEY = 'migration_41_kds_demo_tickets';
 const DEMO_EMAIL = 'demo@restaurant.com';
 
 const TICKETS = [
-  {
-    status: 'pending',
-    minutesAgo: 3,
-    items: [
-      { name: 'Pizza Margherita', price: 14.5, quantity: 1 },
-      { name: 'Coca-Cola', price: 3.5, quantity: 2 },
-    ],
-  },
-  {
-    status: 'pending',
-    minutesAgo: 8,
-    items: [
-      { name: 'Burger Deluxe', price: 16.9, quantity: 1 },
-      { name: 'Frites', price: 4.5, quantity: 1 },
-    ],
-  },
-  {
-    status: 'pending',
-    minutesAgo: 12,
-    items: [{ name: 'Poke Bowl', price: 15.5, quantity: 2 }],
-  },
-  {
-    status: 'accepted',
-    minutesAgo: 6,
-    items: [
-      { name: 'Pâtes Carbonara', price: 13.9, quantity: 1 },
-      { name: 'Tiramisu', price: 6.5, quantity: 1 },
-    ],
-  },
-  {
-    status: 'preparing',
-    minutesAgo: 11,
-    items: [
-      { name: 'Salade César', price: 12.5, quantity: 1 },
-      { name: 'Soupe du jour', price: 7.9, quantity: 1 },
-    ],
-  },
-  {
-    status: 'preparing',
-    minutesAgo: 18,
-    items: [
-      { name: 'Sushi Mix', price: 22.0, quantity: 1 },
-      { name: 'Miso Soup', price: 4.5, quantity: 1 },
-      { name: 'Edamame', price: 5.0, quantity: 1 },
-    ],
-  },
-  {
-    status: 'ready',
-    minutesAgo: 4,
-    items: [{ name: 'Tacos Mexicains', price: 11.5, quantity: 2 }],
-  },
-  {
-    status: 'ready',
-    minutesAgo: 9,
-    items: [
-      { name: 'Poulet rôti', price: 18.5, quantity: 1 },
-      { name: 'Gratin dauphinois', price: 6.0, quantity: 1 },
-    ],
-  },
-  {
-    status: 'ready',
-    minutesAgo: 14,
-    items: [
-      { name: 'Ramen Tonkotsu', price: 16.0, quantity: 1 },
-      { name: 'Gyoza', price: 7.5, quantity: 1 },
-    ],
-  },
-];
+{
+  status: 'pending',
+  minutesAgo: 3,
+  items: [
+  { name: 'Pizza Margherita', price: 14.5, quantity: 1 },
+  { name: 'Coca-Cola', price: 3.5, quantity: 2 }]
+
+},
+{
+  status: 'pending',
+  minutesAgo: 8,
+  items: [
+  { name: 'Burger Deluxe', price: 16.9, quantity: 1 },
+  { name: 'Frites', price: 4.5, quantity: 1 }]
+
+},
+{
+  status: 'pending',
+  minutesAgo: 12,
+  items: [{ name: 'Poke Bowl', price: 15.5, quantity: 2 }]
+},
+{
+  status: 'accepted',
+  minutesAgo: 6,
+  items: [
+  { name: 'Pâtes Carbonara', price: 13.9, quantity: 1 },
+  { name: 'Tiramisu', price: 6.5, quantity: 1 }]
+
+},
+{
+  status: 'preparing',
+  minutesAgo: 11,
+  items: [
+  { name: 'Salade César', price: 12.5, quantity: 1 },
+  { name: 'Soupe du jour', price: 7.9, quantity: 1 }]
+
+},
+{
+  status: 'preparing',
+  minutesAgo: 18,
+  items: [
+  { name: 'Sushi Mix', price: 22.0, quantity: 1 },
+  { name: 'Miso Soup', price: 4.5, quantity: 1 },
+  { name: 'Edamame', price: 5.0, quantity: 1 }]
+
+},
+{
+  status: 'ready',
+  minutesAgo: 4,
+  items: [{ name: 'Tacos Mexicains', price: 11.5, quantity: 2 }]
+},
+{
+  status: 'ready',
+  minutesAgo: 9,
+  items: [
+  { name: 'Poulet rôti', price: 18.5, quantity: 1 },
+  { name: 'Gratin dauphinois', price: 6.0, quantity: 1 }]
+
+},
+{
+  status: 'ready',
+  minutesAgo: 14,
+  items: [
+  { name: 'Ramen Tonkotsu', price: 16.0, quantity: 1 },
+  { name: 'Gyoza', price: 7.5, quantity: 1 }]
+
+}];
 
 function buildItems(rawItems) {
   return rawItems.map((item, index) => {
@@ -96,7 +88,7 @@ function buildItems(rawItems) {
       quantity,
       extras: [],
       variants: [],
-      total,
+      total
     };
   });
 }
@@ -110,7 +102,7 @@ function totalsFromItems(items) {
     subtotal: Number(subtotal.toFixed(2)),
     tax: { rate: 0.1, amount: taxAmount },
     deliveryFee,
-    totalPrice,
+    totalPrice
   };
 }
 
@@ -132,11 +124,11 @@ async function up(db) {
   }
 
   const restaurantId = demoUser.restaurant;
-  const customers = await usersCol
-    .find({ role: 'customer' })
-    .project({ _id: 1, name: 1, phone: 1 })
-    .limit(20)
-    .toArray();
+  const customers = await usersCol.
+  find({ role: 'customer' }).
+  project({ _id: 1, name: 1, phone: 1 }).
+  limit(20).
+  toArray();
 
   if (!customers.length) {
     console.log('⚠️ Aucun customer pour rattacher les tickets KDS — migration 41 ignorée');
@@ -163,17 +155,17 @@ async function up(db) {
       payment: {
         method: 'card',
         status: 'paid',
-        transactionId: `kds-seed-${index + 1}`,
+        transactionId: `kds-seed-${index + 1}`
       },
       delivery: {
         type: index % 2 === 0 ? 'delivery' : 'pickup',
         address: '12 Rue Ramey, 75018 Paris',
         estimatedTime: new Date(createdAt.getTime() + 35 * 60 * 1000),
-        deliveryFee: money.deliveryFee,
+        deliveryFee: money.deliveryFee
       },
       createdAt,
       updatedAt: now,
-      migrationSeedKey: SEED_KEY,
+      migrationSeedKey: SEED_KEY
     };
   });
 

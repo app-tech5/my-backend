@@ -1,9 +1,3 @@
-/**
- * Seed des modes de versement (payout) pour le compte driver démo.
- *
- * up   → insère un virement Stripe Connect + un PayPal (skip si déjà seedés)
- * down → supprime les documents créés par cette migration
- */
 
 const { ObjectId } = require('mongodb');
 
@@ -17,42 +11,42 @@ const DEMO_PM_PAYPAL_ID = new ObjectId('6979f500af5473434a8de602');
 
 function buildSeedPaymentMethods(now = new Date()) {
   return [
-    {
-      _id: DEMO_PM_STRIPE_ID,
-      id: `stripe_connect_${DEMO_STRIPE_CONNECT_ACCOUNT_ID}`,
-      user: DEMO_USER_ID,
-      methodType: 'bank_transfer',
-      purpose: 'payout',
-      isDefault: true,
-      isActive: true,
-      stripeConnectAccountId: DEMO_STRIPE_CONNECT_ACCOUNT_ID,
-      bankDetails: {
-        accountHolderName: 'Jean Dupont',
-        ibanLast4: '7890',
-        bankName: 'BNP Paribas',
-      },
-      verificationStatus: 'verified',
-      verificationDate: now,
-      migrationSeedKey: SEED_KEY,
-      createdAt: now,
-      updatedAt: now,
+  {
+    _id: DEMO_PM_STRIPE_ID,
+    id: `stripe_connect_${DEMO_STRIPE_CONNECT_ACCOUNT_ID}`,
+    user: DEMO_USER_ID,
+    methodType: 'bank_transfer',
+    purpose: 'payout',
+    isDefault: true,
+    isActive: true,
+    stripeConnectAccountId: DEMO_STRIPE_CONNECT_ACCOUNT_ID,
+    bankDetails: {
+      accountHolderName: 'Jean Dupont',
+      ibanLast4: '7890',
+      bankName: 'BNP Paribas'
     },
-    {
-      _id: DEMO_PM_PAYPAL_ID,
-      id: 'demo_payout_paypal',
-      user: DEMO_USER_ID,
-      methodType: 'paypal',
-      purpose: 'payout',
-      isDefault: false,
-      isActive: true,
-      paypalEmail: 'driver.paypal@demo.com',
-      verificationStatus: 'verified',
-      verificationDate: now,
-      migrationSeedKey: SEED_KEY,
-      createdAt: now,
-      updatedAt: now,
-    },
-  ];
+    verificationStatus: 'verified',
+    verificationDate: now,
+    migrationSeedKey: SEED_KEY,
+    createdAt: now,
+    updatedAt: now
+  },
+  {
+    _id: DEMO_PM_PAYPAL_ID,
+    id: 'demo_payout_paypal',
+    user: DEMO_USER_ID,
+    methodType: 'paypal',
+    purpose: 'payout',
+    isDefault: false,
+    isActive: true,
+    paypalEmail: 'driver.paypal@demo.com',
+    verificationStatus: 'verified',
+    verificationDate: now,
+    migrationSeedKey: SEED_KEY,
+    createdAt: now,
+    updatedAt: now
+  }];
+
 }
 
 async function up(db) {
@@ -60,7 +54,7 @@ async function up(db) {
   const usersCol = db.collection('users');
 
   const alreadySeeded = await paymentMethodsCol.countDocuments({
-    migrationSeedKey: SEED_KEY,
+    migrationSeedKey: SEED_KEY
   });
 
   if (alreadySeeded > 0) {
@@ -84,8 +78,8 @@ async function up(db) {
     {
       $set: {
         stripeConnectAccountId: DEMO_STRIPE_CONNECT_ACCOUNT_ID,
-        updatedAt: now,
-      },
+        updatedAt: now
+      }
     }
   );
 
@@ -103,10 +97,10 @@ async function down(db) {
   await usersCol.updateOne(
     {
       _id: DEMO_USER_ID,
-      stripeConnectAccountId: DEMO_STRIPE_CONNECT_ACCOUNT_ID,
+      stripeConnectAccountId: DEMO_STRIPE_CONNECT_ACCOUNT_ID
     },
     {
-      $set: { stripeConnectAccountId: '' },
+      $set: { stripeConnectAccountId: '' }
     }
   );
 
@@ -122,5 +116,5 @@ module.exports = {
   DEMO_PM_PAYPAL_ID,
   buildSeedPaymentMethods,
   up,
-  down,
+  down
 };

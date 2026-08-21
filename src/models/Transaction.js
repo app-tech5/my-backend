@@ -4,27 +4,27 @@ const transactionSchema = new mongoose.Schema({
   transaction_type: {
     type: String,
     enum: [
-      'customer_payment',    
-      'restaurant_payout',   
-      'driver_payout',       
-      'platform_commission', 
-      'service_fee',         
-      'delivery_fee',        
-      'tip',                
-      'refund',             
-      'adjustment',
-      'customer_top_up',
-      'cashback',
-    ],
+    'customer_payment',
+    'restaurant_payout',
+    'driver_payout',
+    'platform_commission',
+    'service_fee',
+    'delivery_fee',
+    'tip',
+    'refund',
+    'adjustment',
+    'customer_top_up',
+    'cashback'],
+
     required: true
   },
-  amount: { 
-    type: Number, 
+  amount: {
+    type: Number,
     required: true,
     min: 0
   },
-  currency: { 
-    type: String, 
+  currency: {
+    type: String,
     default: 'USD',
     required: true,
     select: false
@@ -38,44 +38,44 @@ const transactionSchema = new mongoose.Schema({
   payment_method: {
     type: String,
     enum: [
-      'credit_card', 
-      'debit_card', 
-      'paypal', 
-      'apple_pay', 
-      'google_pay', 
-      'venmo', 
-      'ach_transfer', 
-      'platform_credit',
-      'cash'
-    ],
-    required: function() {
+    'credit_card',
+    'debit_card',
+    'paypal',
+    'apple_pay',
+    'google_pay',
+    'venmo',
+    'ach_transfer',
+    'platform_credit',
+    'cash'],
+
+    required: function () {
       return this.transaction_type === 'customer_payment';
     }
   },
   payout_method: {
     type: String,
     enum: [
-      'ach_deposit',
-      'instant_pay',
-      'check',
-      'paypal',
-      'platform_balance'
-    ],
-    required: function() {
+    'ach_deposit',
+    'instant_pay',
+    'check',
+    'paypal',
+    'platform_balance'],
+
+    required: function () {
       return ['restaurant_payout', 'driver_payout'].includes(this.transaction_type);
     }
   },
-  date_created: { 
-    type: Date, 
+  date_created: {
+    type: Date,
     default: Date.now,
     required: true
   },
-  date_processed: { 
+  date_processed: {
     type: Date,
     select: false
   },
-  date_completed: { 
-    type: Date 
+  date_completed: {
+    type: Date
   },
   related_order: {
     type: mongoose.Schema.Types.ObjectId,
@@ -83,7 +83,7 @@ const transactionSchema = new mongoose.Schema({
   },
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true,
     default: new mongoose.Types.ObjectId()
- },
+  },
   platform_fee: {
     amount: { type: Number },
     percentage: { type: Number },
@@ -96,16 +96,16 @@ const transactionSchema = new mongoose.Schema({
   tax: {
     amount: { type: Number },
     description: { type: String }
-  },
+  }
 }, {
   timestamps: true,
   toJSON: { virtuals: true },
   toObject: { virtuals: true }
 });
 addPopulateMiddleware(transactionSchema, [
-    { path: "user", select: "name image email role" },
-    { path: "related_order", select: "status totalPrice createdAt" },
-])
+{ path: "user", select: "name image email role" },
+{ path: "related_order", select: "status totalPrice createdAt" }]
+);
 
 transactionSchema.post('find', function (docs) {
   const filter = this.getFilter();
@@ -118,18 +118,18 @@ transactionSchema.post('find', function (docs) {
     const amount = Number(doc.amount) || 0;
 
     if (
-      doc.transaction_type === 'customer_top_up' ||
-      doc.transaction_type === 'refund' ||
-      doc.transaction_type === 'adjustment' ||
-      doc.transaction_type === 'cashback'
-    ) {
+    doc.transaction_type === 'customer_top_up' ||
+    doc.transaction_type === 'refund' ||
+    doc.transaction_type === 'adjustment' ||
+    doc.transaction_type === 'cashback')
+    {
       return acc + amount;
     }
 
     if (
-      doc.transaction_type === 'customer_payment' &&
-      doc.payment_method === 'platform_credit'
-    ) {
+    doc.transaction_type === 'customer_payment' &&
+    doc.payment_method === 'platform_credit')
+    {
       return acc - amount;
     }
 

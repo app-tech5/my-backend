@@ -15,25 +15,25 @@ async function notifyResource({
   action,
   actionData,
   pushData,
-  priority = 'high',
+  priority = 'high'
 }) {
-  const user = userId
-    ? await User.findById(userId).select('_id deviceToken')
-    : userFilter
-      ? await User.findOne(userFilter).select('_id deviceToken')
-      : null;
+  const user = userId ?
+  await User.findById(userId).select('_id deviceToken') :
+  userFilter ?
+  await User.findOne(userFilter).select('_id deviceToken') :
+  null;
 
   if (!user?._id) return;
 
   const title = i18n.__(titleKey);
-  // i18n sprintf: ensure placeholders are filled (avoid persisting raw "%s")
+
   const message =
-    Array.isArray(messageArgs) && messageArgs.length > 0
-      ? i18n.__(messageKey, ...messageArgs.map(String))
-      : i18n.__(messageKey);
-  const safeMessage = String(message || '').includes('%s') && messageArgs?.[0] != null
-    ? String(message).replace(/%s/g, String(messageArgs[0]))
-    : message;
+  Array.isArray(messageArgs) && messageArgs.length > 0 ?
+  i18n.__(messageKey, ...messageArgs.map(String)) :
+  i18n.__(messageKey);
+  const safeMessage = String(message || '').includes('%s') && messageArgs?.[0] != null ?
+  String(message).replace(/%s/g, String(messageArgs[0])) :
+  message;
 
   await Notification.create({
     user: user._id,
@@ -45,14 +45,14 @@ async function notifyResource({
     action,
     actionData,
     priority,
-    createdBy: 'system',
+    createdBy: 'system'
   });
 
   await sendPushToDevice({
     token: user.deviceToken,
     title,
     body: safeMessage,
-    data: pushData,
+    data: pushData
   });
 }
 

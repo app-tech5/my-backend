@@ -2,14 +2,14 @@ const {
   findBatchCandidates,
   acceptOrderWithBatching,
   listDriverActiveOrders,
-  completeDeliveryWithProof,
+  completeDeliveryWithProof
 } = require('../services/logisticsService');
 const i18n = require('../config/i18n');
 
 function fail(res, error, fallbackKey) {
   const status = error.status || 500;
   return res.status(status).json({
-    message: error.message || i18n.__(fallbackKey || 'server_error'),
+    message: error.message || i18n.__(fallbackKey || 'server_error')
   });
 }
 
@@ -20,7 +20,7 @@ async function batchSuggestions(req, res) {
     const data = await findBatchCandidates({
       orderId,
       driverId,
-      driverUserId: req.user?.id,
+      driverUserId: req.user?.id
     });
     return res.json({
       radiusKm: data.radiusKm,
@@ -31,8 +31,8 @@ async function batchSuggestions(req, res) {
         sameRestaurant: c.sameRestaurant,
         address: c.order.delivery?.address,
         restaurant: c.order.restaurant,
-        status: c.order.status,
-      })),
+        status: c.order.status
+      }))
     });
   } catch (error) {
     return fail(res, error, 'logistics_batch_failed');
@@ -43,12 +43,12 @@ async function acceptBatch(req, res) {
   try {
     const orderId = req.params.orderId || req.body?.orderId;
     const driverId =
-      req.body?.driverId || req.user?.driverId || req.user?.id;
+    req.body?.driverId || req.user?.driverId || req.user?.id;
     const includeNearby = req.body?.includeNearby !== false;
     const data = await acceptOrderWithBatching({
       orderId,
       driverId,
-      includeNearby,
+      includeNearby
     });
     return res.json(data);
   } catch (error) {
@@ -77,7 +77,7 @@ async function completeWithProof(req, res) {
       signatureData: req.body?.signatureData,
       lat: req.body?.lat,
       lng: req.body?.lng,
-      contactless: req.body?.contactless !== false,
+      contactless: req.body?.contactless !== false
     });
     return res.json(order);
   } catch (error) {
@@ -89,5 +89,5 @@ module.exports = {
   batchSuggestions,
   acceptBatch,
   activeOrders,
-  completeWithProof,
+  completeWithProof
 };

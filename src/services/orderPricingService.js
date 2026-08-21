@@ -4,16 +4,11 @@ function roundMoney(n) {
   return Math.round((Number(n) || 0) * 100) / 100;
 }
 
-/**
- * Apply active customer subscription benefits to checkout amounts.
- * freeDelivery → delivery fee forced to 0
- * discountPercent → percent off subtotal (before tax)
- */
 function applyCustomerBenefitsToAmounts({
   subtotal,
   deliveryFee,
   taxRate = 0,
-  benefits,
+  benefits
 }) {
   let nextSubtotal = roundMoney(subtotal);
   let nextDelivery = roundMoney(deliveryFee);
@@ -26,7 +21,7 @@ function applyCustomerBenefitsToAmounts({
 
   let discountAmount = 0;
   if (applyDiscount) {
-    discountAmount = roundMoney((nextSubtotal * discountPercent) / 100);
+    discountAmount = roundMoney(nextSubtotal * discountPercent / 100);
     nextSubtotal = roundMoney(nextSubtotal - discountAmount);
   }
 
@@ -35,7 +30,7 @@ function applyCustomerBenefitsToAmounts({
   }
 
   const rate =
-    Number(taxRate) > 1 ? Number(taxRate) / 100 : Math.max(0, Number(taxRate) || 0);
+  Number(taxRate) > 1 ? Number(taxRate) / 100 : Math.max(0, Number(taxRate) || 0);
   const taxAmount = roundMoney(nextSubtotal * rate);
   const totalPrice = roundMoney(nextSubtotal + taxAmount + nextDelivery);
 
@@ -47,7 +42,7 @@ function applyCustomerBenefitsToAmounts({
     totalPrice,
     discountPercent: applyDiscount ? discountPercent : 0,
     discountAmount,
-    memberFreeDelivery: freeDelivery,
+    memberFreeDelivery: freeDelivery
   };
 }
 
@@ -55,23 +50,23 @@ async function priceOrderForCustomer({
   userId,
   subtotal,
   deliveryFee,
-  taxRate = 0,
+  taxRate = 0
 }) {
-  const benefits = userId
-    ? await getActiveBenefits(userId, 'customer')
-    : { active: false };
+  const benefits = userId ?
+  await getActiveBenefits(userId, 'customer') :
+  { active: false };
   return {
     benefits,
     ...applyCustomerBenefitsToAmounts({
       subtotal,
       deliveryFee,
       taxRate,
-      benefits,
-    }),
+      benefits
+    })
   };
 }
 
 module.exports = {
   applyCustomerBenefitsToAmounts,
-  priceOrderForCustomer,
+  priceOrderForCustomer
 };

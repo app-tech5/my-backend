@@ -28,16 +28,16 @@ describe('migration 26-paymentmethods-seed-demo-driver-payouts', () => {
       _id: migration.DEMO_USER_ID,
       email: 'driver@demo.com',
       role: 'delivery',
-      stripeConnectAccountId: '',
+      stripeConnectAccountId: ''
     });
 
     await migration.up(db);
 
-    const methods = await db
-      .collection('paymentmethods')
-      .find({ migrationSeedKey: migration.SEED_KEY })
-      .sort({ isDefault: -1 })
-      .toArray();
+    const methods = await db.
+    collection('paymentmethods').
+    find({ migrationSeedKey: migration.SEED_KEY }).
+    sort({ isDefault: -1 }).
+    toArray();
 
     expect(methods).toHaveLength(2);
 
@@ -54,8 +54,8 @@ describe('migration 26-paymentmethods-seed-demo-driver-payouts', () => {
       bankDetails: {
         accountHolderName: 'Jean Dupont',
         ibanLast4: '7890',
-        bankName: 'BNP Paribas',
-      },
+        bankName: 'BNP Paribas'
+      }
     });
     expect(stripeMethod.bankDetails.iban).toBeUndefined();
 
@@ -64,7 +64,7 @@ describe('migration 26-paymentmethods-seed-demo-driver-payouts', () => {
       user: migration.DEMO_USER_ID,
       purpose: 'payout',
       isDefault: false,
-      paypalEmail: 'driver.paypal@demo.com',
+      paypalEmail: 'driver.paypal@demo.com'
     });
 
     const user = await db.collection('users').findOne({ _id: migration.DEMO_USER_ID });
@@ -75,14 +75,14 @@ describe('migration 26-paymentmethods-seed-demo-driver-payouts', () => {
     await db.collection('users').insertOne({
       _id: migration.DEMO_USER_ID,
       email: 'driver@demo.com',
-      role: 'delivery',
+      role: 'delivery'
     });
 
     await migration.up(db);
     await migration.up(db);
 
     const count = await db.collection('paymentmethods').countDocuments({
-      migrationSeedKey: migration.SEED_KEY,
+      migrationSeedKey: migration.SEED_KEY
     });
 
     expect(count).toBe(2);
@@ -92,7 +92,7 @@ describe('migration 26-paymentmethods-seed-demo-driver-payouts', () => {
     await migration.up(db);
 
     const count = await db.collection('paymentmethods').countDocuments({
-      migrationSeedKey: migration.SEED_KEY,
+      migrationSeedKey: migration.SEED_KEY
     });
 
     expect(count).toBe(0);
@@ -103,14 +103,14 @@ describe('migration 26-paymentmethods-seed-demo-driver-payouts', () => {
       _id: migration.DEMO_USER_ID,
       email: 'driver@demo.com',
       role: 'delivery',
-      stripeConnectAccountId: '',
+      stripeConnectAccountId: ''
     });
 
     await migration.up(db);
     await migration.down(db);
 
     const count = await db.collection('paymentmethods').countDocuments({
-      migrationSeedKey: migration.SEED_KEY,
+      migrationSeedKey: migration.SEED_KEY
     });
     const user = await db.collection('users').findOne({ _id: migration.DEMO_USER_ID });
 

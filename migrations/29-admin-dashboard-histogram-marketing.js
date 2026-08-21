@@ -1,17 +1,9 @@
-/**
- * Données marketing admin dashboard — histogramme Jan–Jul avec Sell / Commission variés.
- * Répartit des commandes existantes (user + restaurant valides) sur 7 mois,
- * recalcule subtotal / tax / delivery / totalPrice de façon cohérente.
- *
- * up   → dates + montants (idempotent via migrationSeedKey)
- * down → restaure l'état sauvegardé
- */
 
 const { ObjectId } = require("mongodb");
 const {
   toFiniteNumber,
   resolveDeliveryFee,
-  recalculateOrderTotals,
+  recalculateOrderTotals
 } = require("./16-orders-fix-absurd-delivery-fees");
 const { scaleItemsToSubtotal } = require("./18-orders-normalize-seed-subtotals-below-free-delivery-threshold");
 
@@ -20,14 +12,13 @@ const MARKETING_YEAR = 2026;
 const ORDERS_PER_MONTH = 6;
 
 const MONTH_TARGETS = [
-  { month: 0, gross: 1400, net: 580 },
-  { month: 1, gross: 3600, net: 1450 },
-  { month: 2, gross: 2100, net: 850 },
-  { month: 3, gross: 900, net: 380 },
-  { month: 4, gross: 2600, net: 1050 },
-  { month: 5, gross: 1200, net: 490 },
-  { month: 6, gross: 3000, net: 1220 },
-];
+{ month: 0, gross: 1400, net: 580 },
+{ month: 1, gross: 3600, net: 1450 },
+{ month: 2, gross: 2100, net: 850 },
+{ month: 3, gross: 900, net: 380 },
+{ month: 4, gross: 2600, net: 1050 },
+{ month: 5, gross: 1200, net: 490 },
+{ month: 6, gross: 3000, net: 1220 }];
 
 function round2(value) {
   return Math.round(value * 100) / 100;
@@ -44,15 +35,15 @@ function isEligibleOrder(order) {
     Array.isArray(order?.items) &&
     order.items.length > 0 &&
     toFiniteNumber(order?.subtotal, 0) > 0 &&
-    toFiniteNumber(order?.totalPrice, 0) > 0
-  );
+    toFiniteNumber(order?.totalPrice, 0) > 0);
+
 }
 
 function targetSubtotalFromTotal(order, targetTotal) {
   const currentTotal = toFiniteNumber(order?.totalPrice, 0);
   const currentSubtotal = toFiniteNumber(order?.subtotal, 0);
   if (currentTotal <= 0) return currentSubtotal;
-  return round2((targetTotal * currentSubtotal) / currentTotal);
+  return round2(targetTotal * currentSubtotal / currentTotal);
 }
 
 async function buildOrderContext(db) {
@@ -91,7 +82,7 @@ async function buildOrderContext(db) {
     appDefaultFee,
     deliverySettingByRestaurant,
     getRestaurant,
-    getUser,
+    getUser
   };
 }
 
@@ -122,7 +113,7 @@ async function scaleOrderToTarget(db, order, targetTotal, context) {
     subtotal,
     taxAmount,
     deliveryFee,
-    totalPrice,
+    totalPrice
   };
 }
 
@@ -134,15 +125,15 @@ function splitMonthTargets(target) {
   const perCancelled = round2(grossGap / cancelledCount);
 
   return [
-    ...Array.from({ length: deliveredCount }, () => ({
-      status: "delivered",
-      targetTotal: perDelivered,
-    })),
-    ...Array.from({ length: cancelledCount }, () => ({
-      status: "cancelled",
-      targetTotal: perCancelled,
-    })),
-  ];
+  ...Array.from({ length: deliveredCount }, () => ({
+    status: "delivered",
+    targetTotal: perDelivered
+  })),
+  ...Array.from({ length: cancelledCount }, () => ({
+    status: "cancelled",
+    targetTotal: perCancelled
+  }))];
+
 }
 
 async function up(db) {
@@ -157,13 +148,13 @@ async function up(db) {
 
   const context = await buildOrderContext(db);
 
-  const pool = await ordersCol
-    .find({
-      migrationSeedKey: { $ne: SEED_KEY },
-      status: { $in: ["delivered", "cancelled", "pending", "preparing"] },
-    })
-    .sort({ _id: 1 })
-    .toArray();
+  const pool = await ordersCol.
+  find({
+    migrationSeedKey: { $ne: SEED_KEY },
+    status: { $in: ["delivered", "cancelled", "pending", "preparing"] }
+  }).
+  sort({ _id: 1 }).
+  toArray();
 
   const eligible = pool.filter(isEligibleOrder);
   if (eligible.length < expectedCount) {
@@ -213,8 +204,8 @@ async function up(db) {
             migrationSeedPreviousSubtotal: order.subtotal,
             migrationSeedPreviousTaxAmount: order.tax?.amount,
             migrationSeedPreviousDeliveryFee: order.delivery?.deliveryFee,
-            migrationSeedPreviousTotalPrice: order.totalPrice,
-          },
+            migrationSeedPreviousTotalPrice: order.totalPrice
+          }
         }
       );
       updated += 1;
@@ -237,7 +228,7 @@ async function down(db) {
       "delivery.deliveryFee": order.migrationSeedPreviousDeliveryFee ?? order.delivery?.deliveryFee,
       totalPrice: order.migrationSeedPreviousTotalPrice ?? order.totalPrice,
       createdAt: order.migrationSeedPreviousCreatedAt ?? order.createdAt,
-      updatedAt: order.migrationSeedPreviousUpdatedAt ?? order.updatedAt,
+      updatedAt: order.migrationSeedPreviousUpdatedAt ?? order.updatedAt
     };
 
     await ordersCol.updateOne(
@@ -253,8 +244,8 @@ async function down(db) {
           migrationSeedPreviousSubtotal: "",
           migrationSeedPreviousTaxAmount: "",
           migrationSeedPreviousDeliveryFee: "",
-          migrationSeedPreviousTotalPrice: "",
-        },
+          migrationSeedPreviousTotalPrice: ""
+        }
       }
     );
   }
@@ -272,5 +263,5 @@ module.exports = {
   splitMonthTargets,
   targetSubtotalFromTotal,
   up,
-  down,
+  down
 };

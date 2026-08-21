@@ -1,11 +1,11 @@
 const DEFAULT_OPENAI_MODEL = process.env.OPENAI_RECOMMENDATION_MODEL || 'gpt-4.1-mini';
 const DEFAULT_GEMINI_MODEL =
-  process.env.GEMINI_RECOMMENDATION_MODEL || 'gemini-1.5-flash';
+process.env.GEMINI_RECOMMENDATION_MODEL || 'gemini-1.5-flash';
 
 const PROVIDERS = Object.freeze({
   BUILTIN: 'builtin',
   OPENAI: 'openai',
-  GEMINI: 'gemini',
+  GEMINI: 'gemini'
 });
 
 function normalizeProvider(value) {
@@ -44,26 +44,26 @@ function toExternalContext(input) {
       price: p.price,
       ratingAverage: p?.rating?.average || 0,
       ratingCount: p?.rating?.count || 0,
-      hasDiscount: Boolean(p?.discount?.isActive),
+      hasDiscount: Boolean(p?.discount?.isActive)
     })),
-    requestedLimit: input.limit,
+    requestedLimit: input.limit
   };
 }
 
 function buildPrompt(context) {
   return [
-    'You are a food delivery recommendation engine.',
-    'Pick cross-sell items from candidates.',
-    'Return strict JSON only in this shape:',
-    '{"recommendedProductIds":["id1","id2"],"reasonsById":{"id1":"short reason"}}',
-    'Rules:',
-    '- Prefer candidates that fit cart/history, weather and time-of-day.',
-    '- Never include ids not in candidates.',
-    '- Do not include cartProductIds in response.',
-    '- Keep reasons very short (max 12 words).',
-    '',
-    JSON.stringify(context),
-  ].join('\n');
+  'You are a food delivery recommendation engine.',
+  'Pick cross-sell items from candidates.',
+  'Return strict JSON only in this shape:',
+  '{"recommendedProductIds":["id1","id2"],"reasonsById":{"id1":"short reason"}}',
+  'Rules:',
+  '- Prefer candidates that fit cart/history, weather and time-of-day.',
+  '- Never include ids not in candidates.',
+  '- Do not include cartProductIds in response.',
+  '- Keep reasons very short (max 12 words).',
+  '',
+  JSON.stringify(context)].
+  join('\n');
 }
 
 function reorderWithExternalIds({ candidates, externalIds, limit }) {
@@ -94,21 +94,21 @@ async function callOpenAI({ apiKey, model, prompt }) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
+      Authorization: `Bearer ${apiKey}`
     },
     body: JSON.stringify({
       model,
       temperature: 0.2,
       response_format: { type: 'json_object' },
       messages: [
-        {
-          role: 'system',
-          content:
-            'You return strict JSON only. No markdown, no code fences, no commentary.',
-        },
-        { role: 'user', content: prompt },
-      ],
-    }),
+      {
+        role: 'system',
+        content:
+        'You return strict JSON only. No markdown, no code fences, no commentary.'
+      },
+      { role: 'user', content: prompt }]
+
+    })
   });
   if (!res.ok) throw new Error(`openai_http_${res.status}`);
   const data = await res.json();
@@ -120,26 +120,26 @@ async function callOpenAI({ apiKey, model, prompt }) {
 
 async function callGemini({ apiKey, model, prompt }) {
   const url =
-    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent` +
-    `?key=${encodeURIComponent(apiKey)}`;
+  `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent` +
+  `?key=${encodeURIComponent(apiKey)}`;
   const res = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       generationConfig: {
         temperature: 0.2,
-        responseMimeType: 'application/json',
+        responseMimeType: 'application/json'
       },
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
-    }),
+      contents: [{ role: 'user', parts: [{ text: prompt }] }]
+    })
   });
   if (!res.ok) throw new Error(`gemini_http_${res.status}`);
   const data = await res.json();
   const text =
-    data?.candidates?.[0]?.content?.parts
-      ?.map((p) => p?.text || '')
-      .join('\n')
-      .trim() || '';
+  data?.candidates?.[0]?.content?.parts?.
+  map((p) => p?.text || '').
+  join('\n').
+  trim() || '';
   const parsed = safeJsonParse(text) || extractJsonObject(text);
   if (!parsed) throw new Error('gemini_invalid_json');
   return parsed;
@@ -154,7 +154,7 @@ async function applyRecommendationProvider(input) {
     return {
       provider,
       mode: 'builtin',
-      items: builtinItems,
+      items: builtinItems
     };
   }
 
@@ -173,18 +173,18 @@ async function applyRecommendationProvider(input) {
       parsed = await callGemini({ apiKey, model: DEFAULT_GEMINI_MODEL, prompt });
     }
 
-    const externalIds = Array.isArray(parsed?.recommendedProductIds)
-      ? parsed.recommendedProductIds.map(String)
-      : [];
+    const externalIds = Array.isArray(parsed?.recommendedProductIds) ?
+    parsed.recommendedProductIds.map(String) :
+    [];
     const reordered = reorderWithExternalIds({
       candidates,
       externalIds,
-      limit: input.limit,
+      limit: input.limit
     });
     const reasonsById =
-      parsed?.reasonsById && typeof parsed.reasonsById === 'object'
-        ? parsed.reasonsById
-        : {};
+    parsed?.reasonsById && typeof parsed.reasonsById === 'object' ?
+    parsed.reasonsById :
+    {};
 
     const mergedItems = reordered.map((item) => {
       const id = String(item._id);
@@ -197,14 +197,14 @@ async function applyRecommendationProvider(input) {
       mode: 'external',
       items: mergedItems,
       model:
-        provider === PROVIDERS.OPENAI ? DEFAULT_OPENAI_MODEL : DEFAULT_GEMINI_MODEL,
+      provider === PROVIDERS.OPENAI ? DEFAULT_OPENAI_MODEL : DEFAULT_GEMINI_MODEL
     };
   } catch (error) {
     return {
       provider,
       mode: 'fallback_builtin',
       fallbackError: error.message,
-      items: builtinItems,
+      items: builtinItems
     };
   }
 }
@@ -227,7 +227,7 @@ async function callExternalProvider({ provider, prompt }) {
     return callOpenAI({
       apiKey,
       model: process.env.OPENAI_RECOMMENDATION_MODEL || DEFAULT_OPENAI_MODEL,
-      prompt,
+      prompt
     });
   }
   if (provider === PROVIDERS.GEMINI) {
@@ -236,7 +236,7 @@ async function callExternalProvider({ provider, prompt }) {
     return callGemini({
       apiKey,
       model: process.env.GEMINI_RECOMMENDATION_MODEL || DEFAULT_GEMINI_MODEL,
-      prompt,
+      prompt
     });
   }
   throw new Error('builtin_provider_no_external_call');
@@ -248,12 +248,12 @@ async function applyEtaProvider({ builtinResult }) {
     return { provider, mode: 'builtin', eta: builtinResult };
   }
   const prompt = [
-    'You optimize delivery ETA ranges for food delivery.',
-    'Return JSON only: {"minMinutes":number,"maxMinutes":number,"labelReason":"short"}',
-    'Rules: maxMinutes must be >= minMinutes, realistic, conservative.',
-    'Input:',
-    JSON.stringify(builtinResult),
-  ].join('\n');
+  'You optimize delivery ETA ranges for food delivery.',
+  'Return JSON only: {"minMinutes":number,"maxMinutes":number,"labelReason":"short"}',
+  'Rules: maxMinutes must be >= minMinutes, realistic, conservative.',
+  'Input:',
+  JSON.stringify(builtinResult)].
+  join('\n');
   try {
     const parsed = await callExternalProvider({ provider, prompt });
     const minMinutes = clampNumber(
@@ -277,15 +277,15 @@ async function applyEtaProvider({ builtinResult }) {
         maxMinutes,
         estimatedArrivalAt: new Date(Date.now() + maxMinutes * 60 * 1000).toISOString(),
         aiLabelReason:
-          typeof parsed?.labelReason === 'string' ? parsed.labelReason.trim() : '',
-      },
+        typeof parsed?.labelReason === 'string' ? parsed.labelReason.trim() : ''
+      }
     };
   } catch (error) {
     return {
       provider,
       mode: 'fallback_builtin',
       fallbackError: error.message,
-      eta: builtinResult,
+      eta: builtinResult
     };
   }
 }
@@ -296,12 +296,12 @@ async function applySurgeProvider({ builtinResult }) {
     return { provider, mode: 'builtin', surge: builtinResult };
   }
   const prompt = [
-    'You optimize surge multiplier for food delivery marketplace.',
-    'Return JSON only: {"active":boolean,"multiplier":number,"labelReason":"short"}',
-    'Rules: multiplier between 1.0 and 2.0',
-    'Input:',
-    JSON.stringify(builtinResult),
-  ].join('\n');
+  'You optimize surge multiplier for food delivery marketplace.',
+  'Return JSON only: {"active":boolean,"multiplier":number,"labelReason":"short"}',
+  'Rules: multiplier between 1.0 and 2.0',
+  'Input:',
+  JSON.stringify(builtinResult)].
+  join('\n');
   try {
     const parsed = await callExternalProvider({ provider, prompt });
     const multiplier = clampNumber(
@@ -311,7 +311,7 @@ async function applySurgeProvider({ builtinResult }) {
       builtinResult.multiplier
     );
     const active =
-      typeof parsed?.active === 'boolean' ? parsed.active : multiplier > 1.05;
+    typeof parsed?.active === 'boolean' ? parsed.active : multiplier > 1.05;
     return {
       provider,
       mode: 'external',
@@ -320,15 +320,15 @@ async function applySurgeProvider({ builtinResult }) {
         active,
         multiplier: active ? Number(multiplier.toFixed(2)) : 1,
         aiLabelReason:
-          typeof parsed?.labelReason === 'string' ? parsed.labelReason.trim() : '',
-      },
+        typeof parsed?.labelReason === 'string' ? parsed.labelReason.trim() : ''
+      }
     };
   } catch (error) {
     return {
       provider,
       mode: 'fallback_builtin',
       fallbackError: error.message,
-      surge: builtinResult,
+      surge: builtinResult
     };
   }
 }
@@ -338,5 +338,5 @@ module.exports = {
   normalizeProvider,
   applyRecommendationProvider,
   applyEtaProvider,
-  applySurgeProvider,
+  applySurgeProvider
 };

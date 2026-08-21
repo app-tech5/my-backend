@@ -35,7 +35,7 @@ describe("migration 29-admin-dashboard-histogram-marketing", () => {
     items: [{ name: "Burger", quantity: 1, price: 20, total: 20 }],
     createdAt: new Date("2025-11-01T10:00:00.000Z"),
     updatedAt: new Date("2025-11-01T10:00:00.000Z"),
-    ...overrides,
+    ...overrides
   });
 
   it("splitMonthTargets separates gross and net across statuses", () => {
@@ -53,32 +53,32 @@ describe("migration 29-admin-dashboard-histogram-marketing", () => {
     const restaurantId = new ObjectId();
     const userId = new ObjectId();
     const orders = Array.from({ length: 50 }, (_, index) =>
-      seedOrder({
-        _id: new ObjectId(),
-        user: userId,
-        restaurant: restaurantId,
-        totalPrice: 18 + index,
-      })
+    seedOrder({
+      _id: new ObjectId(),
+      user: userId,
+      restaurant: restaurantId,
+      totalPrice: 18 + index
+    })
     );
 
     await db.collection("restaurants").insertOne({
       _id: restaurantId,
       name: "Test Kitchen",
       latitude: 48.8566,
-      longitude: 2.3522,
+      longitude: 2.3522
     });
     await db.collection("users").insertOne({
       _id: userId,
-      location: { latitude: 48.86, longitude: 2.35 },
+      location: { latitude: 48.86, longitude: 2.35 }
     });
     await db.collection("orders").insertMany(orders);
 
     await migration.up(db);
 
-    const touched = await db
-      .collection("orders")
-      .find({ migrationSeedKey: migration.SEED_KEY })
-      .toArray();
+    const touched = await db.
+    collection("orders").
+    find({ migrationSeedKey: migration.SEED_KEY }).
+    toArray();
 
     expect(touched.length).toBe(migration.MONTH_TARGETS.length * 6);
 

@@ -6,14 +6,14 @@ const driverReportSchema = new Schema({
     type: String,
     required: true,
     enum: [
-      'late_delivery',
-      'rude_behavior',
-      'unprofessional',
-      'wrong_order',
-      'safety_concern',
-      'driving_issues',
-      'other'
-    ],
+    'late_delivery',
+    'rude_behavior',
+    'unprofessional',
+    'wrong_order',
+    'safety_concern',
+    'driving_issues',
+    'other'],
+
     default: 'other'
   },
   description: {
@@ -43,19 +43,19 @@ const driverReportSchema = new Schema({
     required: false
   },
   images: [{
-    type: String, 
+    type: String,
     validate: {
-      validator: function(v) {
-        return v.length <= 5; 
+      validator: function (v) {
+        return v.length <= 5;
       },
       message: i18n.__('maximum_5_images_allowed')
     }
   }],
   videos: [{
-    type: String, 
+    type: String,
     validate: {
-      validator: function(v) {
-        return v.length <= 2; 
+      validator: function (v) {
+        return v.length <= 2;
       },
       message: i18n.__('maximum_2_videos_allowed')
     }
@@ -79,13 +79,13 @@ const driverReportSchema = new Schema({
   resolution: {
     type: String,
     enum: ['warning_issued', 'driver_suspended', 'driver_terminated', 'compensation_issued', 'no_action'],
-    required: function() {
+    required: function () {
       return this.status === 'resolved';
     }
   },
   resolutionDetails: {
     type: String,
-    required: function() {
+    required: function () {
       return this.status === 'resolved';
     },
     maxlength: 2000
@@ -100,7 +100,7 @@ const driverReportSchema = new Schema({
   },
   resolvedAt: {
     type: Date,
-    required: function() {
+    required: function () {
       return this.status === 'resolved';
     }
   }
@@ -115,28 +115,28 @@ driverReportSchema.index({ order: 1 });
 driverReportSchema.index({ createdAt: -1 });
 driverReportSchema.pre(["find", "findOne"], function () {
   this.populate([
-    { path: "reporter", select: "name email image" },
-    {
-      path: "driver",
-      select: "userId",
-      populate: { path: "userId", select: "name phone image" },
-    },
-    { path: "order", select: "status totalPrice createdAt" },
-    { path: "adminNotes.admin", select: "name" },
-  ]);
+  { path: "reporter", select: "name email image" },
+  {
+    path: "driver",
+    select: "userId",
+    populate: { path: "userId", select: "name phone image" }
+  },
+  { path: "order", select: "status totalPrice createdAt" },
+  { path: "adminNotes.admin", select: "name" }]
+  );
 });
-driverReportSchema.pre('save', function(next) {
+driverReportSchema.pre('save', function (next) {
   this.updatedAt = new Date();
   next();
 });
-driverReportSchema.methods.addAdminNote = function(noteContent, adminId) {
+driverReportSchema.methods.addAdminNote = function (noteContent, adminId) {
   this.adminNotes.push({
     note: noteContent,
     admin: adminId
   });
   return this.save();
 };
-driverReportSchema.methods.updateStatus = function(newStatus, resolutionType, resolutionDetails) {
+driverReportSchema.methods.updateStatus = function (newStatus, resolutionType, resolutionDetails) {
   this.status = newStatus;
   if (newStatus === 'resolved') {
     this.resolution = resolutionType;
@@ -145,7 +145,7 @@ driverReportSchema.methods.updateStatus = function(newStatus, resolutionType, re
   }
   return this.save();
 };
-driverReportSchema.virtual('processingTime').get(function() {
+driverReportSchema.virtual('processingTime').get(function () {
   if (this.status === 'resolved' && this.resolvedAt && this.createdAt) {
     return this.resolvedAt - this.createdAt;
   }

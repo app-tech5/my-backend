@@ -4,7 +4,7 @@ const {
   PARIS_RESTAURANT,
   PARIS_DRIVER_POINT,
   DEMO_KITCHEN_ID,
-  DRIVER2_ID,
+  DRIVER2_ID
 } = require('../../migrations/36-scrub-bonaberi-real-geo-from-demo');
 
 describe('migration 36 scrub bonaberi geo', () => {

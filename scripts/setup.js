@@ -47,7 +47,7 @@ async function setup() {
     }
     mongoUri += `localhost:27017/${finalDatabase}`;
     envContent += `# Configuration MongoDB\n`;
-    envContent += `MONGO_URI=${mongoUri}\n`;  
+    envContent += `MONGO_URI=${mongoUri}\n`;
     envContent += `MONGODB_HOST=${finalHost}\n`;
     envContent += `MONGODB_PORT=${finalPort}\n`;
     envContent += `MONGODB_DATABASE=${finalDatabase}\n`;

@@ -5,7 +5,7 @@ const i18n = require('../config/i18n');
 function maskPaypalEmail(email) {
   if (!email || typeof email !== 'string') return '';
   return email.replace(/(.{1,3})(.*)(@.*)/, (_match, start, middle, domain) =>
-    `${start}${middle.replace(/./g, '*')}${domain}`
+  `${start}${middle.replace(/./g, '*')}${domain}`
   );
 }
 
@@ -13,7 +13,7 @@ const paymentMethodSchema = new Schema({
   id: {
     type: String,
     required: true,
-    default: () => new mongoose.Types.ObjectId().toString(),
+    default: () => new mongoose.Types.ObjectId().toString()
   },
   user: {
     type: Schema.Types.ObjectId,
@@ -29,7 +29,7 @@ const paymentMethodSchema = new Schema({
   purpose: {
     type: String,
     enum: ['payment', 'payout'],
-    default: 'payment',
+    default: 'payment'
   },
   isDefault: {
     type: Boolean,
@@ -42,23 +42,23 @@ const paymentMethodSchema = new Schema({
   cardDetails: {
     cardNumberLast4: {
       type: String,
-      required: function() { 
-        return ['credit_card', 'debit_card'].includes(this.methodType); 
+      required: function () {
+        return ['credit_card', 'debit_card'].includes(this.methodType);
       },
       maxlength: 4
     },
     cardBrand: {
       type: String,
-      // require c'est pour 
-      required: function() { 
-        return ['credit_card', 'debit_card'].includes(this.methodType); 
+
+      required: function () {
+        return ['credit_card', 'debit_card'].includes(this.methodType);
       },
       enum: ['visa', 'mastercard', 'amex', 'discover', 'jcb', 'diners', 'unionpay', 'other']
     },
     cardholderName: {
       type: String,
-      required: function() { 
-        return ['credit_card', 'debit_card'].includes(this.methodType); 
+      required: function () {
+        return ['credit_card', 'debit_card'].includes(this.methodType);
       },
       maxlength: 100
     },
@@ -77,37 +77,35 @@ const paymentMethodSchema = new Schema({
       required: function () {
         return this.methodType === 'bank_transfer' && !this.stripeConnectAccountId;
       },
-      maxlength: 100,
+      maxlength: 100
     },
     iban: {
       type: String,
       required: function () {
         return this.methodType === 'bank_transfer' && !this.stripeConnectAccountId;
-      },
+      }
     },
     ibanLast4: {
       type: String,
-      maxlength: 4,
+      maxlength: 4
     },
     bankName: {
       type: String,
-      maxlength: 100,
-    },
+      maxlength: 100
+    }
   },
   paypalEmail: {
     type: String,
-    required: function() { return this.methodType === 'paypal'; },
+    required: function () {return this.methodType === 'paypal';},
     match: [/.+\@.+\..+/, i18n.__('please_enter_valid_email')]
   },
   walletToken: {
-    type: String,
-    // required: function() { 
-    //   return ['apple_pay', 'google_pay'].includes(this.methodType); 
-    // }
+    type: String
+
   },
   stripeConnectAccountId: {
     type: String,
-    default: '',
+    default: ''
   },
   createdAt: {
     type: Date,
@@ -134,7 +132,7 @@ const paymentMethodSchema = new Schema({
   timestamps: true,
   toJSON: {
     virtuals: true,
-    transform: function(doc, ret) {
+    transform: function (doc, ret) {
       if (ret.bankDetails?.iban) {
         delete ret.bankDetails.iban;
       }
@@ -150,17 +148,17 @@ const paymentMethodSchema = new Schema({
 paymentMethodSchema.index({ user: 1, isActive: 1 });
 paymentMethodSchema.index({ user: 1, purpose: 1, isActive: 1 });
 paymentMethodSchema.index({ user: 1, isDefault: 1 });
-paymentMethodSchema.pre(/^find/, function(next) {
-    this.populate({
-      path: 'user',
-      select: 'name'
-    });
-    next();
+paymentMethodSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'user',
+    select: 'name'
   });
+  next();
+});
 const isDefaultTruthyUpdate = (update = {}) =>
-  update.isDefault === true || update.$set?.isDefault === true;
+update.isDefault === true || update.$set?.isDefault === true;
 
-paymentMethodSchema.pre('save', async function(next) {
+paymentMethodSchema.pre('save', async function (next) {
   try {
     if (this.methodType === 'bank_transfer' && this.bankDetails?.iban) {
       const normalized = String(this.bankDetails.iban).replace(/\s/g, '').toUpperCase();
@@ -175,7 +173,7 @@ paymentMethodSchema.pre('save', async function(next) {
         user: this.user,
         purpose,
         isDefault: true,
-        isActive: true,
+        isActive: true
       });
       if (!hasDefault) {
         this.isDefault = true;
@@ -194,7 +192,7 @@ paymentMethodSchema.pre('save', async function(next) {
   next();
 });
 
-paymentMethodSchema.pre('findOneAndUpdate', async function(next) {
+paymentMethodSchema.pre('findOneAndUpdate', async function (next) {
   const update = this.getUpdate();
 
   if (process.env.DEMO_MODE === 'true' && isDefaultTruthyUpdate(update)) {
@@ -211,7 +209,7 @@ paymentMethodSchema.pre('findOneAndUpdate', async function(next) {
           {
             user: doc.user,
             purpose: doc.purpose || 'payment',
-            _id: { $ne: doc._id },
+            _id: { $ne: doc._id }
           },
           { $set: { isDefault: false } }
         );
@@ -223,7 +221,7 @@ paymentMethodSchema.pre('findOneAndUpdate', async function(next) {
 
   next();
 });
-paymentMethodSchema.methods.getMaskedDetails = function() {
+paymentMethodSchema.methods.getMaskedDetails = function () {
   switch (this.methodType) {
     case 'credit_card':
     case 'debit_card':
@@ -254,13 +252,13 @@ paymentMethodSchema.methods.getMaskedDetails = function() {
         accountHolderName: this.bankDetails?.accountHolderName,
         ibanLast4: this.bankDetails?.ibanLast4,
         bankName: this.bankDetails?.bankName,
-        stripeConnectAccountId: this.stripeConnectAccountId || undefined,
+        stripeConnectAccountId: this.stripeConnectAccountId || undefined
       };
     default:
       return { type: 'other' };
   }
 };
-paymentMethodSchema.methods.isExpired = function() {
+paymentMethodSchema.methods.isExpired = function () {
   if (['credit_card', 'debit_card'].includes(this.methodType)) {
     const now = new Date();
     const expiryDate = new Date(

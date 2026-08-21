@@ -1,13 +1,3 @@
-/**
- * Rebase les dates des commandes seed migration 29 (histogramme admin).
- * L'ancien schéma utilisait les jours 3/7/11/15/19/23 — le jour 23 de juillet
- * polluait le compteur "Today's orders" du dashboard restaurant.
- *
- * Nouveau schéma : jours 3/6/9/12/15/18 (toujours Jan–Jul 2026).
- *
- * up   → réécrit createdAt/updatedAt des seeds migration_29 (idempotent)
- * down → restaure les dates sauvegardées par cette migration
- */
 
 const SEED_KEY = 'migration_30_orders_rebase_admin_histogram_days';
 const SOURCE_SEED_KEY = 'migration_29_admin_dashboard_histogram';
@@ -21,10 +11,10 @@ function monthDate(year, monthIndex, day) {
 async function up(db) {
   const ordersCol = db.collection('orders');
 
-  const seeded = await ordersCol
-    .find({ migrationSeedKey: SOURCE_SEED_KEY })
-    .sort({ createdAt: 1, _id: 1 })
-    .toArray();
+  const seeded = await ordersCol.
+  find({ migrationSeedKey: SOURCE_SEED_KEY }).
+  sort({ createdAt: 1, _id: 1 }).
+  toArray();
 
   if (!seeded.length) {
     console.log('⚠️ Aucune commande migration_29 — migration 30 ignorée');
@@ -33,9 +23,9 @@ async function up(db) {
 
   const byMonth = new Map();
   for (const order of seeded) {
-    const month = order.createdAt instanceof Date
-      ? order.createdAt.getMonth()
-      : new Date(order.createdAt).getMonth();
+    const month = order.createdAt instanceof Date ?
+    order.createdAt.getMonth() :
+    new Date(order.createdAt).getMonth();
     if (!byMonth.has(month)) byMonth.set(month, []);
     byMonth.get(month).push(order);
   }
@@ -58,8 +48,8 @@ async function up(db) {
 
       if (order.migration30SeedKey === SEED_KEY) {
         const alreadyCorrect =
-          order.createdAt instanceof Date &&
-          order.createdAt.getTime() === nextCreatedAt.getTime();
+        order.createdAt instanceof Date &&
+        order.createdAt.getTime() === nextCreatedAt.getTime();
         if (alreadyCorrect) {
           skipped += 1;
           continue;
@@ -74,10 +64,10 @@ async function up(db) {
             updatedAt: nextCreatedAt,
             migration30SeedKey: SEED_KEY,
             migration30PreviousCreatedAt:
-              order.migration30PreviousCreatedAt ?? order.createdAt,
+            order.migration30PreviousCreatedAt ?? order.createdAt,
             migration30PreviousUpdatedAt:
-              order.migration30PreviousUpdatedAt ?? order.updatedAt,
-          },
+            order.migration30PreviousUpdatedAt ?? order.updatedAt
+          }
         }
       );
 
@@ -110,8 +100,8 @@ async function down(db) {
         $unset: {
           migration30SeedKey: '',
           migration30PreviousCreatedAt: '',
-          migration30PreviousUpdatedAt: '',
-        },
+          migration30PreviousUpdatedAt: ''
+        }
       }
     );
   }
@@ -126,5 +116,5 @@ module.exports = {
   DAYS_PER_MONTH,
   monthDate,
   up,
-  down,
+  down
 };
