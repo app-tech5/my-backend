@@ -103,6 +103,8 @@ app.use("/api/uploads", (req, res, next) => {
 }, express.static(path.join(__dirname, "../uploads")));
 
 const { publicRouter: channelPublicRoutes, protectedRouter: channelProtectedRoutes } = require("./routes/channelRoutes");
+const marketingRoutes = require("./routes/marketingRoutes");
+app.use("/api/marketing", marketingRoutes);
 app.use("/api/channels", channelPublicRoutes);
 app.use("/api", authMiddleware);
 app.use('/api/settings', settingsRoutes);
