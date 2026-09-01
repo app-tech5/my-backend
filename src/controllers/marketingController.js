@@ -1,5 +1,6 @@
 const LicenseInquiry = require('../models/LicenseInquiry');
 const { validateLicenseInquiry } = require('../utils/licenseInquiryValidation');
+const { sendLicenseInquiryEmail } = require('../utils/licenseInquiryMailer');
 
 async function createLicenseInquiry(req, res) {
   try {
@@ -20,7 +21,8 @@ async function createLicenseInquiry(req, res) {
       });
     }
 
-    await LicenseInquiry.create(result.values);
+    const inquiry = await LicenseInquiry.create(result.values);
+    sendLicenseInquiryEmail(inquiry.toObject()).catch(() => {});
 
     return res.status(201).json({
       success: true,

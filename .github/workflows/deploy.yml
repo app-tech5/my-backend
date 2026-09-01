@@ -17,11 +17,17 @@ jobs:
         uses: appleboy/ssh-action@v1.2.0
         env:
           STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          LICENSE_INQUIRY_TO: ${{ secrets.LICENSE_INQUIRY_TO }}
+          LICENSE_INQUIRY_FROM: ${{ secrets.LICENSE_INQUIRY_FROM }}
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          envs: STRIPE_SECRET_KEY
+          envs: STRIPE_SECRET_KEY,SMTP_HOST,SMTP_PORT,SMTP_USER,SMTP_PASS,LICENSE_INQUIRY_TO,LICENSE_INQUIRY_FROM
           # IMPORTANT: script_stop must stay false.
           # When true, appleboy injects "exit if $? != 0" after EVERY line,
           # which kills multi-line if/elif/functions (e.g. grep no-match).
@@ -69,8 +75,14 @@ jobs:
               *migrations/*) NEED_MIGRATE=1 ;;
             esac
 
-            echo "=== 2/5 sync STRIPE_SECRET_KEY ==="
+            echo "=== 2/5 sync secrets to .env ==="
             sync_env STRIPE_SECRET_KEY "${STRIPE_SECRET_KEY:-}"
+            sync_env SMTP_HOST "${SMTP_HOST:-}"
+            sync_env SMTP_PORT "${SMTP_PORT:-}"
+            sync_env SMTP_USER "${SMTP_USER:-}"
+            sync_env SMTP_PASS "${SMTP_PASS:-}"
+            sync_env LICENSE_INQUIRY_TO "${LICENSE_INQUIRY_TO:-}"
+            sync_env LICENSE_INQUIRY_FROM "${LICENSE_INQUIRY_FROM:-}"
 
             echo "=== 3/5 npm install (only if deps changed) ==="
             if [ "$OLD_SHA" = "$NEW_SHA" ]; then
