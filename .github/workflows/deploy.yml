@@ -54,10 +54,10 @@ jobs:
 
             OLD_SHA=$(git rev-parse HEAD)
 
-            echo "=== 1/5 git pull ==="
+            echo "=== 1/5 git fetch + reset ==="
             git fetch origin features-online
             git checkout features-online
-            git pull --ff-only origin features-online
+            git reset --hard origin/features-online
 
             NEW_SHA=$(git rev-parse HEAD)
             echo "SHA ${OLD_SHA} -> ${NEW_SHA}"
@@ -84,13 +84,13 @@ jobs:
             sync_env LICENSE_INQUIRY_TO "${LICENSE_INQUIRY_TO:-}"
             sync_env LICENSE_INQUIRY_FROM "${LICENSE_INQUIRY_FROM:-}"
 
-            echo "=== 3/5 npm install (only if deps changed) ==="
+            echo "=== 3/5 npm ci (only if deps changed) ==="
             if [ "$OLD_SHA" = "$NEW_SHA" ]; then
-              echo "No new commits - skip npm install"
+              echo "No new commits - skip npm ci"
             elif [ "$NEED_NPM" = "1" ]; then
-              npm install
+              npm ci
             else
-              echo "package.json / package-lock.json unchanged - skip npm install"
+              echo "package.json / package-lock.json unchanged - skip npm ci"
             fi
 
             echo "=== 4/5 migrate (only if migrations changed) ==="
