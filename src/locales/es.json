@@ -226,6 +226,7 @@
   "intelligence_surge_weather": "Weather impact (%s)",
   "intelligence_surge_rush_hour": "Rush hour",
   "logistics_batch_failed": "Pedido batching failed",
+  "logistics_nearest_failed": "Nearest driver lookup failed",
   "logistics_pod_failed": "Proof of delivery failed",
   "logistics_pod_photo_required": "A delivery photo is required for contactless drop-off",
   "logistics_pod_proof_required": "Photo or signature proof is required to complete delivery",

@@ -4,6 +4,7 @@ const {
   listDriverActiveOrders,
   completeDeliveryWithProof
 } = require('../services/logisticsService');
+const { findNearestDrivers } = require('../services/driverGeoService');
 const i18n = require('../config/i18n');
 
 function fail(res, error, fallbackKey) {
@@ -85,9 +86,24 @@ async function completeWithProof(req, res) {
   }
 }
 
+async function nearestDrivers(req, res) {
+  try {
+    const data = await findNearestDrivers({
+      lng: req.query.lng,
+      lat: req.query.lat,
+      radiusKm: req.query.radiusKm,
+      count: req.query.count
+    });
+    return res.json(data);
+  } catch (error) {
+    return fail(res, error, 'logistics_nearest_failed');
+  }
+}
+
 module.exports = {
   batchSuggestions,
   acceptBatch,
   activeOrders,
-  completeWithProof
+  completeWithProof,
+  nearestDrivers
 };

@@ -95,6 +95,11 @@ DriverSchema.post("findOneAndUpdate", async function (doc) {
       });
     }
   }
+  try {
+    const { syncDriverGeo } = require("../services/driverGeoService");
+    await syncDriverGeo(doc);
+  } catch (_) {
+  }
 });
 DriverSchema.pre("findOne", function () {
   this.populate(USER_ID_POPULATE);

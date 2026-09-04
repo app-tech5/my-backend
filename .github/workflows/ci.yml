@@ -13,6 +13,22 @@ jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 20
+
+    env:
+      REDIS_URL: redis://127.0.0.1:6379
+      REDIS_DRIVERS_GEO_KEY: drivers:geo
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -23,8 +39,10 @@ jobs:
           node-version: 22
           cache: npm
 
+      # npm install (not ci): allows new package.json deps like redis
+      # without requiring a locally-generated package-lock update on Mac.
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Run tests
         run: npm run test:ci

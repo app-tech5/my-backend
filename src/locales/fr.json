@@ -101,6 +101,7 @@
   "intelligence_surge_weather": "Impact météo (%s)",
   "intelligence_surge_rush_hour": "Heure de pointe",
   "logistics_batch_failed": "Échec du groupage de commandes",
+  "logistics_nearest_failed": "Échec de la recherche de livreurs proches",
   "logistics_pod_failed": "Échec de la preuve de livraison",
   "logistics_pod_photo_required": "Une photo est requise pour une livraison sans contact",
   "logistics_pod_proof_required": "Une photo ou une signature est requise pour terminer la livraison",

@@ -135,8 +135,13 @@ app.use("/api/gateways", paymentGatewayRoutes);
 app.use("/api/channels", channelProtectedRoutes);
 app.use('/api', cleanupRouter);
 const startCleanupCron = require('./jobs/cleanupCron');
+const { getRedisClient } = require('./config/redis');
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.info(`Server running on port ${PORT}`);
   startCleanupCron();
+  getRedisClient().then((c) => {
+    if (c) console.info('[redis] connected');
+    else console.info('[redis] skipped (no REDIS_URL or client unavailable)');
+  });
 });
