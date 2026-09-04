@@ -99,7 +99,7 @@ async function findNearestDrivers({
   const rows = await redis.geoSearchWith(
     GEO_KEY,
     { longitude, latitude },
-    { RADIUS: radius, unit: 'km' },
+    { radius: radius, unit: 'km' },
     { SORT: 'ASC', COUNT: limit, WITHDIST: true }
   );
 

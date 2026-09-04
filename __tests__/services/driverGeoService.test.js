@@ -88,7 +88,7 @@ describe('driverGeoService', () => {
     expect(geoSearchWith).toHaveBeenCalledWith(
       'drivers:geo',
       { longitude: 9.7, latitude: 4.05 },
-      { RADIUS: 3, unit: 'km' },
+      { radius: 3, unit: 'km' },
       { SORT: 'ASC', COUNT: 10, WITHDIST: true }
     );
   });
