@@ -89,7 +89,8 @@ describe('driverGeoService', () => {
       'drivers:geo',
       { longitude: 9.7, latitude: 4.05 },
       { radius: 3, unit: 'km' },
-      { SORT: 'ASC', COUNT: 10, WITHDIST: true }
+      ['WITHDIST'],
+      { SORT: 'ASC', COUNT: 10 }
     );
   });
 
